@@ -6,10 +6,9 @@ namespace DialogueSystem.Editor.Utilities
     public static class StyleUtility
     {
         ///Adds stylesheet(s) to this element.
-        public static void AddStyleSheets(this VisualElement element, params string[] styleSheetNames)
+        public static void AddStyleSheet(this VisualElement element, string styleSheetName)
         {
-            foreach (string name in styleSheetNames)
-                element.styleSheets.Add((StyleSheet) EditorGUIUtility.Load(name));
+            element.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>($"Assets/DialogueSystem/Editor/Window/USS/{styleSheetName}"));
         }
         
         ///Adds class name(s) from a .uss file to this element.
