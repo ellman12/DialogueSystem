@@ -1,7 +1,7 @@
-﻿namespace DialogueSystem.Elements
-{
-	using UnityEngine;
+﻿using UnityEngine;
 
+namespace DialogueSystem.Editor.Elements
+{
 	public sealed class SingleChoiceNode : DialogueNode
 	{
 		public SingleChoiceNode(Vector2 position)

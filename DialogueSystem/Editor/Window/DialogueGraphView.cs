@@ -1,6 +1,6 @@
 ﻿using DialogueSystem.Data;
 using DialogueSystem.Editor.Utilities;
-using DialogueSystem.Elements;
+using DialogueSystem.Editor.Elements;
 using System;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;

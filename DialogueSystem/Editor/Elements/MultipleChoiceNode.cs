@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace DialogueSystem.Elements
+namespace DialogueSystem.Editor.Elements
 {
 	public sealed class MultipleChoiceNode : DialogueNode
 	{

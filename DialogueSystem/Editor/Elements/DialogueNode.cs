@@ -3,7 +3,7 @@ using DialogueSystem.Data;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace DialogueSystem.Elements
+namespace DialogueSystem.Editor.Elements
 {
 	public abstract class DialogueNode : Node
 	{
