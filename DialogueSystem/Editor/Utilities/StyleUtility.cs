@@ -5,10 +5,10 @@ namespace DialogueSystem.Editor.Utilities
 {
     public static class StyleUtility
     {
-        ///Adds stylesheet(s) to this element.
+        ///Adds a stylesheet to this element.
         public static void AddStyleSheet(this VisualElement element, string styleSheetName)
         {
-            element.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>($"Assets/DialogueSystem/Editor/Window/USS/{styleSheetName}"));
+            element.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>($"Assets/DialogueSystem/Editor/Window/USS/{styleSheetName}.uss"));
         }
         
         ///Adds class name(s) from a .uss file to this element.

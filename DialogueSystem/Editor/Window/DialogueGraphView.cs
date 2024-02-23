@@ -23,7 +23,7 @@ namespace DialogueSystem.Editor.Window
 			gridBackground.StretchToParentSize();
 			Insert(0, gridBackground);
 
-			this.AddStyleSheet("GraphView.uss");
+			this.AddStyleSheet("GraphView");
 
 			#region Manipulators
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
