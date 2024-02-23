@@ -1,0 +1,24 @@
+.node {
+    min-width: 200px;
+}
+
+.node #title-label {
+    display: none;
+}
+
+.node #title-button-container {
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.node #title-button-container > * {
+    flex-grow: 1;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.node #title-button-container > .unity-text-field {
+    flex-shrink: 1;
+}
