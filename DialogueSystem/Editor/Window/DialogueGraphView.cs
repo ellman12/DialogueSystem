@@ -1,4 +1,4 @@
-﻿using DialogueSystem.Data;
+using DialogueSystem.Data;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Elements;
 using System;
@@ -23,6 +23,7 @@ namespace DialogueSystem.Editor.Window
 			gridBackground.StretchToParentSize();
 			Insert(0, gridBackground);
 
+			this.AddStyleSheet("Constants");
 			this.AddStyleSheet("GraphView");
 
 			#region Manipulators
