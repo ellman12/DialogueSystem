@@ -21,6 +21,7 @@ namespace DialogueSystem.Editor.Utilities
 		public static TextField CreateTextField(string value, string label, EventCallback<ChangeEvent<string>> onChange)
 		{
 			TextField textField = new() { value = value, label = label };
+			textField.AddStyleSheet("TextInput");
 			textField.RegisterValueChangedCallback(onChange);
 			return textField;
 		}

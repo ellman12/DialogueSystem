@@ -1,0 +1,4 @@
+* {
+    border-color: var(--dark-grey-6);
+    padding: 1px;
+}
