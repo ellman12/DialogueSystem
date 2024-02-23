@@ -15,6 +15,7 @@ namespace DialogueSystem.Editor.Utilities
 		{
 			var port = node.InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(bool));
 			port.portName = "";
+			port.AddStyleSheet("Port");
 			return port;
 		}
 
