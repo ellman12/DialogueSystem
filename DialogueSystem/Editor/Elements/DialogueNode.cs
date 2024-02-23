@@ -20,18 +20,20 @@ namespace DialogueSystem.Editor.Elements
 			}
 		}
 		
-		public string Text;
+		public string Text = "";
 		public DialogueType Type;
 		public Vector2 Position;
 
 		protected DialogueNode(DialogueType type)
 		{
 			Type = type;
-			
+
 			this.AddStyleSheet("Node");
 			
 			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
 			titleButtonContainer.Insert(1, ElementUtility.CreateTextField(Name, "", e => Name = e.newValue));
+			
+			extensionContainer.Add(ElementUtility.CreateTextArea(Text, "", e => Text = e.newValue));
 			
 			expanded = true;
 			RefreshExpandedState();

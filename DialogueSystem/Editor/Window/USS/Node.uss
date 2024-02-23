@@ -1,9 +1,10 @@
-.node {
-    min-width: 200px;
+.node #title-label,
+.node #divider {
+    display: none;
 }
 
-.node #title-label {
-    display: none;
+.node {
+    min-width: 200px;
 }
 
 .node #collapse-button { display: none; }
@@ -24,4 +25,9 @@
 
 .node #title-button-container > .unity-text-field {
     flex-shrink: 1;
+}
+
+.node #collapsible-area {
+    padding: 8px;
+    background-color: var(--light-grey-2);
 }
