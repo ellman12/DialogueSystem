@@ -11,7 +11,12 @@ namespace DialogueSystem.Editor.Utilities
 
 		public static Foldout CreateFoldout(string title, bool collapsed = false) => new() { text = title, value = !collapsed };
 
-		public static Port CreatePort(this Node node, Direction direction, Port.Capacity capacity) => node.InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(bool));
+		public static Port CreatePort(this Node node, Direction direction, Port.Capacity capacity)
+		{
+			var port = node.InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(bool));
+			port.portName = "";
+			return port;
+		}
 
 		public static TextField CreateTextField(string value, string label, EventCallback<ChangeEvent<string>> onChange)
 		{
