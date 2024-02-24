@@ -40,12 +40,12 @@ namespace DialogueSystem.Editor.Window
 			#endregion
 		}
 
-		private static Node CreateNode(DialogueType type, Vector2 position)
+		private Node CreateNode(DialogueType type, Vector2 position)
 		{
 			return type switch
 			{
-				DialogueType.SingleChoice => new SingleChoiceNode(position),
-				DialogueType.MultipleChoice => new MultipleChoiceNode(position),
+				DialogueType.SingleChoice => new SingleChoiceNode(this, position),
+				DialogueType.MultipleChoice => new MultipleChoiceNode(this, position),
 				_ => throw new ArgumentOutOfRangeException()
 			};
 		}
