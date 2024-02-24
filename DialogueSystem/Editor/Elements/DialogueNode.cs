@@ -24,10 +24,8 @@ namespace DialogueSystem.Editor.Elements
 		public DialogueType Type;
 		public Vector2 Position;
 
-		protected DialogueNode(DialogueType type)
+		protected DialogueNode()
 		{
-			Type = type;
-
 			this.AddStyleSheet("Node");
 			
 			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
@@ -35,7 +33,6 @@ namespace DialogueSystem.Editor.Elements
 			
 			extensionContainer.Add(ElementUtility.CreateTextArea(Text, "", e => Text = e.newValue));
 			
-			expanded = true;
 			RefreshExpandedState();
 		}
 	}
