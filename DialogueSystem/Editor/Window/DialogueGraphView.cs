@@ -35,27 +35,39 @@ namespace DialogueSystem.Editor.Window
 
 			this.AddManipulator(CreateNodeContextualMenu("Add Single Choice Node", DialogueType.SingleChoice));
 			this.AddManipulator(CreateNodeContextualMenu("Add Multiple Choice Node", DialogueType.MultipleChoice));
+			this.AddManipulator(CreateGroupContextualMenu("Add Group"));
 			#endregion
 		}
 
-		private Node CreateNode(DialogueType type, Vector2 position)
+        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _)
 		{
-			return type switch
+			return ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
+        }
+
+		#region Menu
+		private IManipulator CreateNodeContextualMenu(string title, DialogueType type) => new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(title, e => CreateNode(type, GetLocalMousePosition(e))));
+
+		private void CreateNode(DialogueType type, Vector2 position)
+		{
+			DialogueNode node = type switch
 			{
 				DialogueType.SingleChoice => new SingleChoiceNode(this, position),
 				DialogueType.MultipleChoice => new MultipleChoiceNode(this, position),
 				_ => throw new ArgumentOutOfRangeException()
 			};
+			
+			AddElement(node);
 		}
 		
-        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _)
-		{
-			return ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
-        }
-		
-		private IManipulator CreateNodeContextualMenu(string actionTitle, DialogueType type) => new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode(type, GetLocalMousePosition(actionEvent.eventInfo.localMousePosition)))));
+		private IManipulator CreateGroupContextualMenu(string title) => new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(title, e => CreateGroup(GetLocalMousePosition(e))));
 
-        private Vector2 GetLocalMousePosition(Vector2 mousePosition) => contentViewContainer.WorldToLocal(mousePosition);
+		private void CreateGroup(Vector2 position)
+		{
+			AddElement(new DialogueGroup(position));
+		}
+		
+        private Vector2 GetLocalMousePosition(DropdownMenuAction action) => contentViewContainer.WorldToLocal(action.eventInfo.localMousePosition);
+		#endregion
 
 		private void OnElementsDeleted()
 		{
