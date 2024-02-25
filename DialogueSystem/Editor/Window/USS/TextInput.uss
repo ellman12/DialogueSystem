@@ -1,4 +1,10 @@
-* {
+.unity-text-field {
     border-color: var(--dark-grey-6);
     padding: 1px;
+    align-items: center;
+}
+
+.unity-text-field > .unity-label {
+    width: auto;
+    padding: 0;
 }

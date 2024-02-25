@@ -1,0 +1,20 @@
+.unity-toolbar {
+    display: flex;
+    align-items: center;
+    height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.unity-text-field {
+    width: auto;
+    flex-grow: 0;
+    flex-shrink: 1;
+}
+
+.unity-text-field > .unity-label { display: none; }
+    
+.unity-text-field > .unity-text-field__input {
+    flex-grow: 0;
+    min-width: 200px;
+}

@@ -10,6 +10,7 @@ namespace DialogueSystem.Editor.Window
 		private void OnEnable()
 		{
 			rootVisualElement.Add(new DialogueGraphView(this));
+			rootVisualElement.Add(new DialogueGraphToolbar());
 		}
 	}
 }
