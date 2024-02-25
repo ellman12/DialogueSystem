@@ -22,6 +22,8 @@ namespace DialogueSystem.Editor.Elements
 		public string Text = "";
 		public DialogueType Type;
 		public Vector2 Position;
+		public DialogueGroup Group;
+		
 		protected DialogueGraphView GraphView;
 
 		protected DialogueNode()

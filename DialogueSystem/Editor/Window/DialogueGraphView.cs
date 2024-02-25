@@ -24,8 +24,13 @@ namespace DialogueSystem.Editor.Window
 			this.AddStyleSheet("Constants");
 			this.AddStyleSheet("GraphView");
 
+			#region Events
 			deleteSelection = (_, _) => OnElementsDeleted();
-			
+
+			elementsAddedToGroup = NodesAddedToGroup;
+			elementsRemovedFromGroup = NodesRemovedFromGroup;
+			#endregion
+
 			#region Manipulators
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
@@ -71,6 +76,7 @@ namespace DialogueSystem.Editor.Window
         private Vector2 GetLocalMousePosition(DropdownMenuAction action) => contentViewContainer.WorldToLocal(action.eventInfo.localMousePosition);
 		#endregion
 
+		#region Events
 		private void OnElementsDeleted()
 		{
 			foreach (var element in selection.Cast<GraphElement>().ToArray())
@@ -81,5 +87,20 @@ namespace DialogueSystem.Editor.Window
 				element.RemoveFromHierarchy();
 			}
 		}
+
+		private void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
+		{
+			var dialogueGroup = group as DialogueGroup;
+
+			foreach (var element in elements.Cast<DialogueNode>())
+				element.Group = dialogueGroup;
+		}
+		
+		private void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
+		{
+			foreach (var element in elements.Cast<DialogueNode>())
+				element.Group = null;
+		}
+		#endregion
 	}
 }
