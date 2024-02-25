@@ -39,7 +39,9 @@ namespace DialogueSystem.Editor.Window
 			#endregion
 		}
 
-        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _)
+		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt) {}
+
+		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _)
 		{
 			return ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
         }
