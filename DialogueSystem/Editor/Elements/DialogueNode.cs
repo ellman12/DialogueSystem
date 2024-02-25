@@ -13,14 +13,10 @@ namespace DialogueSystem.Editor.Elements
 	{
 		public Guid Id = Guid.NewGuid();
 
-		private new string name = "New Node";
 		public string Name
 		{
 			get => name;
-			set
-			{
-				name = Name;
-			}
+			set => name = value;
 		}
 		
 		public string Text = "";
@@ -30,6 +26,7 @@ namespace DialogueSystem.Editor.Elements
 
 		protected DialogueNode()
 		{
+			Name = "New Node";
 			this.AddStyleSheet("Node");
 			
 			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
