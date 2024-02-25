@@ -24,6 +24,8 @@ namespace DialogueSystem.Editor.Window
 			this.AddStyleSheet("Constants");
 			this.AddStyleSheet("GraphView");
 
+			deleteSelection = (_, _) => OnElementsDeleted();
+			
 			#region Manipulators
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
@@ -54,5 +56,16 @@ namespace DialogueSystem.Editor.Window
 		private IManipulator CreateNodeContextualMenu(string actionTitle, DialogueType type) => new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode(type, GetLocalMousePosition(actionEvent.eventInfo.localMousePosition)))));
 
         private Vector2 GetLocalMousePosition(Vector2 mousePosition) => contentViewContainer.WorldToLocal(mousePosition);
+
+		private void OnElementsDeleted()
+		{
+			foreach (var element in selection.Cast<GraphElement>().ToArray())
+			{
+				if (element is DialogueNode node)
+					node.DisconnectAllPorts();
+				
+				element.RemoveFromHierarchy();
+			}
+		}
 	}
 }
