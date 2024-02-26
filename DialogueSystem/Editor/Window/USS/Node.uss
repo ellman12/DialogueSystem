@@ -11,16 +11,20 @@
 .node:hover #collapse-button { display: flex; }
 
 .node #title-button-container {
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-left: 4px;
-    padding-right: 4px;
 }
 
 .node #title-button-container > * {
     flex-grow: 1;
     flex-shrink: 0;
     padding: 0;
+    margin: 0;
+    margin-left: 2px;
+    margin-right: 2px;
+    width: auto;
 }
 
 .node #title-button-container > .unity-text-field {
