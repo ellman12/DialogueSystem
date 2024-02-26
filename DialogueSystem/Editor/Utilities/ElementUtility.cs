@@ -14,7 +14,7 @@ namespace DialogueSystem.Editor.Utilities
 		public static Button CreateIconButton(string icon, Action onClick)
 		{
 			Button button = new(onClick);
-			button.AddStyleSheet("IconButton");
+			button.AddStyleSheet("Inputs/IconButton");
 			button.AddToClassList("IconButton");
 			button.Add(new Image {sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/DialogueSystem/Editor/Window/Icons/{icon}.png")});
 			return button;
@@ -26,14 +26,14 @@ namespace DialogueSystem.Editor.Utilities
 		{
 			var port = node.InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(bool));
 			port.portName = "";
-			port.AddStyleSheet("Port");
+			port.AddStyleSheet("Inputs/Port");
 			return port;
 		}
 
 		public static TextField CreateTextField(string value, string label, EventCallback<ChangeEvent<string>> onChange)
 		{
 			TextField textField = new() { value = value, label = label };
-			textField.AddStyleSheet("TextInput");
+			textField.AddStyleSheet("Inputs/TextInput");
 			textField.RegisterValueChangedCallback(onChange);
 			return textField;
 		}

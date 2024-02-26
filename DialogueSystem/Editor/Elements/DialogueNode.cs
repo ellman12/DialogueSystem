@@ -29,7 +29,7 @@ namespace DialogueSystem.Editor.Elements
 		protected DialogueNode()
 		{
 			Name = "New Node";
-			this.AddStyleSheet("Node");
+			this.AddStyleSheet("Nodes/DialogueNode");
 			
 			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
 			titleButtonContainer.Insert(1, ElementUtility.CreateTextField(Name, "", e => Name = e.newValue));
