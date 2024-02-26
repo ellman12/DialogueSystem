@@ -1,5 +1,7 @@
 using System;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Utilities
@@ -9,8 +11,17 @@ namespace DialogueSystem.Editor.Utilities
 	{
 		public static Button CreateButton(string text, Action onClick) => new(onClick) { text = text };
 
+		public static Button CreateIconButton(string icon, Action onClick)
+		{
+			Button button = new(onClick);
+			button.AddStyleSheet("IconButton");
+			button.AddToClassList("IconButton");
+			button.Add(new Image {sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/DialogueSystem/Editor/Window/Icons/{icon}.png")});
+			return button;
+		}
+		
 		public static Foldout CreateFoldout(string title, bool collapsed = false) => new() { text = title, value = !collapsed };
-
+		
 		public static Port CreatePort(this Node node, Direction direction, Port.Capacity capacity)
 		{
 			var port = node.InstantiatePort(Orientation.Horizontal, direction, capacity, typeof(bool));
