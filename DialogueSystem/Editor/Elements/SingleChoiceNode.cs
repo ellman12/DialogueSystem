@@ -10,9 +10,11 @@ namespace DialogueSystem.Editor.Elements
 	{
 		public SingleChoiceNode(DialogueGraphView graphView, Vector2 position)
 		{
-			titleButtonContainer.Add(this.CreatePort(Direction.Output, Port.Capacity.Single));
+			this.AddStyleSheet("Nodes/SingleChoice");
 			AddToClassList("singleChoiceNode");
 
+			titleButtonContainer.Add(this.CreatePort(Direction.Output, Port.Capacity.Single));
+			
 			GraphView = graphView;
 			Type = DialogueType.SingleChoice;
 			Position = position;

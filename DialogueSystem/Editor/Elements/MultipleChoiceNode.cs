@@ -1,4 +1,5 @@
 using DialogueSystem.Data;
+using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace DialogueSystem.Editor.Elements
 	{
 		public MultipleChoiceNode(DialogueGraphView graphView, Vector2 position)
 		{
+			this.AddStyleSheet("Nodes/MultipleChoice");
 			AddToClassList("multipleChoiceNode");
 			
 			GraphView = graphView;

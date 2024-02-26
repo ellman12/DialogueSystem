@@ -1,0 +1,7 @@
+.multipleChoiceNode {
+    
+}
+
+.multipleChoiceNode #title-button-container > .unity-text-field { margin-right: 12px; }
+
+.multipleChoiceNode:hover #title-button-container .unity-text-field { margin-right: 2px; }
