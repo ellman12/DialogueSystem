@@ -1,3 +1,4 @@
+using DialogueSystem.Editor.Utilities;
 using UnityEditor;
 
 namespace DialogueSystem.Editor.Window
@@ -9,6 +10,7 @@ namespace DialogueSystem.Editor.Window
 
 		private void OnEnable()
 		{
+			rootVisualElement.AddStyleSheet("Constants");
 			rootVisualElement.Add(new DialogueGraphView(this));
 			rootVisualElement.Add(new DialogueGraphToolbar());
 		}

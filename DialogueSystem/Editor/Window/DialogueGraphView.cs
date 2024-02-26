@@ -21,7 +21,6 @@ namespace DialogueSystem.Editor.Window
 			gridBackground.StretchToParentSize();
 			Insert(0, gridBackground);
 
-			this.AddStyleSheet("Constants");
 			this.AddStyleSheet("GraphView");
 
 			#region Events
