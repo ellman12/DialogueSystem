@@ -1,5 +1,4 @@
 .unity-text-field {
-    padding: 1px;
     align-items: center;
 }
 
@@ -8,6 +7,12 @@
     padding: 0;
 }
 
+.unity-text-field .unity-text-element {
+    padding: 2px;
+}
+
 .unity-text-field * {
     border-color: var(--dark-grey-6);
+    margin: 0;
+    padding: 0;
 }
