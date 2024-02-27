@@ -15,7 +15,7 @@ namespace DialogueSystem.Editor.Utilities
 		{
 			Button button = new(onClick);
 			button.AddStyleSheet("Inputs/IconButton");
-			button.AddToClassList("IconButton");
+			button.AddToClassList("iconButton");
 			button.Add(new Image {sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/DialogueSystem/Editor/Window/Icons/{icon}.png")});
 			return button;
 		}
