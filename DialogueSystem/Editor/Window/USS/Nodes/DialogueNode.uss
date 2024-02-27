@@ -7,8 +7,16 @@
     min-width: 200px;
 }
 
-.node #collapse-button { display: none; }
-.node:hover #collapse-button { display: flex; }
+.node #collapse-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+}
+
+.node:hover #collapse-button {
+    display: flex;
+}
 
 .node #title-button-container {
     display: flex;
