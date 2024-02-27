@@ -1,0 +1,27 @@
+.choiceDisplay {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px;
+}
+
+.choiceDisplay > * {
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
+
+.choiceDisplay .iconButton {
+    width: 16px;
+    height: 16px;
+}
+
+.choiceDisplay .unity-text-field {
+    flex-grow: 0;
+    flex-shrink: 2;
+    margin-left: 4px;
+    margin-right: 4px;
+}
