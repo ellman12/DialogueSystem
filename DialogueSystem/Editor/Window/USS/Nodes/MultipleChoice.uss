@@ -2,6 +2,11 @@
     padding-right: 2px;
 }
 
+.multipleChoiceNode #title-button-container .iconButton {
+    width: 16px;
+    height: 16px;
+}
+
 .multipleChoiceNode #title-button-container > .unity-text-field { margin-right: 5px; }
 
 .multipleChoiceNode:hover #title-button-container .unity-text-field { margin-right: 2px; }
