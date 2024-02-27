@@ -1,7 +1,11 @@
-.multipleChoiceNode {
-    
+.multipleChoiceNode #title-button-container {
+    padding-right: 2px;
 }
 
-.multipleChoiceNode #title-button-container > .unity-text-field { margin-right: 12px; }
+.multipleChoiceNode #title-button-container > .unity-text-field { margin-right: 5px; }
 
 .multipleChoiceNode:hover #title-button-container .unity-text-field { margin-right: 2px; }
+
+.multipleChoiceNode #title-button-container .iconButton { display: none; }
+
+.multipleChoiceNode:hover #title-button-container .iconButton { display: flex; }
