@@ -8,7 +8,7 @@ namespace DialogueSystem.Editor.Elements
 {
 	public sealed class MultipleChoiceNode : DialogueNode
 	{
-		private readonly List<ChoiceDisplay> ChoiceDisplays = new();
+		public readonly List<ChoiceDisplay> ChoiceDisplays = new();
 		
 		public MultipleChoiceNode(DialogueGraphView graphView, Vector2 position)
 		{
@@ -44,8 +44,7 @@ namespace DialogueSystem.Editor.Elements
 		{
 			if (ChoiceDisplays.Count > 1)
 			{
-				ChoiceDisplays.Remove(choiceDisplay);
-				extensionContainer.Remove(choiceDisplay);
+				choiceDisplay.Remove();
 				RenderChoices();
 			}
 		}

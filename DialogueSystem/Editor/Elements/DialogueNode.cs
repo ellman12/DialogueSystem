@@ -23,8 +23,7 @@ namespace DialogueSystem.Editor.Elements
 		public DialogueType Type;
 		public Vector2 Position;
 		public DialogueGroup Group;
-		
-		protected DialogueGraphView GraphView;
+		public DialogueGraphView GraphView;
 
 		protected DialogueNode()
 		{
