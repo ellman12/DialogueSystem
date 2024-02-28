@@ -43,14 +43,14 @@ namespace DialogueSystem.Editor.Window
 			#endregion
 		}
 
-		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt) {}
-
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _)
 		{
 			return ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
-        }
+		}
 
 		#region Menu
+		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt) {}
+
 		private IManipulator CreateNodeContextualMenu(string title, DialogueType type) => new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(title, e => CreateNode(type, GetLocalMousePosition(e))));
 
 		private void CreateNode(DialogueType type, Vector2 position)
