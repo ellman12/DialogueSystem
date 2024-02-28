@@ -27,7 +27,7 @@ namespace DialogueSystem.Editor.Elements
 			RenderChoices();
 		}
 
-		private void RenderChoices()
+		public void RenderChoices()
 		{
 			foreach (var choiceDisplay in ChoiceDisplays)
 				extensionContainer.Add(choiceDisplay);
@@ -38,15 +38,6 @@ namespace DialogueSystem.Editor.Elements
 			ChoiceDisplays.Add(new ChoiceDisplay(this));
 			expanded = true;
 			RenderChoices();
-		}
-
-		public void RemoveChoice(ChoiceDisplay choiceDisplay)
-		{
-			if (ChoiceDisplays.Count > 1)
-			{
-				choiceDisplay.Remove();
-				RenderChoices();
-			}
 		}
 	}
 }
