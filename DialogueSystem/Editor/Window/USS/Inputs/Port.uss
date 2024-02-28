@@ -1,1 +1,6 @@
+.port {
+    margin: 0;
+    padding: 0;
+}
+
 .port > .connectorText { display: none; }
