@@ -6,7 +6,7 @@ namespace DialogueSystem.Editor.Elements
 {
     public sealed class DialogueGroup : Group
     {
-        public Guid Id = Guid.NewGuid();
+        public string Id = Guid.NewGuid().ToString();
         public Vector2 Position;
         
         public DialogueGroup(Vector2 position)
