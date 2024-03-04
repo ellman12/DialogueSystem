@@ -26,10 +26,16 @@ namespace DialogueSystem.Editor.Elements
 			
 			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
 			titleButtonContainer.Insert(1, ElementUtility.CreateTextField(SaveData.Name, "", e => SaveData.Name = e.newValue));
-			
+			titleButtonContainer.Insert(2, ElementUtility.CreateIconButton("Add", AddChoice));
+	
 			extensionContainer.Add(ElementUtility.CreateTextArea(SaveData.Text, "", e => SaveData.Text = e.newValue));
 			
 			RefreshExpandedState();
+		}
+
+		private void AddChoice()
+		{
+			
 		}
 
 		#region Ports
