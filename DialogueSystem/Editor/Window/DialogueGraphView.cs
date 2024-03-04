@@ -38,7 +38,7 @@ namespace DialogueSystem.Editor.Window
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
 
-			AddMenuItem("Create Node", e => AddElement(new DialogueNode(GetLocalMousePosition(e))));
+			AddMenuItem("Create Node", e => AddElement(new DialogueNode(GetLocalMousePosition(e), this)));
 			AddMenuItem("Create Group", e => AddElement(new DialogueGroup(GetLocalMousePosition(e))));
 			#endregion
 		}
