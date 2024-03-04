@@ -1,6 +1,6 @@
 ﻿namespace DialogueSystem.Data
 {
-    public enum DialogueType
+    public enum NodeType
     {
         ///The node is just for storing text, without presenting the player with any kind of choice.
         Text,
