@@ -18,7 +18,7 @@ namespace DialogueSystem.Editor.Elements
 
 		public readonly VisualElement choiceDisplays = new();
 
-		public DialogueNode(Vector2 position, DialogueGraphView graphView)
+		public DialogueNode(Vector2 position, DialogueGraphView graphView, int startingChoices = 0)
 		{
 			SaveData = NodeSaveData.Create();
 			SaveData.Name = "New Node";
@@ -39,6 +39,9 @@ namespace DialogueSystem.Editor.Elements
 			extensionContainer.Add(ElementUtility.CreateTextArea(SaveData.Text, "", e => SaveData.Text = e.newValue));
 			extensionContainer.Add(choiceDisplays);
 
+			for (int i = 0; i < startingChoices; i++)
+				AddChoice();
+			
 			expanded = true;
 			RefreshExpandedState();
 		}
