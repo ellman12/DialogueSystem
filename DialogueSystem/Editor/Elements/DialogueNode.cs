@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
-	public abstract class DialogueNode : Node
+	public sealed class DialogueNode : Node
 	{
 		public Guid Id = Guid.NewGuid();
 
@@ -22,12 +22,17 @@ namespace DialogueSystem.Editor.Elements
 		public string Text = "";
 		public DialogueType Type;
 		public Vector2 Position;
+		
 		public DialogueGroup Group;
 		public DialogueGraphView GraphView;
 
-		protected DialogueNode()
+		public DialogueNode(Vector2 position)
 		{
 			Name = "New Node";
+			
+			Position = position;
+			SetPosition(new Rect(position, Vector2.zero));
+			
 			this.AddStyleSheet("Nodes/DialogueNode");
 			
 			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
