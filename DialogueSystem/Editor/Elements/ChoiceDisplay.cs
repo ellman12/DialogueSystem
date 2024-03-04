@@ -8,13 +8,13 @@ namespace DialogueSystem.Editor.Elements
 {
 	public sealed class ChoiceDisplay : VisualElement
 	{
-		private new readonly MultipleChoiceNode parent;
+		private new readonly DialogueNode parent;
 
 		private readonly ChoiceSaveData SaveData = new();
 
 		private readonly Port port;
 
-		public ChoiceDisplay(MultipleChoiceNode parent)
+		public ChoiceDisplay(DialogueNode parent)
 		{
 			AddToClassList("choiceDisplay");
 			this.AddStyleSheet("Nodes/ChoiceDisplay");
@@ -30,14 +30,14 @@ namespace DialogueSystem.Editor.Elements
 
 		private void Remove()
 		{
-			if (parent.ChoiceDisplays.Count > 1)
-			{
-				parent.ChoiceDisplays.Remove(this);
-				parent.extensionContainer.Remove(this);
-				parent.RenderChoices();
-			}
+			// if (parent.ChoiceDisplays.Count > 1)
+			// {
+				// parent.ChoiceDisplays.Remove(this);
+				// parent.extensionContainer.Remove(this);
+				// parent.RenderChoices();
+			// }
 			
-			parent.GraphView.DeleteElements(port.connections);
+			// parent.GraphView.DeleteElements(port.connections);
 		}
 	}
 }
