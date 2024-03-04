@@ -1,4 +1,3 @@
-using DialogueSystem.Data;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Elements;
 using System;
@@ -12,6 +11,8 @@ namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphView : GraphView
 	{
+		public const string GraphsRootPath = "Assets/DialogueSystem/Graphs";
+
 		public DialogueGraphView(DialogueGraphWindow window)
 		{
 			this.StretchToParentSize();
@@ -66,16 +67,16 @@ namespace DialogueSystem.Editor.Window
 
 		private void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
 		{
-			var dialogueGroup = group as DialogueGroup;
+			var dialogueGroup = (DialogueGroup) group;
 
 			foreach (var element in elements.Cast<DialogueNode>())
-				element.Group = dialogueGroup;
+				element.SaveData.GroupId = dialogueGroup.Id;
 		}
 		
 		private void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			foreach (var element in elements.Cast<DialogueNode>())
-				element.Group = null;
+				element.SaveData.GroupId = "";
 		}
 		#endregion
 	}
