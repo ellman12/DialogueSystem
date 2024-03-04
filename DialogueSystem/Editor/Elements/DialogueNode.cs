@@ -88,6 +88,9 @@ namespace DialogueSystem.Editor.Elements
 		{
 			foreach (var port in titleButtonContainer.Children().OfType<Port>().Where(child => child.connected && child.direction == direction))
 				GraphView.DeleteElements(port.connections);
+			
+			foreach (var choiceDisplay in choiceDisplays.Children().Cast<ChoiceDisplay>())
+				choiceDisplay.DisconnectPort();
 		}
 		#endregion
 	}

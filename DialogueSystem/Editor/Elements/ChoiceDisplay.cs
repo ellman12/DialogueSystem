@@ -28,9 +28,15 @@ namespace DialogueSystem.Editor.Elements
 			Add(outputPort);
 		}
 
-		private void Remove()
+		public void DisconnectPort()
 		{
 			parent.GraphView.DeleteElements(outputPort.connections);
+			saveData.NodeId = "";
+		}
+
+		private void Remove()
+		{
+			DisconnectPort();
 			parent.SaveData.Choices.Remove(saveData);
 			parent.choiceDisplays.Remove(this);
 			parent.OnChoiceRemoved();
