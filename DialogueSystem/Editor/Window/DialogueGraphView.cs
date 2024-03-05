@@ -61,6 +61,11 @@ namespace DialogueSystem.Editor.Window
 			{
 				if (element is DialogueNode node)
 					node.DisconnectAllPorts();
+				else if (element is Edge edge)
+				{
+					edge.input.Disconnect(edge);
+					edge.output.Disconnect(edge);
+				}
 				
 				element.RemoveFromHierarchy();
 			}
