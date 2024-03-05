@@ -1,4 +1,3 @@
-using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
@@ -12,11 +11,11 @@ namespace DialogueSystem.Editor.Elements
 	{
 		public readonly NodeSaveData SaveData;
 
-		public readonly DialogueGraphView GraphView;
+		private readonly DialogueGraphView graphView;
 
-		private readonly Port outputPort;
+		private readonly Port inputPort, outputPort;
 
-		public readonly VisualElement choiceDisplays = new();
+		private readonly ChoicesDisplay choicesDisplay;
 
 		public DialogueNode(Vector2 position, DialogueGraphView graphView, int startingChoices = 0)
 		{
@@ -25,74 +24,63 @@ namespace DialogueSystem.Editor.Elements
 			SaveData.Position = position;
 			SetPosition(new Rect(position, Vector2.zero));
 
-			GraphView = graphView;
+			this.graphView = graphView;
 
 			this.AddStyleSheet("Nodes/DialogueNode");
 
-			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
+			#region Title Container
+			inputPort = this.CreatePort(Direction.Input, Port.Capacity.Multi);
+			titleButtonContainer.Insert(0, inputPort);
+
 			titleButtonContainer.Insert(1, ElementUtility.CreateTextField(SaveData.Name, "", e => SaveData.Name = e.newValue));
-			titleButtonContainer.Insert(2, ElementUtility.CreateIconButton("Add", AddChoice));
+			titleButtonContainer.Insert(2, ElementUtility.CreateIconButton("Add", () => choicesDisplay!.Add()));
 
 			outputPort = this.CreatePort(Direction.Output, Port.Capacity.Single);
 			titleButtonContainer.Add(outputPort);
+			#endregion
 
+			#region Extension Container
 			extensionContainer.Add(ElementUtility.CreateTextArea(SaveData.Text, "", e => SaveData.Text = e.newValue));
-			extensionContainer.Add(choiceDisplays);
+
+			choicesDisplay = new ChoicesDisplay(this, graphView);
+			extensionContainer.Add(choicesDisplay);
 
 			for (int i = 0; i < startingChoices; i++)
-				AddChoice();
-			
+				choicesDisplay.Add();
+
 			expanded = true;
 			RefreshExpandedState();
+			#endregion
 		}
-
-		private void AddChoice()
-		{
-			SaveData.Next = null;
-			GraphView.DeleteElements(outputPort.connections);
-			HideOutputPort();
-
-			ChoiceSaveData newChoice = new();
-			SaveData.Choices.Add(newChoice);
-			choiceDisplays.Add(new ChoiceDisplay(this, newChoice));
-		}
-
-		#region Events
-		public void OnChoiceRemoved()
-		{
-			if (choiceDisplays.childCount == 0)
-				ShowOutputPort();
-		}
-		#endregion
 
 		#region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
-			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPorts());
+			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
 			e.menu.AppendAction("Disconnect Output Ports", _ => DisconnectOutputPorts());
 			e.menu.AppendAction("Disconnect All Ports", _ => DisconnectAllPorts());
 			e.menu.AppendSeparator();
 		}
 
+		public void ShowOutputPort() => outputPort.style.display = DisplayStyle.Flex;
+		public void HideOutputPort()
+		{
+			graphView.DeleteElements(outputPort.connections);
+			outputPort.style.display = DisplayStyle.None;
+		}
+
 		public void DisconnectAllPorts()
 		{
-			DisconnectInputPorts();
+			DisconnectInputPort();
 			DisconnectOutputPorts();
 		}
 
-		private void HideOutputPort() => outputPort.style.display = DisplayStyle.None;
-		private void ShowOutputPort() => outputPort.style.display = DisplayStyle.Flex;
-
-		private void DisconnectInputPorts() => DisconnectPorts(Direction.Input);
-
-		private void DisconnectOutputPorts() => DisconnectPorts(Direction.Output);
-
-		private void DisconnectPorts(Direction direction)
+		private void DisconnectInputPort() => graphView.DeleteElements(inputPort.connections);
+		private void DisconnectOutputPorts()
 		{
-			foreach (var port in titleButtonContainer.Children().OfType<Port>().Where(child => child.connected && child.direction == direction))
-				GraphView.DeleteElements(port.connections);
-			
-			foreach (var choiceDisplay in choiceDisplays.Children().Cast<ChoiceDisplay>())
+			graphView.DeleteElements(outputPort.connections);
+
+			foreach (var choiceDisplay in choicesDisplay.Children)
 				choiceDisplay.DisconnectPort();
 		}
 		#endregion
