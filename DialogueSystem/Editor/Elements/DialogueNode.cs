@@ -1,4 +1,5 @@
 using DialogueSystem.Data;
+using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
 using UnityEditor.Experimental.GraphView;
@@ -29,18 +30,18 @@ namespace DialogueSystem.Editor.Elements
 			this.AddStyleSheet("Nodes/DialogueNode");
 
 			#region Title Container
-			inputPort = this.CreatePort(Direction.Input, Port.Capacity.Multi);
+			inputPort = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
 			titleButtonContainer.Insert(0, inputPort);
+			
+			titleButtonContainer.InsertTextField(1, e => SaveData.Name = e.newValue, SaveData.Name);
+			titleButtonContainer.InsertIconButton(2, "Add", () => choicesDisplay!.Add());
 
-			titleButtonContainer.Insert(1, ElementUtility.CreateTextField(SaveData.Name, "", e => SaveData.Name = e.newValue));
-			titleButtonContainer.Insert(2, ElementUtility.CreateIconButton("Add", () => choicesDisplay!.Add()));
-
-			outputPort = this.CreatePort(Direction.Output, Port.Capacity.Single);
+			outputPort = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			titleButtonContainer.Add(outputPort);
 			#endregion
 
 			#region Extension Container
-			extensionContainer.Add(ElementUtility.CreateTextArea(SaveData.Text, "", e => SaveData.Text = e.newValue));
+			extensionContainer.AddTextField(e => SaveData.Text = e.newValue, SaveData.Text, true);
 
 			choicesDisplay = new ChoicesDisplay(this, graphView);
 			extensionContainer.Add(choicesDisplay);
