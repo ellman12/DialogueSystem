@@ -27,6 +27,9 @@ namespace DialogueSystem.Editor.Elements
 			this.graphView = graphView;
 
 			this.AddStyleSheet("Nodes/DialogueNode");
+			
+			RegisterCallback<FocusInEvent>(_ => SaveData.FocusIn());
+			RegisterCallback<FocusOutEvent>(_ => SaveData.FocusOut());
 
 			#region Title Container
 			inputPort = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);

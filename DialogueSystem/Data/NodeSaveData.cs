@@ -21,9 +21,18 @@ namespace DialogueSystem.Data
 		public NodeSaveData Next;
 		public List<ChoiceSaveData> Choices = new();
 
-		[HideInInspector]
-		public Vector2 Position;
-
+		[SerializeField, HideInInspector]
+		private Vector2 position;
+		public Vector2 Position
+		{
+			get => position;
+			set
+			{
+				position = value;
+				Save();
+			}
+		}
+		
 		private string Path => P.Combine(DialogueGraphView.GraphsRootPath, $"{Name}.asset");
 
 		[NonSerialized]

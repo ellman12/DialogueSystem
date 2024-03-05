@@ -29,6 +29,8 @@ namespace DialogueSystem.Editor.Window
 
 			elementsAddedToGroup = NodesAddedToGroup;
 			elementsRemovedFromGroup = NodesRemovedFromGroup;
+			
+			graphViewChanged = UpdateElementPositions;
 			#endregion
 
 			#region Manipulators
@@ -83,6 +85,22 @@ namespace DialogueSystem.Editor.Window
 		{
 			foreach (var element in elements.Cast<DialogueNode>())
 				element.SaveData.GroupId = "";
+		}
+		
+		private GraphViewChange UpdateElementPositions(GraphViewChange change)
+		{
+			if (change.movedElements != null)
+			{
+				foreach (var element in change.movedElements)
+				{
+					if (element is DialogueNode node)
+						node.SaveData.Position = element.GetPosition().position;
+					else if (element is DialogueGroup group)
+						group.Position = element.GetPosition().position;
+				}
+			}
+			
+			return change;
 		}
 		#endregion
 	}
