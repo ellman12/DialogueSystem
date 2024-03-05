@@ -1,5 +1,5 @@
 ﻿using DialogueSystem.Data;
-using DialogueSystem.Editor.Utilities;
+using DialogueSystem.Editor.Extensions;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
@@ -17,11 +17,11 @@ namespace DialogueSystem.Editor.Elements
 			
 			AddToClassList("choiceDisplay");
 			this.AddStyleSheet("Nodes/ChoiceDisplay");
+			
+			this.AddIconButton("Close", () => choicesDisplay.Remove(this, saveData));
+			this.AddTextField(e => saveData.Text = e.newValue, saveData.Text);
 
-			Add(ElementUtility.CreateIconButton("Close", () => choicesDisplay.Remove(this, saveData)));
-			Add(ElementUtility.CreateTextArea(saveData.Text, "", e => saveData.Text = e.newValue));
-
-			outputPort = ElementUtility.CreatePort(Direction.Output, Port.Capacity.Single);
+			outputPort = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			Add(outputPort);	
 			
 			RegisterCallback<DetachFromPanelEvent>(_ => DisconnectPort());

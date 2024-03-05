@@ -1,5 +1,5 @@
 using System.IO;
-using DialogueSystem.Editor.Utilities;
+using DialogueSystem.Editor.Extensions;
 using UnityEditor;
 
 namespace DialogueSystem.Editor.Window

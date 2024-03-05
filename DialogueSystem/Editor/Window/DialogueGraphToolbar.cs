@@ -1,4 +1,4 @@
-﻿using DialogueSystem.Editor.Utilities;
+﻿using DialogueSystem.Editor.Extensions;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
@@ -11,14 +11,13 @@ namespace DialogueSystem.Editor.Window
 
 		public DialogueGraphToolbar()
 		{
-			fileNameTextField = ElementUtility.CreateTextField("Dialogue Graph", "", e => fileNameTextField.value = e.newValue);
-
-			saveButton = ElementUtility.CreateButton("Save", Save);
-			Button loadButton = ElementUtility.CreateButton("Load", Load);
-
+			fileNameTextField = ElementExtensions.CreateTextField(e => fileNameTextField!.value = e.newValue, "Dialogue Graph");
 			Add(fileNameTextField);
+
+			saveButton = ElementExtensions.CreateButton("Save", Save);
 			Add(saveButton);
-			Add(loadButton);
+			
+			this.AddButton("Load", Load);
 
 			this.AddStyleSheet("Toolbar");
 		}
