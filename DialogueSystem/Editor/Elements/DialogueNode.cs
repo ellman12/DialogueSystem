@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
@@ -9,59 +7,82 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
-	public abstract class DialogueNode : Node
+	public sealed class DialogueNode : Node
 	{
-		public Guid Id = Guid.NewGuid();
+		public readonly NodeSaveData SaveData;
 
-		public string Name
-		{
-			get => name;
-			set => name = value;
-		}
-		
-		public string Text = "";
-		public DialogueType Type;
-		public Vector2 Position;
-		public DialogueGroup Group;
-		public DialogueGraphView GraphView;
+		private readonly DialogueGraphView graphView;
 
-		protected DialogueNode()
+		private readonly Port inputPort, outputPort;
+
+		private readonly ChoicesDisplay choicesDisplay;
+
+		public DialogueNode(Vector2 position, DialogueGraphView graphView, int startingChoices = 0)
 		{
-			Name = "New Node";
+			SaveData = NodeSaveData.Create();
+			SaveData.Name = "New Node";
+			SaveData.Position = position;
+			SetPosition(new Rect(position, Vector2.zero));
+
+			this.graphView = graphView;
+
 			this.AddStyleSheet("Nodes/DialogueNode");
-			
-			titleButtonContainer.Insert(0, this.CreatePort(Direction.Input, Port.Capacity.Multi));
-			titleButtonContainer.Insert(1, ElementUtility.CreateTextField(Name, "", e => Name = e.newValue));
-			
-			extensionContainer.Add(ElementUtility.CreateTextArea(Text, "", e => Text = e.newValue));
-			
+
+			#region Title Container
+			inputPort = this.CreatePort(Direction.Input, Port.Capacity.Multi);
+			titleButtonContainer.Insert(0, inputPort);
+
+			titleButtonContainer.Insert(1, ElementUtility.CreateTextField(SaveData.Name, "", e => SaveData.Name = e.newValue));
+			titleButtonContainer.Insert(2, ElementUtility.CreateIconButton("Add", () => choicesDisplay!.Add()));
+
+			outputPort = this.CreatePort(Direction.Output, Port.Capacity.Single);
+			titleButtonContainer.Add(outputPort);
+			#endregion
+
+			#region Extension Container
+			extensionContainer.Add(ElementUtility.CreateTextArea(SaveData.Text, "", e => SaveData.Text = e.newValue));
+
+			choicesDisplay = new ChoicesDisplay(this, graphView);
+			extensionContainer.Add(choicesDisplay);
+
+			for (int i = 0; i < startingChoices; i++)
+				choicesDisplay.Add();
+
+			expanded = true;
 			RefreshExpandedState();
+			#endregion
 		}
 
 		#region Ports
-        public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
-        {
-            e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPorts());
-            e.menu.AppendAction("Disconnect Output Ports", _ => DisconnectOutputPorts());
-            e.menu.AppendAction("Disconnect All Ports", _ => DisconnectAllPorts());
+		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
+		{
+			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
+			e.menu.AppendAction("Disconnect Output Ports", _ => DisconnectOutputPorts());
+			e.menu.AppendAction("Disconnect All Ports", _ => DisconnectAllPorts());
 			e.menu.AppendSeparator();
-        }
-		
-        public void DisconnectAllPorts()
-        {
-			DisconnectInputPorts();
+		}
+
+		public void ShowOutputPort() => outputPort.style.display = DisplayStyle.Flex;
+		public void HideOutputPort()
+		{
+			graphView.DeleteElements(outputPort.connections);
+			outputPort.style.display = DisplayStyle.None;
+		}
+
+		public void DisconnectAllPorts()
+		{
+			DisconnectInputPort();
 			DisconnectOutputPorts();
-        }
+		}
 
-        private void DisconnectInputPorts() => DisconnectPorts(Direction.Input);
+		private void DisconnectInputPort() => graphView.DeleteElements(inputPort.connections);
+		private void DisconnectOutputPorts()
+		{
+			graphView.DeleteElements(outputPort.connections);
 
-		private void DisconnectOutputPorts() => DisconnectPorts(Direction.Output);
-
-		private void DisconnectPorts(Direction direction)
-        {
-			foreach (var port in titleButtonContainer.Children().OfType<Port>().Where(child => child.connected && child.direction == direction))
-				GraphView.DeleteElements(port.connections);
-        }
+			foreach (var choiceDisplay in choicesDisplay.Children)
+				choiceDisplay.DisconnectPort();
+		}
 		#endregion
 	}
 }

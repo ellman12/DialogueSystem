@@ -21,6 +21,14 @@ namespace DialogueSystem.Editor.Utilities
 		}
 		
 		public static Foldout CreateFoldout(string title, bool collapsed = false) => new() { text = title, value = !collapsed };
+
+		public static Port CreatePort(Direction direction, Port.Capacity capacity)
+		{
+			var port = Port.Create<Edge>(Orientation.Horizontal, direction, capacity, typeof(bool));
+			port.portName = "";
+			port.AddStyleSheet("Inputs/Port");
+			return port;
+		}
 		
 		public static Port CreatePort(this Node node, Direction direction, Port.Capacity capacity)
 		{

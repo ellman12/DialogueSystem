@@ -23,6 +23,26 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    padding-right: 2px;
+}
+
+.node #title-button-container > .unity-text-field {
+    flex-shrink: 1;
+    margin-right: 5px;
+}
+
+.node:hover #title-button-container .unity-text-field {
+    margin-right: 2px;
+}
+
+.node #title-button-container .iconButton {
+    display: none;
+    width: 16px;
+    height: 16px;
+}
+
+.node:hover #title-button-container .iconButton {
+    display: flex;
 }
 
 .node #title-button-container > * {
@@ -32,10 +52,6 @@
     margin: 0;
     margin-left: 2px;
     margin-right: 2px;
-}
-
-.node #title-button-container > .unity-text-field {
-    flex-shrink: 1;
 }
 
 .node #collapsible-area {
