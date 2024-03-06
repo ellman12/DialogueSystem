@@ -89,17 +89,17 @@ namespace DialogueSystem.Editor.Window
 		
 		private GraphViewChange UpdateElementPositions(GraphViewChange change)
 		{
-			if (change.movedElements != null)
-			{
-				foreach (var element in change.movedElements)
-				{
-					if (element is DialogueNode node)
-						node.SaveData.Position = element.GetPosition().position;
-					else if (element is DialogueGroup group)
-						group.Position = element.GetPosition().position;
-				}
-			}
+			if (change.movedElements == null)
+				return change;
 			
+			foreach (var element in change.movedElements)
+			{
+				if (element is DialogueNode node)
+					node.SaveData.Position = element.GetPosition().position;
+				else if (element is DialogueGroup group)
+					group.Position = element.GetPosition().position;
+			}
+
 			return change;
 		}
 		#endregion
