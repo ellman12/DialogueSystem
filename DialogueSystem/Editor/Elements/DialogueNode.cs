@@ -70,6 +70,7 @@ namespace DialogueSystem.Editor.Elements
 		public void ShowOutputPort() => outputPort.style.display = DisplayStyle.Flex;
 		public void HideOutputPort()
 		{
+			SaveData.Next = null;
 			graphView.DeleteElements(outputPort.connections);
 			outputPort.style.display = DisplayStyle.None;
 		}
