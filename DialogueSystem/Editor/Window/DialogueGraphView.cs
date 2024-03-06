@@ -113,8 +113,8 @@ namespace DialogueSystem.Editor.Window
 
 			foreach (var edge in change.edgesToCreate)
 			{
-				var startNode = (DialogueNode) edge.output.node;
-				var endNode = (DialogueNode) edge.input.node;
+				DialogueNode startNode = edge.GetStartNode();
+				DialogueNode endNode = edge.GetEndNode();
 
 				if (startNode.Type == NodeType.Text)
 					startNode.SaveData.Next = endNode.SaveData;
