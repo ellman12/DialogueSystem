@@ -58,7 +58,7 @@ namespace DialogueSystem.Editor.Window
 		#endregion
 
 		#region Events
-		private void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
+		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			var dialogueGroup = (DialogueGroup) group;
 
@@ -66,14 +66,14 @@ namespace DialogueSystem.Editor.Window
 				element.SaveData.GroupId = dialogueGroup.Id;
 		}
 
-		private void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
+		private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			foreach (var element in elements.Cast<DialogueNode>())
 				element.SaveData.GroupId = "";
 		}
 
 		#region GraphViewChanged
-		private GraphViewChange UpdateElementPositions(GraphViewChange change)
+		private static GraphViewChange UpdateElementPositions(GraphViewChange change)
 		{
 			if (change.movedElements == null)
 				return change;
@@ -89,7 +89,7 @@ namespace DialogueSystem.Editor.Window
 			return change;
 		}
 
-		private GraphViewChange UpdateElementEdges(GraphViewChange change)
+		private static GraphViewChange UpdateElementEdges(GraphViewChange change)
 		{
 			if (change.edgesToCreate == null)
 				return change;
