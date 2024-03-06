@@ -47,7 +47,7 @@ namespace DialogueSystem.Data
 
 		public void FocusOut() => Save();
 
-		private void Save()
+		public void Save()
 		{
 			EditorUtility.SetDirty(this);
 			TryRename();

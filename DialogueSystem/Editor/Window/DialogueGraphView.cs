@@ -26,13 +26,12 @@ namespace DialogueSystem.Editor.Window
 			this.AddStyleSheet("GraphView");
 
 			#region Events
-			deleteSelection = (_, _) => OnElementsDeleted();
-
 			elementsAddedToGroup = NodesAddedToGroup;
 			elementsRemovedFromGroup = NodesRemovedFromGroup;
 
 			graphViewChanged += UpdateElementPositions;
 			graphViewChanged += UpdateElementEdges;
+			graphViewChanged += DeleteSelected;
 			#endregion
 
 			#region Manipulators
@@ -59,22 +58,6 @@ namespace DialogueSystem.Editor.Window
 		#endregion
 
 		#region Events
-		private void OnElementsDeleted()
-		{
-			foreach (var element in selection.Cast<GraphElement>().ToArray())
-			{
-				if (element is DialogueNode node)
-					node.DisconnectAllPorts();
-				else if (element is Edge edge)
-				{
-					edge.input.Disconnect(edge);
-					edge.output.Disconnect(edge);
-				}
-
-				element.RemoveFromHierarchy();
-			}
-		}
-
 		private void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			var dialogueGroup = (DialogueGroup) group;
@@ -118,6 +101,41 @@ namespace DialogueSystem.Editor.Window
 
 				if (startNode.Type == NodeType.Text)
 					startNode.SaveData.Next = endNode.SaveData;
+				else
+				{
+					var saveData = (ChoiceSaveData) edge.output.userData;
+					saveData.Node = endNode.SaveData;
+				}
+				
+				startNode.SaveData.Save();
+			}
+
+			return change;
+		}
+
+		private GraphViewChange DeleteSelected(GraphViewChange change)
+		{
+			if (change.elementsToRemove == null)
+				return change;
+
+			foreach (var element in change.elementsToRemove.ToArray())
+			{
+				if (element is DialogueNode node)
+					node.DisconnectAllPorts();
+				else if (element is Edge edge)
+				{
+					edge.input.Disconnect(edge);
+					edge.output.Disconnect(edge);
+
+					if (edge.output.userData != null)
+					{
+						var saveData = (ChoiceSaveData) edge.output.userData;
+						saveData.Node = null;
+						edge.GetStartNode().SaveData.Save();
+					}
+				}
+
+				element.RemoveFromHierarchy();
 			}
 
 			return change;
