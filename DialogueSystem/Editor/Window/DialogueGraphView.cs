@@ -2,6 +2,7 @@ using DialogueSystem.Editor.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
@@ -29,8 +30,9 @@ namespace DialogueSystem.Editor.Window
 
 			elementsAddedToGroup = NodesAddedToGroup;
 			elementsRemovedFromGroup = NodesRemovedFromGroup;
-			
-			graphViewChanged = UpdateElementPositions;
+
+			graphViewChanged += UpdateElementPositions;
+			graphViewChanged += UpdateElementEdges;
 			#endregion
 
 			#region Manipulators
@@ -68,7 +70,7 @@ namespace DialogueSystem.Editor.Window
 					edge.input.Disconnect(edge);
 					edge.output.Disconnect(edge);
 				}
-				
+
 				element.RemoveFromHierarchy();
 			}
 		}
@@ -80,18 +82,19 @@ namespace DialogueSystem.Editor.Window
 			foreach (var element in elements.Cast<DialogueNode>())
 				element.SaveData.GroupId = dialogueGroup.Id;
 		}
-		
+
 		private void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			foreach (var element in elements.Cast<DialogueNode>())
 				element.SaveData.GroupId = "";
 		}
-		
+
+		#region GraphViewChanged
 		private GraphViewChange UpdateElementPositions(GraphViewChange change)
 		{
 			if (change.movedElements == null)
 				return change;
-			
+
 			foreach (var element in change.movedElements)
 			{
 				if (element is DialogueNode node)
@@ -102,6 +105,25 @@ namespace DialogueSystem.Editor.Window
 
 			return change;
 		}
+
+		private GraphViewChange UpdateElementEdges(GraphViewChange change)
+		{
+			if (change.edgesToCreate == null)
+				return change;
+
+			foreach (var edge in change.edgesToCreate)
+			{
+				var startNode = (DialogueNode) edge.output.node;
+				var endNode = (DialogueNode) edge.input.node;
+
+				if (startNode.Type == NodeType.Text)
+					startNode.SaveData.Next = endNode.SaveData;
+			}
+
+			return change;
+		}
+		#endregion
+		
 		#endregion
 	}
 }

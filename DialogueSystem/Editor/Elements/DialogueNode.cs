@@ -9,6 +9,8 @@ namespace DialogueSystem.Editor.Elements
 {
 	public sealed class DialogueNode : Node
 	{
+		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
+		
 		public readonly NodeSaveData SaveData;
 
 		private readonly DialogueGraphView graphView;
