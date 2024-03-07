@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Extensions
 {
-	///Easily create, add, and insert elements into a <see cref="VisualElement"/>VisualElement.
+	///Lots of extensions to VisualElements and their inheritors.
 	public static class ElementExtensions
 	{
 		#region Buttons
@@ -63,5 +63,8 @@ namespace DialogueSystem.Editor.Extensions
 
 		public static DialogueNode GetStartNode(this Edge edge) => (DialogueNode) edge.output.node;
 		public static DialogueNode GetEndNode(this Edge edge) => (DialogueNode) edge.input.node;
+
+		public static void Show(this VisualElement element) => element.style.display = DisplayStyle.Flex;
+		public static void Hide(this VisualElement element) => element.style.display = DisplayStyle.None;
 	}
 }
