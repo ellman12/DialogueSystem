@@ -58,6 +58,8 @@ namespace DialogueSystem.Editor.Elements
 			#endregion
 		}
 
+		public void Delete() => SaveData.Delete();
+
 		#region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
@@ -77,7 +79,7 @@ namespace DialogueSystem.Editor.Elements
 			outputPort.style.display = DisplayStyle.None;
 		}
 
-		public void DisconnectAllPorts()
+		private void DisconnectAllPorts()
 		{
 			DisconnectInputPort();
 			DisconnectOutputPorts();

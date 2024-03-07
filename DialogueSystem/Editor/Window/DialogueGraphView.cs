@@ -127,7 +127,9 @@ namespace DialogueSystem.Editor.Window
 			foreach (var element in change.elementsToRemove.ToArray())
 			{
 				if (element is DialogueNode node)
-					node.DisconnectAllPorts();
+				{
+					node.Delete();
+				}
 				else if (element is Edge edge)
 				{
 					edge.input.Disconnect(edge);

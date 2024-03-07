@@ -57,6 +57,8 @@ namespace DialogueSystem.Data
 			EditorUtility.ClearDirty(this);
 		}
 
+		public void Delete() => AssetDatabase.DeleteAsset(Path);
+
 		private void TryRename()
 		{
 			if (!File.Exists(Path) && !File.Exists(PreviousPath) && Name != DefaultName)
