@@ -32,6 +32,8 @@ namespace DialogueSystem.Editor.Elements
 		public void Remove(ChoiceDisplay choiceDisplay, ChoiceSaveData saveData)
 		{
 			node.SaveData.Choices.Remove(saveData);
+			node.SaveData.Save();
+			
 			contentContainer.Remove(choiceDisplay);
 
 			if (childCount == 0)

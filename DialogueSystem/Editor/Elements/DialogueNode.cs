@@ -71,6 +71,8 @@ namespace DialogueSystem.Editor.Elements
 		public void HideOutputPort()
 		{
 			SaveData.Next = null;
+			SaveData.Save();
+			
 			graphView.DeleteElements(outputPort.connections);
 			outputPort.style.display = DisplayStyle.None;
 		}
