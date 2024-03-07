@@ -127,11 +127,13 @@ namespace DialogueSystem.Editor.Window
 					edge.input.Disconnect(edge);
 					edge.output.Disconnect(edge);
 
+					var startNode = edge.GetStartNode();
+					
 					if (edge.output.userData != null)
 					{
 						var saveData = (ChoiceSaveData) edge.output.userData;
 						saveData.Node = null;
-						edge.GetStartNode().SaveData.Save();
+						startNode?.SaveData.Save();
 					}
 				}
 
