@@ -6,7 +6,7 @@ namespace DialogueSystem.Data
 	public sealed class ChoiceSaveData
 	{
 		public string Text;
-		
-		public string NodeId; 
+
+		public NodeSaveData Node;
 	}
 }

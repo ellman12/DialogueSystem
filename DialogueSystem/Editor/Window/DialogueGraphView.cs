@@ -2,6 +2,7 @@ using DialogueSystem.Editor.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
@@ -25,12 +26,12 @@ namespace DialogueSystem.Editor.Window
 			this.AddStyleSheet("GraphView");
 
 			#region Events
-			deleteSelection = (_, _) => OnElementsDeleted();
-
 			elementsAddedToGroup = NodesAddedToGroup;
 			elementsRemovedFromGroup = NodesRemovedFromGroup;
-			
-			graphViewChanged = UpdateElementPositions;
+
+			graphViewChanged += UpdateElementPositions;
+			graphViewChanged += UpdateElementEdges;
+			graphViewChanged += DeleteSelected;
 			#endregion
 
 			#region Manipulators
@@ -57,41 +58,26 @@ namespace DialogueSystem.Editor.Window
 		#endregion
 
 		#region Events
-		private void OnElementsDeleted()
-		{
-			foreach (var element in selection.Cast<GraphElement>().ToArray())
-			{
-				if (element is DialogueNode node)
-					node.DisconnectAllPorts();
-				else if (element is Edge edge)
-				{
-					edge.input.Disconnect(edge);
-					edge.output.Disconnect(edge);
-				}
-				
-				element.RemoveFromHierarchy();
-			}
-		}
-
-		private void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
+		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			var dialogueGroup = (DialogueGroup) group;
 
 			foreach (var element in elements.Cast<DialogueNode>())
 				element.SaveData.GroupId = dialogueGroup.Id;
 		}
-		
-		private void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
+
+		private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			foreach (var element in elements.Cast<DialogueNode>())
 				element.SaveData.GroupId = "";
 		}
-		
-		private GraphViewChange UpdateElementPositions(GraphViewChange change)
+
+		#region GraphViewChanged
+		private static GraphViewChange UpdateElementPositions(GraphViewChange change)
 		{
 			if (change.movedElements == null)
 				return change;
-			
+
 			foreach (var element in change.movedElements)
 			{
 				if (element is DialogueNode node)
@@ -102,6 +88,62 @@ namespace DialogueSystem.Editor.Window
 
 			return change;
 		}
+
+		private static GraphViewChange UpdateElementEdges(GraphViewChange change)
+		{
+			if (change.edgesToCreate == null)
+				return change;
+
+			foreach (var edge in change.edgesToCreate)
+			{
+				DialogueNode startNode = edge.GetStartNode();
+				DialogueNode endNode = edge.GetEndNode();
+
+				if (startNode.Type == NodeType.Text)
+					startNode.SaveData.Next = endNode.SaveData;
+				else
+				{
+					var saveData = (ChoiceSaveData) edge.output.userData;
+					saveData.Node = endNode.SaveData;
+				}
+				
+				startNode.SaveData.Save();
+			}
+
+			return change;
+		}
+
+		private GraphViewChange DeleteSelected(GraphViewChange change)
+		{
+			if (change.elementsToRemove == null)
+				return change;
+
+			foreach (var element in change.elementsToRemove.ToArray())
+			{
+				if (element is DialogueNode node)
+					node.DisconnectAllPorts();
+				else if (element is Edge edge)
+				{
+					edge.input.Disconnect(edge);
+					edge.output.Disconnect(edge);
+
+					var startNode = edge.GetStartNode();
+					
+					if (edge.output.userData != null)
+					{
+						var saveData = (ChoiceSaveData) edge.output.userData;
+						saveData.Node = null;
+						startNode?.SaveData.Save();
+					}
+				}
+
+				element.RemoveFromHierarchy();
+			}
+
+			return change;
+		}
+		#endregion
+		
 		#endregion
 	}
 }

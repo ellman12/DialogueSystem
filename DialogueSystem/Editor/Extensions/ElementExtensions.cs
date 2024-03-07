@@ -1,4 +1,5 @@
 ﻿using System;
+using DialogueSystem.Editor.Elements;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -59,5 +60,8 @@ namespace DialogueSystem.Editor.Extensions
 		#endregion
 		
         public static void AddStyleSheet(this VisualElement element, string styleSheetName) => element.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>($"Assets/DialogueSystem/Editor/Window/USS/{styleSheetName}.uss"));
+
+		public static DialogueNode GetStartNode(this Edge edge) => (DialogueNode) edge.output.node;
+		public static DialogueNode GetEndNode(this Edge edge) => (DialogueNode) edge.input.node;
 	}
 }

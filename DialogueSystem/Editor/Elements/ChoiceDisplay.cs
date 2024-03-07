@@ -22,6 +22,7 @@ namespace DialogueSystem.Editor.Elements
 			this.AddTextField(e => saveData.Text = e.newValue, saveData.Text);
 
 			outputPort = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
+			outputPort.userData = saveData;
 			Add(outputPort);	
 			
 			RegisterCallback<DetachFromPanelEvent>(_ => DisconnectPort());

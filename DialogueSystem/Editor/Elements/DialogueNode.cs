@@ -9,6 +9,8 @@ namespace DialogueSystem.Editor.Elements
 {
 	public sealed class DialogueNode : Node
 	{
+		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
+		
 		public readonly NodeSaveData SaveData;
 
 		private readonly DialogueGraphView graphView;
@@ -68,6 +70,9 @@ namespace DialogueSystem.Editor.Elements
 		public void ShowOutputPort() => outputPort.style.display = DisplayStyle.Flex;
 		public void HideOutputPort()
 		{
+			SaveData.Next = null;
+			SaveData.Save();
+			
 			graphView.DeleteElements(outputPort.connections);
 			outputPort.style.display = DisplayStyle.None;
 		}
