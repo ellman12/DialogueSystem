@@ -63,13 +63,19 @@ namespace DialogueSystem.Editor.Window
 			var dialogueGroup = (DialogueGroup) group;
 
 			foreach (var element in elements.Cast<DialogueNode>())
-				element.SaveData.GroupId = dialogueGroup.Id;
+			{
+				element.SaveData.Group = dialogueGroup;
+				element.SaveData.Save();
+			}
 		}
 
 		private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
 		{
 			foreach (var element in elements.Cast<DialogueNode>())
-				element.SaveData.GroupId = "";
+			{
+				element.SaveData.Group = null;
+				element.SaveData.Save();
+			}
 		}
 
 		#region GraphViewChanged

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace DialogueSystem.Editor.Elements
 {
+    [Serializable]
     public sealed class DialogueGroup : Group
     {
         public string Id = Guid.NewGuid().ToString();

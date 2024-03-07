@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using DialogueSystem.Editor.Elements;
 using P = System.IO.Path;
 using DialogueSystem.Editor.Window;
 using UnityEditor;
@@ -16,7 +17,7 @@ namespace DialogueSystem.Data
 
 		public string Name = DefaultName;
 		public string Text = "Text";
-		public string GroupId = "";
+		public DialogueGroup Group;
 
 		public NodeSaveData Next;
 		public List<ChoiceSaveData> Choices = new();
