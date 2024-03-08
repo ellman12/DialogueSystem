@@ -66,5 +66,7 @@ namespace DialogueSystem.Editor.Extensions
 
 		public static void Show(this VisualElement element) => element.style.display = DisplayStyle.Flex;
 		public static void Hide(this VisualElement element) => element.style.display = DisplayStyle.None;
+		public static bool Visible(this VisualElement element) => element.style.display == DisplayStyle.Flex;
+		public static bool Hidden(this VisualElement element) => element.style.display == DisplayStyle.None;
 	}
 }
