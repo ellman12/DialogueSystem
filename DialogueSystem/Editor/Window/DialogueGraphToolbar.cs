@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor;
@@ -11,7 +11,7 @@ namespace DialogueSystem.Editor.Window
 	public sealed class DialogueGraphToolbar : Toolbar
 	{
 		private readonly DialogueGraphWindow window;
-		private readonly Label status = new("Load or create a graph."), error = new();
+		private readonly Label error = new();
 
 		private const string GraphsRoot = "Assets/DialogueSystem/Graphs";
 		private static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
@@ -26,15 +26,12 @@ namespace DialogueSystem.Editor.Window
 			this.AddButton("Load", TryLoadGraph);
 			this.AddButton("Create", CreateGraph);
 
-			Add(status);
-
 			error.style.color = Color.red;
 			Add(error);
 		}
-
+		
 		private void CloseGraph()
 		{
-			status.text = "Load or create a graph.";
 			window.CloseGraph();
 		}
 

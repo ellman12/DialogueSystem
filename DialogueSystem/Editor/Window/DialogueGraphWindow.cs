@@ -1,6 +1,7 @@
 using System.IO;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor;
+using UnityEngine;
 
 namespace DialogueSystem.Editor.Window
 {
@@ -22,13 +23,18 @@ namespace DialogueSystem.Editor.Window
 
 		public void LoadGraph(string path)
 		{
-			graphView.GraphName = Path.GetFileName(path);
+			string graphName = Path.GetFileName(path);
+			titleContent = new GUIContent($"{graphName}");
+			
+			graphView.GraphName = graphName;
 			graphView.GraphPath = path[1..]; //Remove pesky / at the start.
 			graphView.Show();
 		}
 
 		public void CloseGraph()
 		{
+			graphView.GraphName = graphView.GraphPath = "";
+			titleContent = new GUIContent("Dialogue Graph");
 			graphView.Hide();
 		}
 		
