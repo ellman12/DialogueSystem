@@ -8,8 +8,6 @@ namespace DialogueSystem.Editor.Window
 	{
 		[MenuItem("Window/Dialogue Graph")]
 		public static void Open() => GetWindow<DialogueGraphWindow>("Dialogue Graph");
-		
-		public string GraphName { get; set; }
 
 		private DialogueGraphView graphView;
 
@@ -24,13 +22,13 @@ namespace DialogueSystem.Editor.Window
 
 		public void LoadGraph(string path)
 		{
-			GraphName = Path.GetFileName(path);
+			graphView.GraphName = Path.GetFileName(path);
+			graphView.GraphPath = path[1..]; //Remove pesky / at the start.
 			graphView.Show();
 		}
 
 		public void CloseGraph()
 		{
-			GraphName = "";
 			graphView.Hide();
 		}
 		

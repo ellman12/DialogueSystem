@@ -12,8 +12,10 @@ namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphView : GraphView
 	{
-		public const string GraphsRootPath = "Assets/DialogueSystem/Graphs";
-
+		public string GraphName { get; set; }
+		
+		public string GraphPath { get; set; }
+		
 		public DialogueGraphView(DialogueGraphWindow window)
 		{
 			this.StretchToParentSize();

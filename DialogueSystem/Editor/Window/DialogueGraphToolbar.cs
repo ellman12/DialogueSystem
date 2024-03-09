@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor;
@@ -14,6 +14,8 @@ namespace DialogueSystem.Editor.Window
 		private readonly Label status = new("Load or create a graph."), error = new();
 
 		private const string GraphsRoot = "Assets/DialogueSystem/Graphs";
+		private static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
+		private static readonly string GraphsRootFull = Path.Combine(Environment.CurrentDirectory, GraphsRoot).Replace('\\', '/');
 
 		public DialogueGraphToolbar(DialogueGraphWindow window)
 		{
@@ -45,8 +47,7 @@ namespace DialogueSystem.Editor.Window
 
 			if (ValidGraph(path))
 			{
-				status.text = Path.GetFileName(path);
-				window.LoadGraph(path);
+				window.LoadGraph(path.Replace(ProjectRoot, ""));
 				error.text = "";
 			}
 			else
@@ -69,8 +70,7 @@ namespace DialogueSystem.Editor.Window
 			if (String.IsNullOrWhiteSpace(path))
 				return;
 
-			status.text = Path.GetFileName(path);
-			window.LoadGraph(path);
+			window.LoadGraph(path.Replace(ProjectRoot, ""));
 
 			Directory.CreateDirectory(path);
 			Directory.CreateDirectory(Path.Combine(path, "Ungrouped"));

@@ -21,9 +21,7 @@ namespace DialogueSystem.Editor.Elements
 
 		public DialogueNode(Vector2 position, DialogueGraphView graphView, int startingChoices = 0)
 		{
-			SaveData = NodeSaveData.Create();
-			SaveData.Name = "New Node";
-			SaveData.Position = position;
+			SaveData = NodeSaveData.Create(graphView.GraphPath, position);
 			SetPosition(new Rect(position, Vector2.zero));
 
 			this.graphView = graphView;
