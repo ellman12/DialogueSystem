@@ -8,6 +8,10 @@ namespace DialogueSystem.Editor.Window
 	{
 		[MenuItem("Window/Dialogue Graph")]
 		public static void Open() => GetWindow<DialogueGraphWindow>("Dialogue Graph");
+		
+		public string GraphName { get; set; }
+
+		private DialogueGraphView graphView;
 
 		//TODO: delete this later
 		[MenuItem("DS/Clear &c")]
@@ -17,12 +21,22 @@ namespace DialogueSystem.Editor.Window
 			Directory.CreateDirectory("Assets/DialogueSystem/Graphs");
 			AssetDatabase.Refresh();
 		}
+
+		public void LoadGraph(string path)
+		{
+			GraphName = Path.GetFileName(path);
+			graphView.Show();
+		}
 		
 		private void OnEnable()
 		{
 			rootVisualElement.AddStyleSheet("Constants");
-			rootVisualElement.Add(new DialogueGraphView(this));
-			rootVisualElement.Add(new DialogueGraphToolbar());
+
+			graphView = new DialogueGraphView(this);
+			graphView.Hide();
+			rootVisualElement.Add(graphView);
+			
+			rootVisualElement.Add(new DialogueGraphToolbar(this));
 		}
 	}
 }
