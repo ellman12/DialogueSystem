@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor;
@@ -20,6 +20,7 @@ namespace DialogueSystem.Editor.Window
 			this.window = window;
 			this.AddStyleSheet("Toolbar");
 
+			this.AddButton("Close", CloseGraph);
 			this.AddButton("Load", TryLoadGraph);
 			this.AddButton("Create", CreateGraph);
 
@@ -27,6 +28,12 @@ namespace DialogueSystem.Editor.Window
 
 			error.style.color = Color.red;
 			Add(error);
+		}
+
+		private void CloseGraph()
+		{
+			status.text = "Load or create a graph.";
+			window.CloseGraph();
 		}
 
 		private void TryLoadGraph()

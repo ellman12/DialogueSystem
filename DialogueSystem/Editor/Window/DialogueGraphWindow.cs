@@ -27,6 +27,12 @@ namespace DialogueSystem.Editor.Window
 			GraphName = Path.GetFileName(path);
 			graphView.Show();
 		}
+
+		public void CloseGraph()
+		{
+			GraphName = "";
+			graphView.Hide();
+		}
 		
 		private void OnEnable()
 		{
