@@ -10,27 +10,22 @@ namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphToolbar : Toolbar
 	{
-		private readonly DialogueGraphWindow window;
+		private readonly DialogueGraphView graphView;
 		private readonly Label error = new();
 
 		private const string GraphsRoot = "Assets/DialogueSystem/Graphs";
 
-		public DialogueGraphToolbar(DialogueGraphWindow window)
+		public DialogueGraphToolbar(DialogueGraphView graphView)
 		{
-			this.window = window;
+			this.graphView = graphView;
 			this.AddStyleSheet("Toolbar");
 
-			this.AddButton("Close", CloseGraph);
+			this.AddButton("Close", graphView.CloseGraph);
 			this.AddButton("Load", TryLoadGraph);
 			this.AddButton("Create", CreateGraph);
 
 			error.style.color = Color.red;
 			Add(error);
-		}
-		
-		private void CloseGraph()
-		{
-			window.CloseGraph();
 		}
 
 		private void TryLoadGraph()
@@ -42,7 +37,7 @@ namespace DialogueSystem.Editor.Window
 
 			if (ValidGraph(fullPath))
 			{
-				window.LoadGraph(fullPath);
+				graphView.LoadGraph(fullPath);
 				error.text = "";
 			}
 			else
@@ -65,12 +60,7 @@ namespace DialogueSystem.Editor.Window
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
 
-			window.LoadGraph(fullPath);
-
-			Directory.CreateDirectory(fullPath);
-			Directory.CreateDirectory(Path.Combine(fullPath, "Ungrouped"));
-			Directory.CreateDirectory(Path.Combine(fullPath, "Groups"));
-			AssetDatabase.Refresh();
+			graphView.CreateGraph(fullPath);
 		}
 	}
 }

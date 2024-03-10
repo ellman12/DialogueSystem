@@ -1,12 +1,15 @@
 using DialogueSystem.Editor.Elements;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using UnityEngine;
+using Object=UnityEngine.Object;
 
 namespace DialogueSystem.Editor.Window
 {
@@ -15,9 +18,13 @@ namespace DialogueSystem.Editor.Window
 		public string GraphName { get; set; }
 		
 		public string GraphPath { get; set; }
+
+		private readonly DialogueGraphWindow window;
 		
 		public DialogueGraphView(DialogueGraphWindow window)
 		{
+			this.window = window;
+			
 			this.StretchToParentSize();
 			window.rootVisualElement.Add(this);
 
@@ -51,6 +58,36 @@ namespace DialogueSystem.Editor.Window
 
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _) => ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
 
+		public void LoadGraph(string fullPath)
+		{
+			SetGraph(fullPath);
+		}
+
+		public void CreateGraph(string fullPath)
+		{
+			SetGraph(fullPath);
+			
+			Directory.CreateDirectory(fullPath);
+			Directory.CreateDirectory(Path.Combine(fullPath, "Ungrouped"));
+			Directory.CreateDirectory(Path.Combine(fullPath, "Groups"));
+			AssetDatabase.Refresh();
+		}
+
+		public void CloseGraph()
+		{
+			GraphName = GraphPath = "";
+			window.titleContent = new GUIContent("Dialogue Graph");
+			this.Hide();
+		}
+
+		private void SetGraph(string fullPath)
+		{
+			GraphName = Path.GetFileName(fullPath);
+			window.titleContent = new GUIContent($"{GraphName}");
+			GraphPath = fullPath.Replace(DialogueGraphWindow.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
+			this.Show();
+		}
+		
 		#region Menu
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent _) {}
 
