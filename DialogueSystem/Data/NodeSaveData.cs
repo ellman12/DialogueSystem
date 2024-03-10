@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using DialogueSystem.Editor.Elements;
 using P = System.IO.Path;
-using DialogueSystem.Editor.Window;
 using UnityEditor;
 using UnityEngine;
 
@@ -33,16 +32,25 @@ namespace DialogueSystem.Data
 				Save();
 			}
 		}
+
+		[NonSerialized]
+		private string folderContaining = "";
 		
-		private string Path => P.Combine(DialogueGraphView.GraphsRootPath, $"{Name}.asset");
+		private string Path => P.Combine(folderContaining, $"{Name}.asset").Replace('\\', '/');
 
 		[NonSerialized]
 		private string previousName = "";
-		private string PreviousPath => P.Combine(DialogueGraphView.GraphsRootPath, $"{previousName}.asset");
+		private string PreviousPath => P.Combine(folderContaining, $"{previousName}.asset").Replace('\\', '/');
 
 		private const string DefaultName = "New Node";
 
-		public static NodeSaveData Create() => CreateInstance<NodeSaveData>();
+		public static NodeSaveData Create(string folderContaining, Vector2 position)
+		{
+			var saveData = CreateInstance<NodeSaveData>();
+			saveData.Position = position;
+			saveData.folderContaining = folderContaining;
+			return saveData;
+		}
 
 		public void FocusIn() => previousName = Name;
 
@@ -62,14 +70,9 @@ namespace DialogueSystem.Data
 		private void TryRename()
 		{
 			if (!File.Exists(Path) && !File.Exists(PreviousPath) && Name != DefaultName)
-			{
 				AssetDatabase.CreateAsset(this, Path);
-			}
 			else if (PreviousPath != Path)
-			{
 				AssetDatabase.RenameAsset(PreviousPath, Name);
-				AssetDatabase.Refresh();
-			}
 			
 			previousName = Name;
 		}

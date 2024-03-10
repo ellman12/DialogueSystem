@@ -1,9 +1,11 @@
 using DialogueSystem.Editor.Elements;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using UnityEngine;
@@ -12,10 +14,16 @@ namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphView : GraphView
 	{
-		public const string GraphsRootPath = "Assets/DialogueSystem/Graphs";
+		public string GraphName { get; set; }
+
+		public string GraphPath { get; set; }
+
+		private readonly DialogueGraphWindow window;
 
 		public DialogueGraphView(DialogueGraphWindow window)
 		{
+			this.window = window;
+
 			this.StretchToParentSize();
 			window.rootVisualElement.Add(this);
 
@@ -48,6 +56,47 @@ namespace DialogueSystem.Editor.Window
 		}
 
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _) => ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
+
+		public void LoadGraph(string fullPath)
+		{
+			SetGraph(fullPath);
+
+			var idk = AssetDatabase.LoadAllAssetsAtPath(GraphPath);
+			Debug.Log(idk.Length);
+		}
+
+		public void CreateGraph(string fullPath)
+		{
+			SetGraph(fullPath);
+
+			Directory.CreateDirectory(fullPath);
+			Directory.CreateDirectory(Path.Combine(fullPath, "Ungrouped"));
+			Directory.CreateDirectory(Path.Combine(fullPath, "Groups"));
+			AssetDatabase.Refresh();
+		}
+
+		public void CloseGraph()
+		{
+			GraphName = GraphPath = "";
+			window.titleContent = new GUIContent("Dialogue Graph");
+			Clear();
+			this.Hide();
+		}
+
+		private void SetGraph(string fullPath)
+		{
+			GraphName = Path.GetFileName(fullPath);
+			window.titleContent = new GUIContent($"{GraphName}");
+			GraphPath = fullPath.Replace(DialogueGraphWindow.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
+			Clear();
+			this.Show();
+		}
+
+		private new void Clear()
+		{
+			foreach (var element in graphElements)
+				RemoveElement(element); //Using DeleteElements would cause the SOs to also be removed.
+		}
 
 		#region Menu
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent _) {}
@@ -112,7 +161,7 @@ namespace DialogueSystem.Editor.Window
 					var saveData = (ChoiceSaveData) edge.output.userData;
 					saveData.Node = endNode.SaveData;
 				}
-				
+
 				startNode.SaveData.Save();
 			}
 
@@ -136,7 +185,7 @@ namespace DialogueSystem.Editor.Window
 					edge.output.Disconnect(edge);
 
 					var startNode = edge.GetStartNode();
-					
+
 					if (edge.output.userData != null)
 					{
 						var saveData = (ChoiceSaveData) edge.output.userData;
@@ -151,7 +200,6 @@ namespace DialogueSystem.Editor.Window
 			return change;
 		}
 		#endregion
-		
 		#endregion
 	}
 }

@@ -1,35 +1,66 @@
-﻿using DialogueSystem.Editor.Extensions;
+using System;
+using System.IO;
+using DialogueSystem.Editor.Extensions;
+using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphToolbar : Toolbar
 	{
-		private readonly Button saveButton;
-		private readonly TextField fileNameTextField;
+		private readonly DialogueGraphView graphView;
+		private readonly Label error = new();
 
-		public DialogueGraphToolbar()
+		private const string GraphsRoot = "Assets/DialogueSystem/Graphs";
+
+		public DialogueGraphToolbar(DialogueGraphView graphView)
 		{
-			fileNameTextField = ElementExtensions.CreateTextField(e => fileNameTextField!.value = e.newValue, "Dialogue Graph");
-			Add(fileNameTextField);
-
-			saveButton = ElementExtensions.CreateButton("Save", Save);
-			Add(saveButton);
-			
-			this.AddButton("Load", Load);
-
+			this.graphView = graphView;
 			this.AddStyleSheet("Toolbar");
+
+			this.AddButton("Close", graphView.CloseGraph);
+			this.AddButton("Load", TryLoadGraph);
+			this.AddButton("Create", CreateGraph);
+
+			error.style.color = Color.red;
+			Add(error);
 		}
 
-		private void Save()
+		private void TryLoadGraph()
 		{
-			
+			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", GraphsRoot, "");
+
+			if (String.IsNullOrWhiteSpace(fullPath))
+				return;
+
+			if (ValidGraph(fullPath))
+			{
+				graphView.LoadGraph(fullPath);
+				error.text = "";
+			}
+			else
+			{
+				error.text = "Folder is invalid!";
+			}
 		}
 
-		private void Load()
+		private static bool ValidGraph(string fullPath)
 		{
-			
+			string ungroupedPath = Path.Combine(fullPath, "Ungrouped");
+			string groupsPath = Path.Combine(fullPath, "Groups");
+			return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
+		}
+
+		private void CreateGraph()
+		{
+			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", GraphsRoot, "");
+
+			if (String.IsNullOrWhiteSpace(fullPath))
+				return;
+
+			graphView.CreateGraph(fullPath);
 		}
 	}
 }
