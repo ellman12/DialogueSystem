@@ -14,8 +14,6 @@ namespace DialogueSystem.Editor.Window
 		private readonly Label error = new();
 
 		private const string GraphsRoot = "Assets/DialogueSystem/Graphs";
-		private static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
-		private static readonly string GraphsRootFull = Path.Combine(Environment.CurrentDirectory, GraphsRoot).Replace('\\', '/');
 
 		public DialogueGraphToolbar(DialogueGraphWindow window)
 		{
@@ -44,7 +42,7 @@ namespace DialogueSystem.Editor.Window
 
 			if (ValidGraph(path))
 			{
-				window.LoadGraph(path.Replace(ProjectRoot, ""));
+				window.LoadGraph(path);
 				error.text = "";
 			}
 			else
@@ -67,7 +65,7 @@ namespace DialogueSystem.Editor.Window
 			if (String.IsNullOrWhiteSpace(path))
 				return;
 
-			window.LoadGraph(path.Replace(ProjectRoot, ""));
+			window.LoadGraph(path);
 
 			Directory.CreateDirectory(path);
 			Directory.CreateDirectory(Path.Combine(path, "Ungrouped"));

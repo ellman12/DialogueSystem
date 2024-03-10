@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor;
@@ -9,6 +10,8 @@ namespace DialogueSystem.Editor.Window
 	{
 		[MenuItem("Window/Dialogue Graph")]
 		public static void Open() => GetWindow<DialogueGraphWindow>("Dialogue Graph");
+		
+		private static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
 
 		private DialogueGraphView graphView;
 
@@ -21,13 +24,13 @@ namespace DialogueSystem.Editor.Window
 			AssetDatabase.Refresh();
 		}
 
-		public void LoadGraph(string path)
+		public void LoadGraph(string fullPath)
 		{
-			string graphName = Path.GetFileName(path);
+			string graphName = Path.GetFileName(fullPath);
 			titleContent = new GUIContent($"{graphName}");
 			
 			graphView.GraphName = graphName;
-			graphView.GraphPath = path[1..]; //Remove pesky / at the start.
+			graphView.GraphPath = fullPath.Replace(ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
 			graphView.Show();
 		}
 
