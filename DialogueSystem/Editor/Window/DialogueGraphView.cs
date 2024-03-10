@@ -16,15 +16,15 @@ namespace DialogueSystem.Editor.Window
 	public sealed class DialogueGraphView : GraphView
 	{
 		public string GraphName { get; set; }
-		
+
 		public string GraphPath { get; set; }
 
 		private readonly DialogueGraphWindow window;
-		
+
 		public DialogueGraphView(DialogueGraphWindow window)
 		{
 			this.window = window;
-			
+
 			this.StretchToParentSize();
 			window.rootVisualElement.Add(this);
 
@@ -61,12 +61,15 @@ namespace DialogueSystem.Editor.Window
 		public void LoadGraph(string fullPath)
 		{
 			SetGraph(fullPath);
+
+			var idk = AssetDatabase.LoadAllAssetsAtPath(GraphPath);
+			Debug.Log(idk.Length);
 		}
 
 		public void CreateGraph(string fullPath)
 		{
 			SetGraph(fullPath);
-			
+
 			Directory.CreateDirectory(fullPath);
 			Directory.CreateDirectory(Path.Combine(fullPath, "Ungrouped"));
 			Directory.CreateDirectory(Path.Combine(fullPath, "Groups"));
@@ -77,6 +80,7 @@ namespace DialogueSystem.Editor.Window
 		{
 			GraphName = GraphPath = "";
 			window.titleContent = new GUIContent("Dialogue Graph");
+			Clear();
 			this.Hide();
 		}
 
@@ -85,9 +89,16 @@ namespace DialogueSystem.Editor.Window
 			GraphName = Path.GetFileName(fullPath);
 			window.titleContent = new GUIContent($"{GraphName}");
 			GraphPath = fullPath.Replace(DialogueGraphWindow.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
+			Clear();
 			this.Show();
 		}
-		
+
+		private new void Clear()
+		{
+			foreach (var element in graphElements)
+				RemoveElement(element);
+		}
+
 		#region Menu
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent _) {}
 
@@ -151,7 +162,7 @@ namespace DialogueSystem.Editor.Window
 					var saveData = (ChoiceSaveData) edge.output.userData;
 					saveData.Node = endNode.SaveData;
 				}
-				
+
 				startNode.SaveData.Save();
 			}
 
@@ -175,7 +186,7 @@ namespace DialogueSystem.Editor.Window
 					edge.output.Disconnect(edge);
 
 					var startNode = edge.GetStartNode();
-					
+
 					if (edge.output.userData != null)
 					{
 						var saveData = (ChoiceSaveData) edge.output.userData;
@@ -190,7 +201,6 @@ namespace DialogueSystem.Editor.Window
 			return change;
 		}
 		#endregion
-		
 		#endregion
 	}
 }
