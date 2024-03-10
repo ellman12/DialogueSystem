@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using DialogueSystem.Editor.Extensions;
 using UnityEditor;
@@ -35,14 +35,14 @@ namespace DialogueSystem.Editor.Window
 
 		private void TryLoadGraph()
 		{
-			string path = EditorUtility.OpenFolderPanel("Choose Folder", GraphsRoot, "");
+			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", GraphsRoot, "");
 
-			if (String.IsNullOrWhiteSpace(path))
+			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
 
-			if (ValidGraph(path))
+			if (ValidGraph(fullPath))
 			{
-				window.LoadGraph(path);
+				window.LoadGraph(fullPath);
 				error.text = "";
 			}
 			else
@@ -51,25 +51,25 @@ namespace DialogueSystem.Editor.Window
 			}
 		}
 
-		private static bool ValidGraph(string path)
+		private static bool ValidGraph(string fullPath)
 		{
-			string ungroupedPath = Path.Combine(path, "Ungrouped");
-			string groupsPath = Path.Combine(path, "Groups");
-			return Directory.Exists(path) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
+			string ungroupedPath = Path.Combine(fullPath, "Ungrouped");
+			string groupsPath = Path.Combine(fullPath, "Groups");
+			return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
 		}
 
 		private void CreateGraph()
 		{
-			string path = EditorUtility.SaveFolderPanel("Choose Folder", GraphsRoot, "");
+			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", GraphsRoot, "");
 
-			if (String.IsNullOrWhiteSpace(path))
+			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
 
-			window.LoadGraph(path);
+			window.LoadGraph(fullPath);
 
-			Directory.CreateDirectory(path);
-			Directory.CreateDirectory(Path.Combine(path, "Ungrouped"));
-			Directory.CreateDirectory(Path.Combine(path, "Groups"));
+			Directory.CreateDirectory(fullPath);
+			Directory.CreateDirectory(Path.Combine(fullPath, "Ungrouped"));
+			Directory.CreateDirectory(Path.Combine(fullPath, "Groups"));
 			AssetDatabase.Refresh();
 		}
 	}
