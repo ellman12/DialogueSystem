@@ -9,7 +9,9 @@ namespace DialogueSystem.Editor.Window
 	{
 		[MenuItem("Window/Dialogue Graph")]
 		public static void Open() => GetWindow<DialogueGraphWindow>("Dialogue Graph");
-		
+
+		public const string GraphsRoot = "Assets/DialogueSystem/Graphs";
+
 		public static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
 
 		private DialogueGraphView graphView;
