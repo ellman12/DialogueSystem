@@ -87,7 +87,7 @@ namespace DialogueSystem.Editor.Window
 		{
 			GraphName = Path.GetFileName(fullPath);
 			window.titleContent = new GUIContent($"{GraphName}");
-			GraphPath = fullPath.Replace(DialogueGraphWindow.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
+			GraphPath = DialogueGraphWindow.GetRelativePath(fullPath);
 			Clear();
 			this.Show();
 		}
