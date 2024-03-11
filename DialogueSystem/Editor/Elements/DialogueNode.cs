@@ -77,7 +77,7 @@ namespace DialogueSystem.Editor.Elements
 			outputPort.style.display = DisplayStyle.None;
 		}
 
-		private void DisconnectAllPorts()
+		public void DisconnectAllPorts()
 		{
 			DisconnectInputPort();
 			DisconnectOutputPorts();
@@ -86,6 +86,9 @@ namespace DialogueSystem.Editor.Elements
 		private void DisconnectInputPort() => graphView.DeleteElements(inputPort.connections);
 		private void DisconnectOutputPorts()
 		{
+			SaveData.Next = null;
+			SaveData.Save();
+			
 			graphView.DeleteElements(outputPort.connections);
 
 			foreach (var choiceDisplay in choicesDisplay.Children)

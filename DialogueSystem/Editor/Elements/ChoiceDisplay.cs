@@ -18,14 +18,12 @@ namespace DialogueSystem.Editor.Elements
 			AddToClassList("choiceDisplay");
 			this.AddStyleSheet("Nodes/ChoiceDisplay");
 			
-			this.AddIconButton("Close", () => choicesDisplay.Remove(this, saveData));
+			this.AddIconButton("Close", () => { DisconnectPort(); choicesDisplay.Remove(this, saveData); });
 			this.AddTextField(e => saveData.Text = e.newValue, saveData.Text);
 
 			outputPort = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			outputPort.userData = saveData;
 			Add(outputPort);	
-			
-			RegisterCallback<DetachFromPanelEvent>(_ => DisconnectPort());
 		}
 
 		public void DisconnectPort() => choicesDisplay.GraphView.DeleteElements(outputPort.connections);

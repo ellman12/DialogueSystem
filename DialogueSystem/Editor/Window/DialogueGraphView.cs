@@ -177,6 +177,7 @@ namespace DialogueSystem.Editor.Window
 			{
 				if (element is DialogueNode node)
 				{
+					node.DisconnectAllPorts();
 					node.Delete();
 				}
 				else if (element is Edge edge)
@@ -186,11 +187,14 @@ namespace DialogueSystem.Editor.Window
 
 					var startNode = edge.GetStartNode();
 
+					startNode.SaveData.Next = null;
+					startNode.SaveData.Save();
+
 					if (edge.output.userData != null)
 					{
 						var saveData = (ChoiceSaveData) edge.output.userData;
 						saveData.Node = null;
-						startNode?.SaveData.Save();
+						startNode.SaveData.Save();
 					}
 				}
 
