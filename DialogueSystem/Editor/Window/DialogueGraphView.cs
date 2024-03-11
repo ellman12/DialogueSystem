@@ -49,8 +49,8 @@ namespace DialogueSystem.Editor.Window
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
 
-			AddMenuItem("Create Node", e => AddElement(new DialogueNode(GetLocalMousePosition(e), this)));
-			AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(GetLocalMousePosition(e), this, 2)));
+			AddMenuItem("Create Node", e => AddElement(new DialogueNode(this, GetLocalMousePosition(e))));
+			AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(this, GetLocalMousePosition(e), 2)));
 			AddMenuItem("Create Group", e => AddElement(new DialogueGroup(GetLocalMousePosition(e))));
 			#endregion
 		}
