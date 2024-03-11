@@ -190,10 +190,10 @@ namespace DialogueSystem.Editor.Window
 					startNode.SaveData.Next = null;
 					startNode.SaveData.Save();
 
-					if (edge.output.userData != null)
+					if (startNode.Type == NodeType.Prompt)
 					{
-						var saveData = (ChoiceSaveData) edge.output.userData;
-						saveData.Node = null;
+						var choiceData = (ChoiceSaveData) edge.output.userData;
+						choiceData.Node = null;
 						startNode.SaveData.Save();
 					}
 				}
