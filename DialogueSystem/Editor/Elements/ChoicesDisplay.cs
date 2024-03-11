@@ -29,6 +29,13 @@ namespace DialogueSystem.Editor.Elements
 			contentContainer.Add(new ChoiceDisplay(this, choice));
 		}
 
+		public void Add(ChoiceSaveData saveData)
+		{
+			node.HideOutputPort();
+			
+			contentContainer.Add(new ChoiceDisplay(this, saveData));
+		}
+
 		public void Remove(ChoiceDisplay choiceDisplay, ChoiceSaveData saveData)
 		{
 			node.SaveData.Choices.Remove(saveData);
