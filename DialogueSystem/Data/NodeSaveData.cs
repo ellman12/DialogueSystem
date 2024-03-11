@@ -33,14 +33,13 @@ namespace DialogueSystem.Data
 			}
 		}
 
-		[NonSerialized]
-		private string folderContaining = "";
+		public string FolderContaining { get; set; } = "";
 		
-		private string Path => P.Combine(folderContaining, $"{Name}.asset").Replace('\\', '/');
+		private string Path => P.Combine(FolderContaining, $"{Name}.asset").Replace('\\', '/');
 
 		[NonSerialized]
 		private string previousName = "";
-		private string PreviousPath => P.Combine(folderContaining, $"{previousName}.asset").Replace('\\', '/');
+		private string PreviousPath => P.Combine(FolderContaining, $"{previousName}.asset").Replace('\\', '/');
 
 		private const string DefaultName = "New Node";
 
@@ -48,7 +47,7 @@ namespace DialogueSystem.Data
 		{
 			var saveData = CreateInstance<NodeSaveData>();
 			saveData.Position = position;
-			saveData.folderContaining = folderContaining;
+			saveData.FolderContaining = folderContaining;
 			return saveData;
 		}
 
