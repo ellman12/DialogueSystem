@@ -64,7 +64,7 @@ namespace DialogueSystem.Editor.Window
 			var nodeAssets = DialogueGraphWindow.GetAssetsAtPath<NodeSaveData>(GraphPath);
 
 			Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
-			
+
 			foreach (var asset in nodeAssets)
 			{
 				DialogueNode node = new(this, asset);
@@ -74,13 +74,18 @@ namespace DialogueSystem.Editor.Window
 
 			foreach (var node in dialogueNodes.Values)
 			{
-				if (node.Type == NodeType.Text && node.SaveData.Next != null)
+				if (node.SaveData.Next != null)
 				{
 					var next = dialogueNodes[node.SaveData.Next.Id].Input;
 					AddElement(node.Output.ConnectTo(next));
 				}
 				else
 				{
+					foreach (var choiceDisplay in node.ChoicesDisplay.Children.Where(display => display.SaveData.Node != null))
+					{
+						var next = dialogueNodes[choiceDisplay.SaveData.Node.Id].Input;
+						AddElement(choiceDisplay.Output.ConnectTo(next));
+					}
 				}
 			}
 		}
