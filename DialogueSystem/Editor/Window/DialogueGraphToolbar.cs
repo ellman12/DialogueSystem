@@ -13,8 +13,6 @@ namespace DialogueSystem.Editor.Window
 		private readonly DialogueGraphView graphView;
 		private readonly Label error = new();
 
-		private const string GraphsRoot = "Assets/DialogueSystem/Graphs";
-
 		public DialogueGraphToolbar(DialogueGraphView graphView)
 		{
 			this.graphView = graphView;
@@ -30,7 +28,7 @@ namespace DialogueSystem.Editor.Window
 
 		private void TryLoadGraph()
 		{
-			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", GraphsRoot, "");
+			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", DialogueGraphWindow.GraphsRoot, "");
 
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
@@ -55,7 +53,7 @@ namespace DialogueSystem.Editor.Window
 
 		private void CreateGraph()
 		{
-			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", GraphsRoot, "");
+			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", DialogueGraphWindow.GraphsRoot, "");
 
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;

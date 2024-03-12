@@ -49,8 +49,8 @@ namespace DialogueSystem.Editor.Window
 			this.AddManipulator(new SelectionDragger());
 			this.AddManipulator(new RectangleSelector());
 
-			AddMenuItem("Create Node", e => AddElement(new DialogueNode(GetLocalMousePosition(e), this)));
-			AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(GetLocalMousePosition(e), this, 2)));
+			AddMenuItem("Create Node", e => AddElement(new DialogueNode(this, GetLocalMousePosition(e))));
+			AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(this, GetLocalMousePosition(e), 2)));
 			AddMenuItem("Create Group", e => AddElement(new DialogueGroup(GetLocalMousePosition(e))));
 			#endregion
 		}
@@ -61,8 +61,33 @@ namespace DialogueSystem.Editor.Window
 		{
 			SetGraph(fullPath);
 
-			var idk = AssetDatabase.LoadAllAssetsAtPath(GraphPath);
-			Debug.Log(idk.Length);
+			var nodeAssets = DialogueGraphWindow.GetAssetsAtPath<NodeSaveData>(GraphPath);
+
+			Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
+
+			foreach (var asset in nodeAssets)
+			{
+				DialogueNode node = new(this, asset);
+				dialogueNodes.Add(node.SaveData.Id, node);
+				AddElement(node);
+			}
+
+			foreach (var node in dialogueNodes.Values)
+			{
+				if (node.SaveData.Next != null)
+				{
+					var next = dialogueNodes[node.SaveData.Next.Id].Input;
+					AddElement(node.Output.ConnectTo(next));
+				}
+				else
+				{
+					foreach (var choiceDisplay in node.ChoicesDisplay.Children.Where(display => display.SaveData.Node != null))
+					{
+						var next = dialogueNodes[choiceDisplay.SaveData.Node.Id].Input;
+						AddElement(choiceDisplay.Output.ConnectTo(next));
+					}
+				}
+			}
 		}
 
 		public void CreateGraph(string fullPath)
@@ -87,7 +112,7 @@ namespace DialogueSystem.Editor.Window
 		{
 			GraphName = Path.GetFileName(fullPath);
 			window.titleContent = new GUIContent($"{GraphName}");
-			GraphPath = fullPath.Replace(DialogueGraphWindow.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
+			GraphPath = DialogueGraphWindow.GetRelativePath(fullPath);
 			Clear();
 			this.Show();
 		}
@@ -168,7 +193,7 @@ namespace DialogueSystem.Editor.Window
 			return change;
 		}
 
-		private GraphViewChange DeleteSelected(GraphViewChange change)
+		private static GraphViewChange DeleteSelected(GraphViewChange change)
 		{
 			if (change.elementsToRemove == null)
 				return change;
@@ -177,6 +202,7 @@ namespace DialogueSystem.Editor.Window
 			{
 				if (element is DialogueNode node)
 				{
+					node.DisconnectAllPorts();
 					node.Delete();
 				}
 				else if (element is Edge edge)
@@ -186,11 +212,14 @@ namespace DialogueSystem.Editor.Window
 
 					var startNode = edge.GetStartNode();
 
-					if (edge.output.userData != null)
+					startNode.SaveData.Next = null;
+					startNode.SaveData.Save();
+
+					if (startNode.Type == NodeType.Prompt)
 					{
-						var saveData = (ChoiceSaveData) edge.output.userData;
-						saveData.Node = null;
-						startNode?.SaveData.Save();
+						var choiceData = (ChoiceSaveData) edge.output.userData;
+						choiceData.Node = null;
+						startNode.SaveData.Save();
 					}
 				}
 
