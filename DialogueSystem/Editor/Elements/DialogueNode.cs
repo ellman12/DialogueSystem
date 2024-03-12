@@ -15,7 +15,8 @@ namespace DialogueSystem.Editor.Elements
 
 		private readonly DialogueGraphView graphView;
 
-		private Port inputPort, outputPort;
+		public Port Input { get; private set; }
+		public Port Output { get; private set; }
 
 		private ChoicesDisplay choicesDisplay;
 
@@ -58,14 +59,14 @@ namespace DialogueSystem.Editor.Elements
 
 			choicesDisplay = new ChoicesDisplay(this, graphView);
 			
-			inputPort = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
-			titleButtonContainer.Insert(0, inputPort);
+			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
+			titleButtonContainer.Insert(0, Input);
 
 			titleButtonContainer.InsertTextField(1, e => SaveData.Name = e.newValue, SaveData.Name);
 			titleButtonContainer.InsertIconButton(2, "Add", choicesDisplay.Add);
 
-			outputPort = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
-			titleButtonContainer.Add(outputPort);
+			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
+			titleButtonContainer.Add(Output);
 
 			extensionContainer.AddTextField(e => SaveData.Text = e.newValue, SaveData.Text, true);
 
@@ -86,14 +87,14 @@ namespace DialogueSystem.Editor.Elements
 			e.menu.AppendSeparator();
 		}
 
-		public void ShowOutputPort() => outputPort.style.display = DisplayStyle.Flex;
+		public void ShowOutputPort() => Output.style.display = DisplayStyle.Flex;
 		public void HideOutputPort()
 		{
 			SaveData.Next = null;
 			SaveData.Save();
 
-			graphView.DeleteElements(outputPort.connections);
-			outputPort.style.display = DisplayStyle.None;
+			graphView.DeleteElements(Output.connections);
+			Output.style.display = DisplayStyle.None;
 		}
 
 		public void DisconnectAllPorts()
@@ -102,13 +103,13 @@ namespace DialogueSystem.Editor.Elements
 			DisconnectOutputPorts();
 		}
 
-		private void DisconnectInputPort() => graphView.DeleteElements(inputPort.connections);
+		private void DisconnectInputPort() => graphView.DeleteElements(Input.connections);
 		private void DisconnectOutputPorts()
 		{
 			SaveData.Next = null;
 			SaveData.Save();
 
-			graphView.DeleteElements(outputPort.connections);
+			graphView.DeleteElements(Output.connections);
 
 			foreach (var choiceDisplay in choicesDisplay.Children)
 				choiceDisplay.DisconnectPort();
