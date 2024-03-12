@@ -61,8 +61,28 @@ namespace DialogueSystem.Editor.Window
 		{
 			SetGraph(fullPath);
 
-			var idk = AssetDatabase.LoadAllAssetsAtPath(GraphPath);
-			Debug.Log(idk.Length);
+			var nodeAssets = DialogueGraphWindow.GetAssetsAtPath<NodeSaveData>(GraphPath);
+
+			Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
+			
+			foreach (var asset in nodeAssets)
+			{
+				DialogueNode node = new(this, asset);
+				dialogueNodes.Add(node.SaveData.Id, node);
+				AddElement(node);
+			}
+
+			foreach (var node in dialogueNodes.Values)
+			{
+				if (node.Type == NodeType.Text && node.SaveData.Next != null)
+				{
+					var next = dialogueNodes[node.SaveData.Next.Id].Input;
+					AddElement(node.Output.ConnectTo(next));
+				}
+				else
+				{
+				}
+			}
 		}
 
 		public void CreateGraph(string fullPath)
