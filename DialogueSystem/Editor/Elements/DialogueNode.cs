@@ -9,6 +9,8 @@ namespace DialogueSystem.Editor.Elements
 {
 	public sealed class DialogueNode : Node
 	{
+		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
+		
 		public readonly NodeSaveData SaveData;
 
 		private readonly DialogueGraphView graphView;
@@ -19,14 +21,15 @@ namespace DialogueSystem.Editor.Elements
 
 		public DialogueNode(Vector2 position, DialogueGraphView graphView, int startingChoices = 0)
 		{
-			SaveData = NodeSaveData.Create();
-			SaveData.Name = "New Node";
-			SaveData.Position = position;
+			SaveData = NodeSaveData.Create(graphView.GraphPath, position);
 			SetPosition(new Rect(position, Vector2.zero));
 
 			this.graphView = graphView;
 
 			this.AddStyleSheet("Nodes/DialogueNode");
+			
+			RegisterCallback<FocusInEvent>(_ => SaveData.FocusIn());
+			RegisterCallback<FocusOutEvent>(_ => SaveData.FocusOut());
 
 			#region Title Container
 			inputPort = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
@@ -53,6 +56,8 @@ namespace DialogueSystem.Editor.Elements
 			#endregion
 		}
 
+		public void Delete() => SaveData.Delete();
+
 		#region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
@@ -65,11 +70,14 @@ namespace DialogueSystem.Editor.Elements
 		public void ShowOutputPort() => outputPort.style.display = DisplayStyle.Flex;
 		public void HideOutputPort()
 		{
+			SaveData.Next = null;
+			SaveData.Save();
+			
 			graphView.DeleteElements(outputPort.connections);
 			outputPort.style.display = DisplayStyle.None;
 		}
 
-		public void DisconnectAllPorts()
+		private void DisconnectAllPorts()
 		{
 			DisconnectInputPort();
 			DisconnectOutputPorts();

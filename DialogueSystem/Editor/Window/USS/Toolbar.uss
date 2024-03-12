@@ -18,3 +18,5 @@
     flex-grow: 0;
     min-width: 200px;
 }
+
+.unity-label { margin-left: 20px; }

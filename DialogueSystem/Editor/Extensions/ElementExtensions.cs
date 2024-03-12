@@ -1,4 +1,5 @@
 ﻿using System;
+using DialogueSystem.Editor.Elements;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Extensions
 {
-	///Easily create, add, and insert elements into a <see cref="VisualElement"/>VisualElement.
+	///Lots of extensions to VisualElements and their inheritors.
 	public static class ElementExtensions
 	{
 		#region Buttons
@@ -59,5 +60,13 @@ namespace DialogueSystem.Editor.Extensions
 		#endregion
 		
         public static void AddStyleSheet(this VisualElement element, string styleSheetName) => element.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>($"Assets/DialogueSystem/Editor/Window/USS/{styleSheetName}.uss"));
+
+		public static DialogueNode GetStartNode(this Edge edge) => (DialogueNode) edge.output.node;
+		public static DialogueNode GetEndNode(this Edge edge) => (DialogueNode) edge.input.node;
+
+		public static void Show(this VisualElement element) => element.style.display = DisplayStyle.Flex;
+		public static void Hide(this VisualElement element) => element.style.display = DisplayStyle.None;
+		public static bool Visible(this VisualElement element) => element.style.display == DisplayStyle.Flex;
+		public static bool Hidden(this VisualElement element) => element.style.display == DisplayStyle.None;
 	}
 }
