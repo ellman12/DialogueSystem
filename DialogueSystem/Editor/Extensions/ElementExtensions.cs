@@ -11,12 +11,22 @@ namespace DialogueSystem.Editor.Extensions
     ///Lots of extensions to VisualElements and their inheritors.
     public static class ElementExtensions
     {
+        #region VisualElement
         public static void AddStyleSheet(this VisualElement element, string styleSheetName) => element.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>($"Assets/DialogueSystem/Editor/Window/USS/{styleSheetName}.uss"));
 
         public static void Show(this VisualElement element) => element.style.display = DisplayStyle.Flex;
         public static void Hide(this VisualElement element) => element.style.display = DisplayStyle.None;
         public static bool Visible(this VisualElement element) => element.style.display == DisplayStyle.Flex;
         public static bool Hidden(this VisualElement element) => element.style.display == DisplayStyle.None;
+
+        public static void Delete(this VisualElement element)
+        {
+            if (element is DialogueNode node)
+                node.Delete();
+            else if (element is Edge edge)
+                edge.Delete();
+        }
+        #endregion
 
         #region Buttons
         public static Button CreateButton(string text, Action onClick) => new(onClick) {text = text};
