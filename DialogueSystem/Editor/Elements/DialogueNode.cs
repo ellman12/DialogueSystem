@@ -1,3 +1,4 @@
+using System;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Window;
@@ -62,7 +63,7 @@ namespace DialogueSystem.Editor.Elements
 			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
 			titleButtonContainer.Insert(0, Input);
 
-			titleButtonContainer.InsertTextField(1, e => SaveData.Name = e.newValue, SaveData.Name);
+			titleButtonContainer.InsertTextField(1, e => SaveData.Name = String.IsNullOrWhiteSpace(e.newValue) ? SaveData.Id : e.newValue, SaveData.Name);
 			titleButtonContainer.InsertIconButton(2, "Add", ChoicesDisplay.Add);
 
 			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);

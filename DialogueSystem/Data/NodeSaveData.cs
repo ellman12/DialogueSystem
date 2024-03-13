@@ -14,7 +14,7 @@ namespace DialogueSystem.Data
 		[HideInInspector]
 		public string Id = Guid.NewGuid().ToString();
 
-		public string Name = DefaultName;
+		public string Name = "";
 		public string Text = "Text";
 		public DialogueGroup Group;
 
@@ -35,19 +35,17 @@ namespace DialogueSystem.Data
 
 		public string FolderContaining { get; set; } = "";
 		
-		private string Path => P.Combine(FolderContaining, $"{Name}.asset").Replace('\\', '/');
+		private string Path => P.Combine(FolderContaining, $"{(String.IsNullOrWhiteSpace(Name) ? Id : Name)}.asset").Replace('\\', '/');
 
 		[NonSerialized]
 		private string previousName = "";
-		private string PreviousPath => P.Combine(FolderContaining, $"{previousName}.asset").Replace('\\', '/');
-
-		private const string DefaultName = "New Node";
+		private string PreviousPath => P.Combine(FolderContaining, $"{(String.IsNullOrWhiteSpace(previousName) ? Id : previousName)}.asset").Replace('\\', '/');
 
 		public static NodeSaveData Create(string folderContaining, Vector2 position)
 		{
 			var saveData = CreateInstance<NodeSaveData>();
-			saveData.Position = position;
 			saveData.FolderContaining = folderContaining;
+			saveData.Position = position;
 			return saveData;
 		}
 
@@ -68,7 +66,7 @@ namespace DialogueSystem.Data
 
 		private void TryRename()
 		{
-			if (!File.Exists(Path) && !File.Exists(PreviousPath) && Name != DefaultName)
+			if (!File.Exists(Path) && !File.Exists(PreviousPath))
 				AssetDatabase.CreateAsset(this, Path);
 			else if (PreviousPath != Path)
 				AssetDatabase.RenameAsset(PreviousPath, Name);
