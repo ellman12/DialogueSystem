@@ -202,7 +202,6 @@ namespace DialogueSystem.Editor.Window
 			{
 				if (element is DialogueNode node)
 				{
-					node.DisconnectAllPorts();
 					node.Delete();
 				}
 				else if (element is Edge edge)

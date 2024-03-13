@@ -76,9 +76,14 @@ namespace DialogueSystem.Editor.Elements
 			RefreshExpandedState();
 		}
 
-		public void Delete() => SaveData.Delete();
+        public void Delete()
+        {
+            DisconnectAllPorts();
+            SaveData.Delete();
+            RemoveFromHierarchy();
+        }
 
-		#region Ports
+        #region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
 			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
@@ -97,7 +102,7 @@ namespace DialogueSystem.Editor.Elements
 			Output.style.display = DisplayStyle.None;
 		}
 
-		public void DisconnectAllPorts()
+		private void DisconnectAllPorts()
 		{
 			DisconnectInputPort();
 			DisconnectOutputPorts();
