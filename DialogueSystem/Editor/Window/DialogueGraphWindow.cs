@@ -46,6 +46,9 @@ namespace DialogueSystem.Editor.Window
 			rootVisualElement.Add(graphView);
 
 			rootVisualElement.Add(new DialogueGraphToolbar(graphView));
-		}
+
+            Directory.CreateDirectory(GraphsRoot);
+            AssetDatabase.Refresh();
+        }
 	}
 }
