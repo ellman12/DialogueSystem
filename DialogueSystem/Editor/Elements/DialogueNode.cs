@@ -9,15 +9,15 @@ namespace DialogueSystem.Editor.Elements
 {
 	public sealed class DialogueNode : Node
 	{
-		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
-
-		public readonly NodeSaveData SaveData;
-
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }
 
 		public ChoicesDisplay ChoicesDisplay { get; private set; }
 
+		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
+
+        public readonly NodeSaveData SaveData;
+        
 		private readonly DialogueGraphView graphView;
 
 		public DialogueNode(DialogueGraphView graphView, Vector2 position, int startingChoices = 0)
@@ -76,9 +76,14 @@ namespace DialogueSystem.Editor.Elements
 			RefreshExpandedState();
 		}
 
-		public void Delete() => SaveData.Delete();
+        public void Delete()
+        {
+            DisconnectAllPorts();
+            SaveData.Delete();
+            RemoveFromHierarchy();
+        }
 
-		#region Ports
+        #region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
 			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
@@ -97,7 +102,7 @@ namespace DialogueSystem.Editor.Elements
 			Output.style.display = DisplayStyle.None;
 		}
 
-		public void DisconnectAllPorts()
+		private void DisconnectAllPorts()
 		{
 			DisconnectInputPort();
 			DisconnectOutputPorts();
