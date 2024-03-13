@@ -201,28 +201,9 @@ namespace DialogueSystem.Editor.Window
 			foreach (var element in change.elementsToRemove.ToArray())
 			{
 				if (element is DialogueNode node)
-				{
 					node.Delete();
-				}
 				else if (element is Edge edge)
-				{
-					edge.input.Disconnect(edge);
-					edge.output.Disconnect(edge);
-
-					var startNode = edge.GetStartNode();
-
-					startNode.SaveData.Next = null;
-					startNode.SaveData.Save();
-
-					if (startNode.Type == NodeType.Prompt)
-					{
-						var choiceData = (ChoiceSaveData) edge.output.userData;
-						choiceData.Node = null;
-						startNode.SaveData.Save();
-					}
-				}
-
-				element.RemoveFromHierarchy();
+                    edge.Delete();
 			}
 
 			return change;
