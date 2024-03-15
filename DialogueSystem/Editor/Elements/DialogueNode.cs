@@ -1,3 +1,4 @@
+using System;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Window;
@@ -9,15 +10,15 @@ namespace DialogueSystem.Editor.Elements
 {
 	public sealed class DialogueNode : Node
 	{
-		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
-
-		public readonly NodeSaveData SaveData;
-
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }
 
 		public ChoicesDisplay ChoicesDisplay { get; private set; }
 
+		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
+
+        public readonly NodeSaveData SaveData;
+        
 		private readonly DialogueGraphView graphView;
 
 		public DialogueNode(DialogueGraphView graphView, Vector2 position, int startingChoices = 0)
@@ -62,7 +63,7 @@ namespace DialogueSystem.Editor.Elements
 			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
 			titleButtonContainer.Insert(0, Input);
 
-			titleButtonContainer.InsertTextField(1, e => SaveData.Name = e.newValue, SaveData.Name);
+			titleButtonContainer.InsertTextField(1, e => SaveData.Name = String.IsNullOrWhiteSpace(e.newValue) ? SaveData.Id : e.newValue, SaveData.Name);
 			titleButtonContainer.InsertIconButton(2, "Add", ChoicesDisplay.Add);
 
 			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
@@ -76,9 +77,14 @@ namespace DialogueSystem.Editor.Elements
 			RefreshExpandedState();
 		}
 
-		public void Delete() => SaveData.Delete();
+        public void Delete()
+        {
+            DisconnectAllPorts();
+            SaveData.Delete();
+            RemoveFromHierarchy();
+        }
 
-		#region Ports
+        #region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
 			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
@@ -97,7 +103,7 @@ namespace DialogueSystem.Editor.Elements
 			Output.style.display = DisplayStyle.None;
 		}
 
-		public void DisconnectAllPorts()
+		private void DisconnectAllPorts()
 		{
 			DisconnectInputPort();
 			DisconnectOutputPorts();
