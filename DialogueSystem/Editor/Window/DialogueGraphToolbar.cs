@@ -58,6 +58,7 @@ namespace DialogueSystem.Editor.Window
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
 
+			error.text = "";
 			graphView.CreateGraph(fullPath);
 		}
 	}
