@@ -13,19 +13,21 @@ namespace DialogueSystem.Editor.Elements
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }
 
+		public TextField nameTextField;
+
 		public ChoicesDisplay ChoicesDisplay { get; private set; }
 
 		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
 
-        public readonly NodeSaveData SaveData;
-        
+		public readonly NodeSaveData SaveData;
+
 		private readonly DialogueGraphView graphView;
 
 		public DialogueNode(DialogueGraphView graphView, Vector2 position, int startingChoices = 0)
 		{
 			this.graphView = graphView;
 			SaveData = NodeSaveData.Create(graphView.GraphPath, position);
-			
+
 			AddEvents();
 			AddElements();
 
@@ -50,7 +52,13 @@ namespace DialogueSystem.Editor.Elements
 		private void AddEvents()
 		{
 			RegisterCallback<FocusInEvent>(_ => SaveData.FocusIn());
-			RegisterCallback<FocusOutEvent>(_ => SaveData.FocusOut());
+			RegisterCallback<FocusOutEvent>(_ => FocusOut());
+		}
+
+		private void FocusOut()
+		{
+			nameTextField.value = nameTextField.value.Trim();
+			SaveData.FocusOut();
 		}
 
 		private void AddElements()
@@ -59,32 +67,38 @@ namespace DialogueSystem.Editor.Elements
 			this.AddStyleSheet("Nodes/DialogueNode");
 
 			ChoicesDisplay = new ChoicesDisplay(this, graphView);
-			
+
+			#region Title Container
 			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
 			titleButtonContainer.Insert(0, Input);
 
-			titleButtonContainer.InsertTextField(1, e => SaveData.Name = String.IsNullOrWhiteSpace(e.newValue) ? SaveData.Id : e.newValue, SaveData.Name);
+			nameTextField = ElementExtensions.CreateTextField(e => SaveData.Name = String.IsNullOrWhiteSpace(e.newValue) ? SaveData.Id : e.newValue, SaveData.Name);
+			titleButtonContainer.Insert(1, nameTextField);
+
 			titleButtonContainer.InsertIconButton(2, "Add", ChoicesDisplay.Add);
 
 			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			titleButtonContainer.Add(Output);
+			#endregion
 
+			#region Extension Container
 			extensionContainer.AddTextField(e => SaveData.Text = e.newValue, SaveData.Text, true);
 
 			extensionContainer.Add(ChoicesDisplay);
 
 			expanded = true;
 			RefreshExpandedState();
+			#endregion
 		}
 
-        public void Delete()
-        {
-            DisconnectAllPorts();
-            SaveData.Delete();
-            RemoveFromHierarchy();
-        }
+		public void Delete()
+		{
+			DisconnectAllPorts();
+			SaveData.Delete();
+			RemoveFromHierarchy();
+		}
 
-        #region Ports
+		#region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
 			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());

@@ -56,6 +56,7 @@ namespace DialogueSystem.Data
 		public void Save()
 		{
 			EditorUtility.SetDirty(this);
+			Name = Name.Trim();
 			TryRename();
 			
 			AssetDatabase.SaveAssetIfDirty(this);
