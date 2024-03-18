@@ -18,12 +18,10 @@ namespace DialogueSystem.Editor.Window
 
         public string GraphPath { get; set; }
 
-        private readonly DialogueGraphWindow window;
+        public static DialogueGraphView C => DialogueGraphWindow.GraphView;
 
-        public DialogueGraphView(DialogueGraphWindow window)
+        public DialogueGraphView()
         {
-            this.window = window;
-
             this.StretchToParentSize();
             this.AddStyleSheet("GraphView");
 
@@ -47,8 +45,8 @@ namespace DialogueSystem.Editor.Window
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
 
-            AddMenuItem("Create Node", e => AddElement(new DialogueNode(this, GetLocalMousePosition(e))));
-            AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(this, GetLocalMousePosition(e), 2)));
+            AddMenuItem("Create Node", e => AddElement(new DialogueNode(GetLocalMousePosition(e))));
+            AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(GetLocalMousePosition(e), 2)));
             AddMenuItem("Create Group", e => AddElement(new DialogueGroup(GetLocalMousePosition(e))));
             #endregion
         }
@@ -65,7 +63,7 @@ namespace DialogueSystem.Editor.Window
 
             foreach (var asset in nodeAssets)
             {
-                DialogueNode node = new(this, asset);
+                DialogueNode node = new(asset);
                 dialogueNodes.Add(node.SaveData.Id, node);
                 AddElement(node);
             }
@@ -101,7 +99,7 @@ namespace DialogueSystem.Editor.Window
         public void CloseGraph()
         {
             GraphName = GraphPath = "";
-            window.titleContent = new GUIContent("Dialogue Graph");
+            DialogueGraphWindow.C.SetTitle("Dialogue Graph");
             Clear();
             this.Hide();
         }
@@ -109,7 +107,7 @@ namespace DialogueSystem.Editor.Window
         private void SetGraph(string fullPath)
         {
             GraphName = Path.GetFileName(fullPath);
-            window.titleContent = new GUIContent($"{GraphName}");
+            DialogueGraphWindow.C.SetTitle(GraphName);
             GraphPath = DialogueGraphWindow.GetRelativePath(fullPath);
             Clear();
             this.Show();

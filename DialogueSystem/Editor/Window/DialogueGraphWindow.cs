@@ -12,11 +12,17 @@ namespace DialogueSystem.Editor.Window
 		[MenuItem("Window/Dialogue Graph")]
 		public static void Open() => GetWindow<DialogueGraphWindow>("Dialogue Graph");
 
-		public const string GraphsRoot = "Assets/DialogueSystem/Graphs";
-
-		public static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
-
 		private DialogueGraphView graphView;
+		public static DialogueGraphView GraphView => C.graphView;
+
+		private DialogueGraphToolbar toolbar; 
+		public static DialogueGraphToolbar Toolbar => C.toolbar;
+
+		public static DialogueGraphWindow C;
+
+		public const string GraphsRoot = "Assets/DialogueSystem/Graphs";
+		
+		public static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
 
 		//TODO: delete this later
 		[MenuItem("DS/Clear &c")]
@@ -26,6 +32,8 @@ namespace DialogueSystem.Editor.Window
 			Directory.CreateDirectory("Assets/DialogueSystem/Graphs");
 			AssetDatabase.Refresh();
 		}
+
+		public void SetTitle(string newTitle) => titleContent = new GUIContent(newTitle);
 
 		///Takes an absolute path and returns it relative to Assets/.
 		public static string GetRelativePath(string fullPath) => fullPath.Replace(ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
@@ -37,18 +45,23 @@ namespace DialogueSystem.Editor.Window
 			return files.Select(AssetDatabase.LoadAssetAtPath<T>).ToArray();
 		}
 
+		private void OnFocus() => C = this;
+
 		private void OnEnable()
 		{
+			C = this;
+            
 			rootVisualElement.AddStyleSheet("Constants");
 
-			graphView = new DialogueGraphView(this);
+			graphView = new DialogueGraphView();
 			graphView.Hide();
 			rootVisualElement.Add(graphView);
 
-			rootVisualElement.Add(new DialogueGraphToolbar(graphView));
+			toolbar = new DialogueGraphToolbar();
+			rootVisualElement.Add(toolbar);
 
-            Directory.CreateDirectory(GraphsRoot);
-            AssetDatabase.Refresh();
-        }
+			Directory.CreateDirectory(GraphsRoot);
+			AssetDatabase.Refresh();
+		}
 	}
 }

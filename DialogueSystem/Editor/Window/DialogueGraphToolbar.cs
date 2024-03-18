@@ -10,15 +10,13 @@ namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphToolbar : Toolbar
 	{
-		private readonly DialogueGraphView graphView;
 		private readonly Label error = new();
 
-		public DialogueGraphToolbar(DialogueGraphView graphView)
+		public DialogueGraphToolbar()
 		{
-			this.graphView = graphView;
 			this.AddStyleSheet("Toolbar");
 
-			this.AddButton("Close", graphView.CloseGraph);
+			this.AddButton("Close", DialogueGraphView.C.CloseGraph);
 			this.AddButton("Load", TryLoadGraph);
 			this.AddButton("Create", CreateGraph);
 
@@ -35,7 +33,7 @@ namespace DialogueSystem.Editor.Window
 
 			if (ValidGraph(fullPath))
 			{
-				graphView.LoadGraph(fullPath);
+				DialogueGraphView.C.LoadGraph(fullPath);
 				error.text = "";
 			}
 			else
@@ -59,7 +57,7 @@ namespace DialogueSystem.Editor.Window
 				return;
 
 			error.text = "";
-			graphView.CreateGraph(fullPath);
+			DialogueGraphView.C.CreateGraph(fullPath);
 		}
 	}
 }

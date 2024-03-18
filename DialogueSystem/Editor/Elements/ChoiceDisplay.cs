@@ -1,5 +1,6 @@
 ﻿using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
+using DialogueSystem.Editor.Window;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
@@ -11,11 +12,8 @@ namespace DialogueSystem.Editor.Elements
 		
 		public Port Output { get; private set; }
 		
-		private readonly ChoicesDisplay choicesDisplay;
-		
 		public ChoiceDisplay(ChoicesDisplay choicesDisplay, ChoiceSaveData saveData)
 		{
-			this.choicesDisplay = choicesDisplay;
 			SaveData = saveData;
 			
 			AddToClassList("choiceDisplay");
@@ -29,6 +27,6 @@ namespace DialogueSystem.Editor.Elements
 			Add(Output);	
 		}
 
-		public void DisconnectPort() => choicesDisplay.GraphView.DeleteElements(Output.connections);
+		public void DisconnectPort() => DialogueGraphView.C.DeleteElements(Output.connections);
 	}
 }

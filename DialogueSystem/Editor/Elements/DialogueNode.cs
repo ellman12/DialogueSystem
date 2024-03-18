@@ -21,12 +21,9 @@ namespace DialogueSystem.Editor.Elements
 
 		public readonly NodeSaveData SaveData;
 
-		private readonly DialogueGraphView graphView;
-
-		public DialogueNode(DialogueGraphView graphView, Vector2 position, int startingChoices = 0)
+		public DialogueNode(Vector2 position, int startingChoices = 0)
 		{
-			this.graphView = graphView;
-			SaveData = NodeSaveData.Create(graphView.GraphPath, position);
+			SaveData = NodeSaveData.Create(position);
 
 			AddEvents();
 			AddElements();
@@ -35,9 +32,8 @@ namespace DialogueSystem.Editor.Elements
 				ChoicesDisplay.Add();
 		}
 
-		public DialogueNode(DialogueGraphView graphView, NodeSaveData saveData)
+		public DialogueNode(NodeSaveData saveData)
 		{
-			this.graphView = graphView;
 			SaveData = saveData;
 
 			AddEvents();
@@ -66,7 +62,7 @@ namespace DialogueSystem.Editor.Elements
 			SetPosition(new Rect(SaveData.Position, Vector2.zero));
 			this.AddStyleSheet("Nodes/DialogueNode");
 
-			ChoicesDisplay = new ChoicesDisplay(this, graphView);
+			ChoicesDisplay = new ChoicesDisplay(this);
 
 			#region Title Container
 			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
@@ -113,7 +109,7 @@ namespace DialogueSystem.Editor.Elements
 			SaveData.Next = null;
 			SaveData.Save();
 
-			graphView.DeleteElements(Output.connections);
+			DialogueGraphView.C.DeleteElements(Output.connections);
 			Output.style.display = DisplayStyle.None;
 		}
 
@@ -123,13 +119,13 @@ namespace DialogueSystem.Editor.Elements
 			DisconnectOutputPorts();
 		}
 
-		private void DisconnectInputPort() => graphView.DeleteElements(Input.connections);
+		private void DisconnectInputPort() => DialogueGraphView.C.DeleteElements(Input.connections);
 		private void DisconnectOutputPorts()
 		{
 			SaveData.Next = null;
 			SaveData.Save();
 
-			graphView.DeleteElements(Output.connections);
+			DialogueGraphView.C.DeleteElements(Output.connections);
 
 			foreach (var choiceDisplay in ChoicesDisplay.Children)
 				choiceDisplay.DisconnectPort();

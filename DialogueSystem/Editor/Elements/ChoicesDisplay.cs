@@ -10,14 +10,11 @@ namespace DialogueSystem.Editor.Elements
 	{
 		public new IEnumerable<ChoiceDisplay> Children => contentContainer.Children().Cast<ChoiceDisplay>();
 
-		public readonly DialogueGraphView GraphView;
-
 		private readonly DialogueNode node;
 
-		public ChoicesDisplay(DialogueNode node, DialogueGraphView graphView)
+		public ChoicesDisplay(DialogueNode node)
 		{
 			this.node = node;
-			GraphView = graphView;
 		}
 
 		public void Add()

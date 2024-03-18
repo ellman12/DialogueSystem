@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DialogueSystem.Editor.Elements;
+using DialogueSystem.Editor.Window;
 using P = System.IO.Path;
 using UnityEditor;
 using UnityEngine;
@@ -32,19 +33,16 @@ namespace DialogueSystem.Data
 				Save();
 			}
 		}
-
-		public string FolderContaining { get; set; } = "";
 		
-		private string Path => P.Combine(FolderContaining, $"{(String.IsNullOrWhiteSpace(Name) ? Id : Name)}.asset").Replace('\\', '/');
+		private string Path => P.Combine(DialogueGraphView.C.GraphPath, $"{(String.IsNullOrWhiteSpace(Name) ? Id : Name)}.asset").Replace('\\', '/');
 
 		[NonSerialized]
 		private string previousName = "";
-		private string PreviousPath => P.Combine(FolderContaining, $"{(String.IsNullOrWhiteSpace(previousName) ? Id : previousName)}.asset").Replace('\\', '/');
+		private string PreviousPath => P.Combine(DialogueGraphView.C.GraphPath, $"{(String.IsNullOrWhiteSpace(previousName) ? Id : previousName)}.asset").Replace('\\', '/');
 
-		public static NodeSaveData Create(string folderContaining, Vector2 position)
+		public static NodeSaveData Create(Vector2 position)
 		{
 			var saveData = CreateInstance<NodeSaveData>();
-			saveData.FolderContaining = folderContaining;
 			saveData.Position = position;
 			return saveData;
 		}
