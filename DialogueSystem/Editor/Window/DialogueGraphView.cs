@@ -25,13 +25,11 @@ namespace DialogueSystem.Editor.Window
             this.window = window;
 
             this.StretchToParentSize();
-            window.rootVisualElement.Add(this);
+            this.AddStyleSheet("GraphView");
 
             GridBackground gridBackground = new();
             gridBackground.StretchToParentSize();
             Insert(0, gridBackground);
-
-            this.AddStyleSheet("GraphView");
 
             #region Events
             elementsAddedToGroup = NodesAddedToGroup;
