@@ -20,10 +20,6 @@ namespace DialogueSystem.Editor.Window
 
 		public static DialogueGraphWindow C;
 
-		public const string GraphsRoot = "Assets/DialogueSystem/Graphs";
-		
-		public static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
-
 		//TODO: delete this later
 		[MenuItem("DS/Clear &c")]
 		public static void Clear(MenuCommand menuCommand)
@@ -36,7 +32,7 @@ namespace DialogueSystem.Editor.Window
 		public void SetTitle(string newTitle) => titleContent = new GUIContent(newTitle);
 
 		///Takes an absolute path and returns it relative to Assets/.
-		public static string GetRelativePath(string fullPath) => fullPath.Replace(ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
+		public static string GetRelativePath(string fullPath) => fullPath.Replace(Constants.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
 
 		///Loads all .asset files at the path.
 		public static T[] GetAssetsAtPath<T>(string path) where T : ScriptableObject
@@ -60,7 +56,7 @@ namespace DialogueSystem.Editor.Window
 			toolbar = new DialogueGraphToolbar();
 			rootVisualElement.Add(toolbar);
 
-			Directory.CreateDirectory(GraphsRoot);
+			Directory.CreateDirectory(Constants.GraphsRoot);
 			AssetDatabase.Refresh();
 		}
 	}

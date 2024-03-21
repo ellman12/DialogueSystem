@@ -26,7 +26,7 @@ namespace DialogueSystem.Editor.Window
 
 		private void TryLoadGraph()
 		{
-			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", DialogueGraphWindow.GraphsRoot, "");
+			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
 
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
@@ -51,7 +51,7 @@ namespace DialogueSystem.Editor.Window
 
 		private void CreateGraph()
 		{
-			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", DialogueGraphWindow.GraphsRoot, "");
+			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", Constants.GraphsRoot, "");
 
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
