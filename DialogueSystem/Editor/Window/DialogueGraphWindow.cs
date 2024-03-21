@@ -10,7 +10,7 @@ namespace DialogueSystem.Editor.Window
 	public sealed class DialogueGraphWindow : EditorWindow
 	{
 		[MenuItem("Window/Dialogue Graph")]
-		public static void Open() => GetWindow<DialogueGraphWindow>("Dialogue Graph");
+		public static void Open() => CreateWindow<DialogueGraphWindow>("Dialogue Graph");
 
 		private DialogueGraphView graphView;
 		public static DialogueGraphView GraphView => C.graphView;
