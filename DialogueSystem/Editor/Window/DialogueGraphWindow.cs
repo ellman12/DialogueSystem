@@ -29,7 +29,7 @@ namespace DialogueSystem.Editor.Window
 			AssetDatabase.Refresh();
 		}
 
-		public void SetTitle(string newTitle) => titleContent = new GUIContent(newTitle);
+		public void SetTitle(string newTitle) => titleContent.text = newTitle;
 
 		///Takes an absolute path and returns it relative to Assets/.
 		public static string GetRelativePath(string fullPath) => fullPath.Replace(Constants.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
