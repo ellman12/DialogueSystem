@@ -88,11 +88,19 @@ namespace DialogueSystem.Editor.Window
 
         public void CreateGraph(string fullPath)
         {
-            SetGraph(fullPath);
+            string ungroupedPath = Path.Combine(fullPath, "Ungrouped");
+            string groupedPath = Path.Combine(fullPath, "Groups");
 
+            if (Directory.Exists(ungroupedPath) && Directory.Exists(groupedPath))
+            {
+                LoadGraph(fullPath);
+                return;
+            }
+
+            SetGraph(fullPath);
             Directory.CreateDirectory(fullPath);
-            Directory.CreateDirectory(Path.Combine(fullPath, "Ungrouped"));
-            Directory.CreateDirectory(Path.Combine(fullPath, "Groups"));
+            Directory.CreateDirectory(ungroupedPath);
+            Directory.CreateDirectory(groupedPath);
             AssetDatabase.Refresh();
         }
 
