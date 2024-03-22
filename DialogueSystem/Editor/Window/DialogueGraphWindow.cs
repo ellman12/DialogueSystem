@@ -55,6 +55,10 @@ namespace DialogueSystem.Editor.Window
 
 			Directory.CreateDirectory(Constants.GraphsRoot);
 			AssetDatabase.Refresh();
+
+			//TODO: remove this later
+			string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
+			graphView.CreateGraph(path);
 		}
 	}
 }
