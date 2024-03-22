@@ -16,5 +16,11 @@ namespace DialogueSystem.Editor.Elements
 			title = "New Group";
 			SetPosition(new Rect(position, Vector2.zero));
 		}
+		
+		public void Delete()
+		{
+			SaveData.Delete();
+			RemoveFromHierarchy();
+		}
 	}
 }

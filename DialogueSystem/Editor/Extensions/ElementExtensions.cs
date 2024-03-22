@@ -23,6 +23,8 @@ namespace DialogueSystem.Editor.Extensions
         {
             if (element is DialogueNode node)
                 node.Delete();
+            else if (element is DialogueGroup group)
+                group.Delete();
             else if (element is Edge edge)
                 edge.Delete();
         }
