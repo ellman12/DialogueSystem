@@ -60,6 +60,8 @@ namespace DialogueSystem.Editor.Window
 			AssetDatabase.Refresh();
 
 			//TODO: remove this later
+			Debug.ClearDeveloperConsole();
+			minSize = new Vector2(1000, 400);
 			string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
 			graphView.CreateGraph(path);
 		}
