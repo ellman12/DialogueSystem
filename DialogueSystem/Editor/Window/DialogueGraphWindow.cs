@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using DialogueSystem.Editor.Extensions;
+using DialogueSystem.Editor.Utilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,9 +32,6 @@ namespace DialogueSystem.Editor.Window
 
 		public void SetTitle(string newTitle) => titleContent.text = newTitle;
 
-		///Takes an absolute path and returns it relative to Assets/.
-		public static string GetRelativePath(string fullPath) => fullPath.Replace(Constants.ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
-
 		///Loads all .asset files at the path.
 		public static T[] GetAssetsAtPath<T>(string path) where T : ScriptableObject
 		{
@@ -62,7 +60,7 @@ namespace DialogueSystem.Editor.Window
 			//TODO: remove this later
 			Debug.ClearDeveloperConsole();
 			minSize = new Vector2(1000, 400);
-			string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
+			string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).ReplaceSlash();
 			graphView.CreateGraph(path);
 		}
 	}
