@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Extensions;
+using DialogueSystem.Editor.Utilities;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
@@ -116,7 +117,7 @@ namespace DialogueSystem.Editor.Window
         {
             GraphName = Path.GetFileName(fullPath);
             DialogueGraphWindow.C.SetTitle(GraphName);
-            GraphPath = DialogueGraphWindow.GetRelativePath(fullPath);
+            GraphPath = PathUtility.GetRelativePath(fullPath);
             Clear();
             this.Show();
         }
