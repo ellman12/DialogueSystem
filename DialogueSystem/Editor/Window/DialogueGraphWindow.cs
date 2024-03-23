@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using DialogueSystem.Editor.Extensions;
+using DialogueSystem.Editor.Utilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -59,7 +60,7 @@ namespace DialogueSystem.Editor.Window
 			//TODO: remove this later
 			Debug.ClearDeveloperConsole();
 			minSize = new Vector2(1000, 400);
-			string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
+			string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).ReplaceSlash();
 			graphView.CreateGraph(path);
 		}
 	}
