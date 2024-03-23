@@ -1,9 +1,9 @@
-using DialogueSystem.Editor.Elements;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DialogueSystem.Data;
+using DialogueSystem.Editor.Elements;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
 using UnityEditor;
@@ -54,9 +54,9 @@ namespace DialogueSystem.Editor.Window
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _) => ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
 
-        public void LoadGraph(string fullPath)
+        public void LoadGraph(string path)
         {
-            SetGraph(fullPath);
+            SetGraph(path);
 
             var nodeAssets = DialogueGraphWindow.GetAssetsAtPath<NodeSaveData>(GraphPath);
 
@@ -87,19 +87,20 @@ namespace DialogueSystem.Editor.Window
             }
         }
 
-        public void CreateGraph(string fullPath)
+        public void CreateGraph(string path)
         {
-            string ungroupedPath = Path.Combine(fullPath, "Ungrouped");
-            string groupedPath = Path.Combine(fullPath, "Groups");
+            path = PathUtility.GetRelativePath(path);
+            string ungroupedPath = Path.Combine(path, "Ungrouped");
+            string groupedPath = Path.Combine(path, "Groups");
 
             if (Directory.Exists(ungroupedPath) && Directory.Exists(groupedPath))
             {
-                LoadGraph(fullPath);
+                LoadGraph(path);
                 return;
             }
 
-            SetGraph(fullPath);
-            Directory.CreateDirectory(fullPath);
+            SetGraph(path);
+            Directory.CreateDirectory(path);
             Directory.CreateDirectory(ungroupedPath);
             Directory.CreateDirectory(groupedPath);
             AssetDatabase.Refresh();
@@ -113,11 +114,11 @@ namespace DialogueSystem.Editor.Window
             this.Hide();
         }
 
-        private void SetGraph(string fullPath)
+        private void SetGraph(string path)
         {
-            GraphName = Path.GetFileName(fullPath);
+            GraphName = Path.GetFileName(path);
             DialogueGraphWindow.C.SetTitle(GraphName);
-            GraphPath = PathUtility.GetRelativePath(fullPath);
+            GraphPath = PathUtility.GetRelativePath(path);
             Clear();
             this.Show();
         }
