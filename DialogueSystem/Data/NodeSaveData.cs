@@ -22,15 +22,28 @@ namespace DialogueSystem.Data
 			set
 			{
 				previousName = name;
-				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, $"{previousName}.asset").ReplaceSlash();
+				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, GroupSaveData == null ? "Ungrouped" : $"Groups/{GroupSaveData.Name}", $"{previousName}.asset").ReplaceSlash();
 
 				name = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
-				path = Path.Combine(DialogueGraphView.C.GraphPath, $"{name}.asset").ReplaceSlash();
+				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, GroupSaveData == null ? "Ungrouped" : $"Groups/{GroupSaveData.Name}").ReplaceSlash();
+				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
 			}
 		}
 
 		public string Text = "Text";
-		public GroupSaveData GroupSaveData;
+		private GroupSaveData groupSaveData;
+		public GroupSaveData GroupSaveData
+		{
+			get => groupSaveData;
+			set
+			{
+				groupSaveData = value;
+				previousName = name;
+				previousPath = path;
+				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, GroupSaveData == null ? "Ungrouped" : $"Groups/{GroupSaveData.Name}").ReplaceSlash();
+				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
+			}
+		}
 
 		public NodeSaveData Next;
 		public List<ChoiceSaveData> Choices = new();
@@ -38,7 +51,7 @@ namespace DialogueSystem.Data
 		[SerializeField, HideInInspector]
 		public Vector2 Position;
 
-		private string path, previousName, previousPath;
+		private string path, folderPath, previousName, previousPath;
 
 		public static NodeSaveData Create(Vector2 position)
 		{
@@ -64,8 +77,10 @@ namespace DialogueSystem.Data
 		{
 			if (!File.Exists(path) && !File.Exists(previousPath))
 				AssetDatabase.CreateAsset(this, path);
-			else if (previousPath != path)
+			else if (previousName != Name)
 				AssetDatabase.RenameAsset(previousPath, Name);
+			else if (previousPath != path)
+				AssetDatabase.MoveAsset(previousPath, path);
 		}
 	}
 }
