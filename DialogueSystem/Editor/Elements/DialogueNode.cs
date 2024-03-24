@@ -53,7 +53,7 @@ namespace DialogueSystem.Editor.Elements
 
 		private void FocusOut()
 		{
-			nameTextField.value = nameTextField.value.Trim();
+			SaveData.Name = nameTextField.value = nameTextField.value.Trim();
 			SaveData.FocusOut();
 		}
 
@@ -68,7 +68,7 @@ namespace DialogueSystem.Editor.Elements
 			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
 			titleButtonContainer.Insert(0, Input);
 
-			nameTextField = ElementExtensions.CreateTextField(e => SaveData.Name = String.IsNullOrWhiteSpace(e.newValue) ? SaveData.Id : e.newValue, SaveData.Name);
+			nameTextField = ElementExtensions.CreateTextField(_ => {}, SaveData.Name == SaveData.Id ? "" : SaveData.Name);
 			titleButtonContainer.Insert(1, nameTextField);
 
 			titleButtonContainer.InsertIconButton(2, "Add", ChoicesDisplay.Add);

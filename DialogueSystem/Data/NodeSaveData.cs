@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DialogueSystem.Editor.Elements;
+using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
-using P = System.IO.Path;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,7 +15,21 @@ namespace DialogueSystem.Data
 		[HideInInspector]
 		public string Id = Guid.NewGuid().ToString();
 
-		public string Name = "";
+		[SerializeField]
+		private new string name = "";
+		public string Name
+		{
+			get => name;
+			set
+			{
+				previousName = name;
+				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, $"{previousName}.asset").ReplaceSlash();
+
+				name = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
+				path = Path.Combine(DialogueGraphView.C.GraphPath, $"{name}.asset").ReplaceSlash();
+			}
+		}
+
 		public string Text = "Text";
 		public DialogueGroup Group;
 
@@ -34,16 +48,14 @@ namespace DialogueSystem.Data
 			}
 		}
 		
-		private string Path => P.Combine(DialogueGraphView.C.GraphPath, $"{(String.IsNullOrWhiteSpace(Name) ? Id : Name)}.asset").Replace('\\', '/');
-
-		[NonSerialized]
-		private string previousName = "";
-		private string PreviousPath => P.Combine(DialogueGraphView.C.GraphPath, $"{(String.IsNullOrWhiteSpace(previousName) ? Id : previousName)}.asset").Replace('\\', '/');
+		private string path, previousName, previousPath;
 
 		public static NodeSaveData Create(Vector2 position)
 		{
 			var saveData = CreateInstance<NodeSaveData>();
+			saveData.Name = saveData.Id;
 			saveData.Position = position;
+			saveData.Save();
 			return saveData;
 		}
 
@@ -54,23 +66,20 @@ namespace DialogueSystem.Data
 		public void Save()
 		{
 			EditorUtility.SetDirty(this);
-			Name = Name.Trim();
 			TryRename();
-			
+
 			AssetDatabase.SaveAssetIfDirty(this);
 			EditorUtility.ClearDirty(this);
 		}
 
-		public void Delete() => AssetDatabase.DeleteAsset(Path);
+		public void Delete() => AssetDatabase.DeleteAsset(path);
 
 		private void TryRename()
 		{
-			if (!File.Exists(Path) && !File.Exists(PreviousPath))
-				AssetDatabase.CreateAsset(this, Path);
-			else if (PreviousPath != Path)
-				AssetDatabase.RenameAsset(PreviousPath, Name);
-			
-			previousName = Name;
+			if (!File.Exists(path) && !File.Exists(previousPath))
+				AssetDatabase.CreateAsset(this, path);
+			else if (previousPath != path)
+				AssetDatabase.RenameAsset(previousPath, Name);
 		}
 	}
 }
