@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
@@ -9,7 +8,7 @@ using UnityEngine;
 namespace DialogueSystem.Data
 {
 	[Serializable]
-	public sealed class NodeSaveData : ScriptableObject
+	public sealed class GroupSaveData : ScriptableObject
 	{
 		[HideInInspector]
 		public string Id = Guid.NewGuid().ToString();
@@ -22,18 +21,16 @@ namespace DialogueSystem.Data
 			set
 			{
 				previousName = name;
-				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, $"{previousName}.asset").ReplaceSlash();
+				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName, $"{previousName}.asset").ReplaceSlash();
 
 				name = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
-				path = Path.Combine(DialogueGraphView.C.GraphPath, $"{name}.asset").ReplaceSlash();
+				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", name).ReplaceSlash();
+				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
+				
+				Directory.CreateDirectory(folderPath);
+				AssetDatabase.Refresh();
 			}
 		}
-
-		public string Text = "Text";
-		public GroupSaveData GroupSaveData;
-
-		public NodeSaveData Next;
-		public List<ChoiceSaveData> Choices = new();
 
 		[SerializeField, HideInInspector]
 		private Vector2 position;
@@ -47,11 +44,11 @@ namespace DialogueSystem.Data
 			}
 		}
 
-		private string path, previousName, previousPath;
+		private string path, folderPath, previousName, previousPath;
 
-		public static NodeSaveData Create(Vector2 position)
+		public static GroupSaveData Create(Vector2 position)
 		{
-			var saveData = CreateInstance<NodeSaveData>();
+			var saveData = CreateInstance<GroupSaveData>();
 			saveData.Name = saveData.Id;
 			saveData.Position = position;
 			saveData.Save();

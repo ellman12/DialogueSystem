@@ -144,7 +144,7 @@ namespace DialogueSystem.Editor.Window
 
 			foreach (var element in elements.Cast<DialogueNode>())
 			{
-                element.SaveData.Group = dialogueGroup;
+                element.SaveData.GroupSaveData = dialogueGroup.SaveData;
                 element.SaveData.Save();
             }
         }
@@ -153,7 +153,7 @@ namespace DialogueSystem.Editor.Window
         {
             foreach (var element in elements.Cast<DialogueNode>())
             {
-                element.SaveData.Group = null;
+                element.SaveData.GroupSaveData = null;
                 element.SaveData.Save();
             }
         }
@@ -169,7 +169,7 @@ namespace DialogueSystem.Editor.Window
                 if (element is DialogueNode node)
                     node.SaveData.Position = element.GetPosition().position;
                 else if (element is DialogueGroup group)
-                    group.Position = element.GetPosition().position;
+                    group.SaveData.Position = element.GetPosition().position;
             }
 
             return change;
