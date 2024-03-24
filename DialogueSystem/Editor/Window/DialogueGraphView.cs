@@ -138,23 +138,23 @@ namespace DialogueSystem.Editor.Window
         #endregion
 
 		#region Events
-		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
+		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> nodes)
 		{
 			var dialogueGroup = (DialogueGroup) group;
 
-			foreach (var element in elements.Cast<DialogueNode>())
+			foreach (var node in nodes.Cast<DialogueNode>())
 			{
-                element.SaveData.GroupSaveData = dialogueGroup.SaveData;
-                element.SaveData.Save();
+                node.SaveData.GroupSaveData = dialogueGroup.SaveData;
+                node.SaveData.Save();
             }
         }
 
-        private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
+        private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> nodes)
         {
-            foreach (var element in elements.Cast<DialogueNode>())
+            foreach (var node in nodes.Cast<DialogueNode>())
             {
-                element.SaveData.GroupSaveData = null;
-                element.SaveData.Save();
+                node.SaveData.GroupSaveData = null;
+                node.SaveData.Save();
             }
         }
 
