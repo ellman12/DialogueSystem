@@ -167,9 +167,15 @@ namespace DialogueSystem.Editor.Window
             foreach (var element in change.movedElements)
             {
                 if (element is DialogueNode node)
+                {
                     node.SaveData.Position = element.GetPosition().position;
+                    node.SaveData.Save();
+                }
                 else if (element is DialogueGroup group)
+                {
                     group.SaveData.Position = element.GetPosition().position;
+                    group.SaveData.Save();
+                }
             }
 
             return change;
