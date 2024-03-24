@@ -15,17 +15,8 @@ namespace DialogueSystem.Data
 		public string Name = "";
 		public string Text = "Text";
 
-		[SerializeField, HideInInspector]
-		private Vector2 position;
-		public Vector2 Position
-		{
-			get => position;
-			set
-			{
-				position = value;
-				Save();
-			}
-		}
+		[HideInInspector]
+		public Vector2 Position;
 
 		protected string previousName = "";
 
