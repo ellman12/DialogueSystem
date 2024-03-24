@@ -1,4 +1,5 @@
 ﻿using System;
+using DialogueSystem.Editor.Utilities;
 
 namespace DialogueSystem
 {
@@ -6,6 +7,6 @@ namespace DialogueSystem
 	{
 		internal const string GraphsRoot = "Assets/DialogueSystem/Graphs";
 
-		internal static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
+		internal static readonly string ProjectRoot = Environment.CurrentDirectory.ReplaceSlash();
 	}
 }
