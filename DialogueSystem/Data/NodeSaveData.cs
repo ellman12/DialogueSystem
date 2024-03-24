@@ -35,17 +35,8 @@ namespace DialogueSystem.Data
 		public NodeSaveData Next;
 		public List<ChoiceSaveData> Choices = new();
 
-		[SerializeField, HideInInspector]
-		private Vector2 position;
-		public Vector2 Position
-		{
-			get => position;
-			set
-			{
-				position = value;
-				Save();
-			}
-		}
+		[HideInInspector]
+		public Vector2 Position;
 
 		private string path, previousName, previousPath;
 

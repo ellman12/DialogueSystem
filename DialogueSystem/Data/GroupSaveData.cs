@@ -32,17 +32,8 @@ namespace DialogueSystem.Data
 			}
 		}
 
-		[SerializeField, HideInInspector]
-		private Vector2 position;
-		public Vector2 Position
-		{
-			get => position;
-			set
-			{
-				position = value;
-				Save();
-			}
-		}
+		[HideInInspector]
+		public Vector2 Position;
 
 		private string path, folderPath, previousName, previousPath;
 
