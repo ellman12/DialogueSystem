@@ -59,10 +59,6 @@ namespace DialogueSystem.Data
 			return saveData;
 		}
 
-		public void FocusIn() => previousName = Name;
-
-		public void FocusOut() => Save();
-
 		public void Save()
 		{
 			EditorUtility.SetDirty(this);

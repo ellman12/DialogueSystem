@@ -25,7 +25,8 @@ namespace DialogueSystem.Editor.Elements
 		{
 			SaveData = NodeSaveData.Create(position);
 
-			AddEvents();
+			RegisterCallback<FocusOutEvent>(_ => FocusOut());
+			
 			AddElements();
 
 			for (int i = 0; i < startingChoices; i++)
@@ -36,25 +37,18 @@ namespace DialogueSystem.Editor.Elements
 		{
 			SaveData = saveData;
 
-			AddEvents();
+			RegisterCallback<FocusOutEvent>(_ => FocusOut());
+			
 			AddElements();
 
 			foreach (var choice in SaveData.Choices)
-			{
 				ChoicesDisplay.Add(choice);
-			}
-		}
-
-		private void AddEvents()
-		{
-			RegisterCallback<FocusInEvent>(_ => SaveData.FocusIn());
-			RegisterCallback<FocusOutEvent>(_ => FocusOut());
 		}
 
 		private void FocusOut()
 		{
 			SaveData.Name = nameTextField.value = nameTextField.value.Trim();
-			SaveData.FocusOut();
+			SaveData.Save();
 		}
 
 		private void AddElements()
