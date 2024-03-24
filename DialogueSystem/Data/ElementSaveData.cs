@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
 using P = System.IO.Path;
-using DialogueSystem.Editor.Window;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,12 +27,13 @@ namespace DialogueSystem.Data
 			}
 		}
 
-		private protected string previousName = "";
-		
-		private protected string Path => P.Combine(DialogueGraphView.C.GraphPath, $"{(String.IsNullOrWhiteSpace(Name) ? Id : Name)}.asset").Replace('\\', '/');
-		private protected string PreviousPath => P.Combine(DialogueGraphView.C.GraphPath, $"{(String.IsNullOrWhiteSpace(previousName) ? Id : previousName)}.asset").Replace('\\', '/');
+		protected string previousName = "";
 
-		private protected static T Create<T>(Vector2 position) where T : ElementSaveData
+		protected abstract string Path { get; }
+		protected abstract string PreviousPath { get; }
+		protected abstract string CreatePath(string filename);
+
+		protected static T Create<T>(Vector2 position) where T : ElementSaveData
 		{
 			var saveData = CreateInstance<T>();
 			saveData.Position = position;
