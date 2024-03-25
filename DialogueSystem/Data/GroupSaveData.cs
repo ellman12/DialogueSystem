@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using DialogueSystem.Editor.Elements;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
 using UnityEditor;
@@ -31,13 +33,32 @@ namespace DialogueSystem.Data
 		}
 
 		[SerializeField, HideInInspector]
-		public Vector2 Position;
+		private Vector2 position;
+
+		///Updates the position of the group and its contained nodes.
+		public Vector2 Position
+		{
+			get => position;
+			set
+			{
+				position = value;
+
+				foreach (var node in Group.containedElements.Cast<DialogueNode>())
+				{
+					node.SaveData.Position = node.GetPosition().position;
+					node.SaveData.Save();
+				}
+			}
+		}
 
 		private string path, folderPath, previousName, previousPath, previousFolderPath;
 
-		public static GroupSaveData Create(Vector2 position)
+		public DialogueGroup Group { get; set; }
+
+		public static GroupSaveData Create(DialogueGroup group, Vector2 position)
 		{
 			var saveData = CreateInstance<GroupSaveData>();
+			saveData.Group = group;
 			saveData.Name = saveData.Id;
 			saveData.Position = position;
 			saveData.Save();

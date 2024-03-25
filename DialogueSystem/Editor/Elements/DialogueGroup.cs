@@ -13,7 +13,7 @@ namespace DialogueSystem.Editor.Elements
 
 		public DialogueGroup(Vector2 position)
 		{
-			SaveData = GroupSaveData.Create(position);
+			SaveData = GroupSaveData.Create(this, position);
 
 			RegisterCallback<FocusOutEvent>(_ => FocusOut());
 

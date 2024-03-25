@@ -67,6 +67,7 @@ namespace DialogueSystem.Editor.Window
 			foreach (var asset in groupAssets)
 			{
 				DialogueGroup group = new(asset);
+				asset.Group = group;
 				groups.Add(group.SaveData.Id, group);
 				AddElement(group);
 			}
