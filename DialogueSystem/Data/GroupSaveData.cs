@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
@@ -21,21 +21,19 @@ namespace DialogueSystem.Data
 			set
 			{
 				previousName = name;
-				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName, $"{previousName}.asset").ReplaceSlash();
+				previousFolderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName).ReplaceSlash();
+				previousPath = Path.Combine(previousFolderPath, $"{previousName}.asset").ReplaceSlash();
 
 				name = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
 				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", name).ReplaceSlash();
 				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
-				
-				Directory.CreateDirectory(folderPath);
-				AssetDatabase.Refresh();
 			}
 		}
 
 		[SerializeField, HideInInspector]
 		public Vector2 Position;
 
-		private string path, folderPath, previousName, previousPath;
+		private string path, folderPath, previousName, previousPath, previousFolderPath;
 
 		public static GroupSaveData Create(Vector2 position)
 		{
@@ -60,9 +58,15 @@ namespace DialogueSystem.Data
 		private void TryRename()
 		{
 			if (!File.Exists(path) && !File.Exists(previousPath))
+			{
+				Directory.CreateDirectory(folderPath);
 				AssetDatabase.CreateAsset(this, path);
+			}
 			else if (previousPath != path)
+			{
 				AssetDatabase.RenameAsset(previousPath, Name);
+				AssetDatabase.MoveAsset(previousFolderPath, folderPath);
+			}
 		}
 	}
 }
