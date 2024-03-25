@@ -35,7 +35,7 @@ namespace DialogueSystem.Editor.Window
 		public static T[] GetAssetsAtPath<T>(string path) where T : ScriptableObject
 		{
 			string[] files = Directory.GetFiles(path, "*.asset", SearchOption.AllDirectories);
-			return files.Select(AssetDatabase.LoadAssetAtPath<T>).ToArray();
+			return files.Select(AssetDatabase.LoadAssetAtPath<T>).Where(asset => asset != null).ToArray();
 		}
 
 		private void OnFocus() => C = this;
