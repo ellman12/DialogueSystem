@@ -52,7 +52,7 @@ namespace DialogueSystem.Editor.Extensions
         #region Port
         public static Port CreatePort(Direction direction, Port.Capacity capacity)
         {
-            var port = Port.Create<Edge>(Orientation.Horizontal, direction, capacity, typeof(bool));
+            var port = Port.Create<DialogueEdge>(Orientation.Horizontal, direction, capacity, typeof(bool));
             port.portName = "";
             port.AddStyleSheet("Inputs/Port");
             return port;
