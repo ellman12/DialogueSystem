@@ -1,5 +1,5 @@
-using System;
 using DialogueSystem.Data;
+using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Window;
 using UnityEditor.Experimental.GraphView;
@@ -8,19 +8,20 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
-	public sealed class DialogueNode : Node
+	public sealed class DialogueNode : Node, IMoveableElement, ISaveableElement<NodeSaveData>
 	{
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }
 
-		public TextField nameTextField;
+		public NodeSaveData SaveData { get; set; }
 
+		private TextField nameTextField;
+		
 		public ChoicesDisplay ChoicesDisplay { get; private set; }
 
 		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
-
-		public readonly NodeSaveData SaveData;
-
+		
+		#region Constructors
 		public DialogueNode(Vector2 position, int startingChoices = 0)
 		{
 			SaveData = NodeSaveData.Create(position);
@@ -44,13 +45,7 @@ namespace DialogueSystem.Editor.Elements
 			foreach (var choice in SaveData.Choices)
 				ChoicesDisplay.Add(choice);
 		}
-
-		private void FocusOut()
-		{
-			SaveData.Name = nameTextField.value = nameTextField.value.Trim();
-			SaveData.Save();
-		}
-
+		
 		private void AddElements()
 		{
 			SetPosition(new Rect(SaveData.Position, Vector2.zero));
@@ -80,12 +75,30 @@ namespace DialogueSystem.Editor.Elements
 			RefreshExpandedState();
 			#endregion
 		}
+		#endregion
+		
+		public void UpdatePosition(Vector2 newPosition)
+		{
+			SaveData.Position = newPosition;
+			SaveData.Save();
+		}
+
+		public void Remove()
+		{
+			DisconnectAllPorts();
+			DialogueGraphView.C.RemoveElement(this);
+		}
 
 		public void Delete()
 		{
-			DisconnectAllPorts();
 			SaveData.Delete();
-			RemoveFromHierarchy();
+			Remove();
+		}
+
+		private void FocusOut()
+		{
+			SaveData.Name = nameTextField.value = nameTextField.value.Trim();
+			SaveData.Save();
 		}
 
 		#region Ports
