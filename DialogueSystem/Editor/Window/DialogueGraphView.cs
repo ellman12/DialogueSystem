@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements;
+using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
 using UnityEditor;
@@ -125,8 +126,8 @@ namespace DialogueSystem.Editor.Window
 
 		private new void Clear()
 		{
-			foreach (var element in graphElements)
-				RemoveElement(element); //Using DeleteElements would cause the SOs to also be removed.
+			foreach (var element in graphElements.OfType<IDialogueElement>())
+                element.Remove();
 		}
 
 		#region Menu
@@ -138,23 +139,23 @@ namespace DialogueSystem.Editor.Window
         #endregion
 
 		#region Events
-		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> elements)
+		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> nodes)
 		{
 			var dialogueGroup = (DialogueGroup) group;
 
-			foreach (var element in elements.Cast<DialogueNode>())
+			foreach (var node in nodes.Cast<DialogueNode>())
 			{
-                element.SaveData.Group = dialogueGroup;
-                element.SaveData.Save();
+                node.SaveData.GroupSaveData = dialogueGroup.SaveData;
+                node.SaveData.Save();
             }
         }
 
-        private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> elements)
+        private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> nodes)
         {
-            foreach (var element in elements.Cast<DialogueNode>())
+            foreach (var node in nodes.Cast<DialogueNode>())
             {
-                element.SaveData.Group = null;
-                element.SaveData.Save();
+                node.SaveData.GroupSaveData = null;
+                node.SaveData.Save();
             }
         }
 
@@ -167,9 +168,15 @@ namespace DialogueSystem.Editor.Window
             foreach (var element in change.movedElements)
             {
                 if (element is DialogueNode node)
+                {
                     node.SaveData.Position = element.GetPosition().position;
+                    node.SaveData.Save();
+                }
                 else if (element is DialogueGroup group)
-                    group.Position = element.GetPosition().position;
+                {
+                    group.SaveData.Position = element.GetPosition().position;
+                    group.SaveData.Save();
+                }
             }
 
             return change;
@@ -180,22 +187,9 @@ namespace DialogueSystem.Editor.Window
             if (change.edgesToCreate == null)
                 return change;
 
-            foreach (var edge in change.edgesToCreate)
-            {
-                DialogueNode startNode = edge.GetStartNode();
-                DialogueNode endNode = edge.GetEndNode();
-
-                if (startNode.Type == NodeType.Text)
-					startNode.SaveData.Next = endNode.SaveData;
-				else
-				{
-					var saveData = (ChoiceSaveData) edge.output.userData;
-					saveData.Node = endNode.SaveData;
-				}
-
-                startNode.SaveData.Save();
-            }
-
+            foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
+                edge.Connect();
+            
             return change;
         }
 
@@ -204,7 +198,7 @@ namespace DialogueSystem.Editor.Window
             if (change.elementsToRemove == null)
                 return change;
 
-            foreach (var element in change.elementsToRemove.ToArray())
+            foreach (var element in change.elementsToRemove.ToArray().OfType<IDialogueElement>())
                 element.Delete();
 
             return change;
