@@ -1,10 +1,10 @@
-using UnityEngine;
+using DialogueSystem.Data;
 
 namespace DialogueSystem.Editor.Elements.Interfaces
 {
 	///Represents a Dialogue Element that has some type of SaveData attached to it.
-	public interface ISaveableElement<TAsset> : IDialogueElement where TAsset : ScriptableObject
+	public interface ISaveableElement<out TAsset> : IDialogueElement where TAsset : SaveData
 	{
-		public TAsset SaveData { get; set; }
+		public TAsset SaveData { get; }
 	}
 }

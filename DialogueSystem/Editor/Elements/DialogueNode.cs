@@ -13,7 +13,7 @@ namespace DialogueSystem.Editor.Elements
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }
 
-		public NodeSaveData SaveData { get; set; }
+		public NodeSaveData SaveData { get; }
 
 		private TextField nameTextField;
 		
