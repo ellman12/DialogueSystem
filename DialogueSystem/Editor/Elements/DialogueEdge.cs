@@ -13,6 +13,8 @@ namespace DialogueSystem.Editor.Elements
 			output.Disconnect(this);
 			DialogueGraphView.C.RemoveElement(this);
 		}
+
+		public void Delete() => Remove();
 		
         public DialogueNode StartNode => (DialogueNode)output.node;
         public DialogueNode EndNode => (DialogueNode)input.node;

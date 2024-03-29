@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace DialogueSystem.Editor.Elements.Interfaces
 {
@@ -6,8 +6,5 @@ namespace DialogueSystem.Editor.Elements.Interfaces
 	public interface ISaveableElement<TAsset> : IDialogueElement where TAsset : ScriptableObject
 	{
 		public TAsset SaveData { get; set; }
-		
-		///Removes the element from the DialogueGraphView, deleting its SaveData asset.
-		public void Delete();
 	}
 }
