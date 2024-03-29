@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements;
+using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
 using UnityEditor;
@@ -125,8 +126,8 @@ namespace DialogueSystem.Editor.Window
 
 		private new void Clear()
 		{
-			foreach (var element in graphElements)
-				RemoveElement(element); //Using DeleteElements would cause the SOs to also be removed.
+			foreach (var element in graphElements.OfType<IDialogueElement>())
+                element.Remove();
 		}
 
 		#region Menu
@@ -210,7 +211,7 @@ namespace DialogueSystem.Editor.Window
             if (change.elementsToRemove == null)
                 return change;
 
-            foreach (var element in change.elementsToRemove.ToArray())
+            foreach (var element in change.elementsToRemove.ToArray().OfType<IDialogueElement>())
                 element.Delete();
 
             return change;

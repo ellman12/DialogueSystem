@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements;
 using UnityEditor;
@@ -18,14 +18,6 @@ namespace DialogueSystem.Editor.Extensions
         public static void Hide(this VisualElement element) => element.style.display = DisplayStyle.None;
         public static bool Visible(this VisualElement element) => element.style.display == DisplayStyle.Flex;
         public static bool Hidden(this VisualElement element) => element.style.display == DisplayStyle.None;
-
-        public static void Delete(this VisualElement element)
-        {
-            if (element is DialogueNode node)
-                node.Delete();
-            else if (element is Edge edge)
-                edge.Delete();
-        }
         #endregion
 
         #region Buttons
@@ -77,29 +69,7 @@ namespace DialogueSystem.Editor.Extensions
         public static void AddTextField(this VisualElement element, EventCallback<ChangeEvent<string>> onChange, string value = "", bool multiline = false, string label = "") => element.Add(CreateTextField(onChange, value, multiline, label));
         #endregion
 
-        #region Edge
-        public static void Delete(this Edge edge)
-        {
-            edge.input.Disconnect(edge);
-            edge.output.Disconnect(edge);
-
-            var startNode = edge.GetStartNode();
-
-            startNode.SaveData.Next = null;
-            startNode.SaveData.Save();
-
-            if (startNode.Type == NodeType.Prompt)
-            {
-                var choiceData = (ChoiceSaveData)edge.output.userData;
-                choiceData.Node = null;
-                startNode.SaveData.Save();
-            }
-
-            edge.RemoveFromHierarchy();
-        }
-
         public static DialogueNode GetStartNode(this Edge edge) => (DialogueNode)edge.output.node;
         public static DialogueNode GetEndNode(this Edge edge) => (DialogueNode)edge.input.node;
-        #endregion
     }
 }
