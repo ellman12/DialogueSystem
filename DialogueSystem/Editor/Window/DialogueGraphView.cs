@@ -145,7 +145,7 @@ namespace DialogueSystem.Editor.Window
 
 			foreach (var node in nodes.Cast<DialogueNode>())
 			{
-                node.SaveData.GroupSaveData = dialogueGroup.SaveData;
+                node.SaveData.Group = dialogueGroup.SaveData;
                 node.SaveData.Save();
             }
         }
@@ -154,7 +154,7 @@ namespace DialogueSystem.Editor.Window
         {
             foreach (var node in nodes.Cast<DialogueNode>())
             {
-                node.SaveData.GroupSaveData = null;
+                node.SaveData.Group = null;
                 node.SaveData.Save();
             }
         }

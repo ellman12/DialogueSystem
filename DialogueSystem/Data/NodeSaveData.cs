@@ -8,13 +8,10 @@ using UnityEngine;
 
 namespace DialogueSystem.Data
 {
-	[Serializable]
-	public sealed class NodeSaveData : ScriptableObject
+	public sealed class NodeSaveData : SaveData
 	{
-		[HideInInspector]
-		public string Id = Guid.NewGuid().ToString();
-
-		public string Name
+		//TODO: try to reduce this repetition
+		public override string Name
 		{
 			get => name;
 			set
@@ -34,32 +31,11 @@ namespace DialogueSystem.Data
 		}
 
 		public string Text = "Text";
-		public GroupSaveData GroupSaveData;
+		public GroupSaveData Group;
 
 		public NodeSaveData Next;
 		public List<ChoiceSaveData> Choices = new();
 
-		[HideInInspector]
-		public Vector2 Position;
-
-		private string path, previousName, previousPath;
-
-		public static NodeSaveData Create(Vector2 position)
-		{
-			var saveData = CreateInstance<NodeSaveData>();
-			saveData.Name = saveData.Id;
-			saveData.Position = position;
-			saveData.Save();
-			return saveData;
-		}
-
-		public void Save()
-		{
-			EditorUtility.SetDirty(this);
-			AssetDatabase.SaveAssetIfDirty(this);
-			EditorUtility.ClearDirty(this);
-		}
-
-		public void Delete() => AssetDatabase.DeleteAsset(path);
+		public static NodeSaveData Create(Vector2 position) => SaveData.Create<NodeSaveData>(position);
 	}
 }

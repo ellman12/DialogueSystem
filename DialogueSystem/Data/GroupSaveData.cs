@@ -7,15 +7,9 @@ using UnityEngine;
 
 namespace DialogueSystem.Data
 {
-	[Serializable]
-	public sealed class GroupSaveData : ScriptableObject
+	public sealed class GroupSaveData : SaveData
 	{
-		[HideInInspector]
-		public string Id = Guid.NewGuid().ToString();
-
-		[SerializeField]
-		private new string name = "";
-		public string Name
+		public override string Name
 		{
 			get => name;
 			set
@@ -23,46 +17,23 @@ namespace DialogueSystem.Data
 				previousName = name;
 				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName, $"{previousName}.asset").ReplaceSlash();
 
+				//TODO: setting name directly like this is probably a problem!
 				name = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
 				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", name).ReplaceSlash();
 				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
-				
+
 				Directory.CreateDirectory(folderPath);
 				AssetDatabase.Refresh();
+
+				if (!File.Exists(path) && !File.Exists(previousPath))
+					AssetDatabase.CreateAsset(this, path);
+				else if (previousPath != path)
+					AssetDatabase.RenameAsset(previousPath, Name);
 			}
 		}
 
-		[HideInInspector]
-		public Vector2 Position;
+		private string folderPath;
 
-		private string path, folderPath, previousName, previousPath;
-
-		public static GroupSaveData Create(Vector2 position)
-		{
-			var saveData = CreateInstance<GroupSaveData>();
-			saveData.Name = saveData.Id;
-			saveData.Position = position;
-			saveData.Save();
-			return saveData;
-		}
-
-		public void Save()
-		{
-			EditorUtility.SetDirty(this);
-			TryRename();
-
-			AssetDatabase.SaveAssetIfDirty(this);
-			EditorUtility.ClearDirty(this);
-		}
-
-		public void Delete() => AssetDatabase.DeleteAsset(path);
-
-		private void TryRename()
-		{
-			if (!File.Exists(path) && !File.Exists(previousPath))
-				AssetDatabase.CreateAsset(this, path);
-			else if (previousPath != path)
-				AssetDatabase.RenameAsset(previousPath, Name);
-		}
+		public static GroupSaveData Create(Vector2 position) => SaveData.Create<GroupSaveData>(position);
 	}
 }
