@@ -68,8 +68,5 @@ namespace DialogueSystem.Editor.Extensions
 
         public static void AddTextField(this VisualElement element, EventCallback<ChangeEvent<string>> onChange, string value = "", bool multiline = false, string label = "") => element.Add(CreateTextField(onChange, value, multiline, label));
         #endregion
-
-        public static DialogueNode GetStartNode(this Edge edge) => (DialogueNode)edge.output.node;
-        public static DialogueNode GetEndNode(this Edge edge) => (DialogueNode)edge.input.node;
     }
 }

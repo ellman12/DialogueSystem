@@ -187,22 +187,9 @@ namespace DialogueSystem.Editor.Window
             if (change.edgesToCreate == null)
                 return change;
 
-            foreach (var edge in change.edgesToCreate)
-            {
-                DialogueNode startNode = edge.GetStartNode();
-                DialogueNode endNode = edge.GetEndNode();
-
-                if (startNode.Type == NodeType.Text)
-					startNode.SaveData.Next = endNode.SaveData;
-				else
-				{
-					var saveData = (ChoiceSaveData) edge.output.userData;
-					saveData.Node = endNode.SaveData;
-				}
-
-                startNode.SaveData.Save();
-            }
-
+            foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
+                edge.Connect();
+            
             return change;
         }
 
