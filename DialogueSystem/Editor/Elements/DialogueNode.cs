@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
-	public sealed class DialogueNode : Node, IMoveableElement, ISaveableElement<NodeSaveData>
+	public sealed class DialogueNode : Node, ISaveableElement<NodeSaveData>
 	{
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }

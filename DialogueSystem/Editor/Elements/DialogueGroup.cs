@@ -8,7 +8,7 @@ using UnityEngine;
 namespace DialogueSystem.Editor.Elements
 {
 	[Serializable]
-	public sealed class DialogueGroup : Group, IMoveableElement, ISaveableElement<GroupSaveData>
+	public sealed class DialogueGroup : Group, ISaveableElement<GroupSaveData>
 	{
 		public GroupSaveData SaveData { get; }
 
