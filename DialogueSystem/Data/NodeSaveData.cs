@@ -19,7 +19,7 @@ namespace DialogueSystem.Data
 				previousName = name;
 				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, $"{previousName}.asset").ReplaceSlash();
 
-				//Setting name directly will still work, but creates a warning in the console. RenameAsset() sets name for us.
+				//Setting name directly does not work. RenameAsset() sets name for us.
 				string newName = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
 				path = Path.Combine(DialogueGraphView.C.GraphPath, $"{newName}.asset").ReplaceSlash();
 
