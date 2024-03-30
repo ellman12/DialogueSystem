@@ -23,16 +23,15 @@ namespace DialogueSystem.Data
 				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
 
 				Directory.CreateDirectory(folderPath);
-				AssetDatabase.Refresh();
 
 				if (!File.Exists(path) && !File.Exists(previousPath))
 					AssetDatabase.CreateAsset(this, path);
-				else if (previousPath != path)
+				else if (previousName != Name)
 					AssetDatabase.RenameAsset(previousPath, Name);
+				else if (previousPath != path)
+					AssetDatabase.MoveAsset(previousPath, path);
 			}
 		}
-
-		private string folderPath;
 
 		public static GroupSaveData Create(Vector2 position) => SaveData.Create<GroupSaveData>(position);
 	}
