@@ -23,6 +23,11 @@ namespace DialogueSystem.Editor.Elements
 
 		public void Remove()
 		{
+			DialogueGraphView.C.RemoveElement(this);
+		}
+
+		public void Delete()
+		{
 			input.Disconnect(this);
 			output.Disconnect(this);
 
@@ -32,9 +37,8 @@ namespace DialogueSystem.Editor.Elements
 				choiceData.Node = null;
 
 			StartNode.SaveData.Save();
-			DialogueGraphView.C.RemoveElement(this);
+			
+			Remove();
 		}
-
-		public void Delete() => Remove();
 	}
 }
