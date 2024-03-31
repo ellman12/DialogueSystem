@@ -51,10 +51,7 @@ namespace DialogueSystem.Editor.Elements
 				node.UpdatePosition(node.GetPosition().position);
 		}
 
-		public void Remove()
-		{
-			DialogueGraphView.C.RemoveElement(this);
-		}
+		public void Remove() => DialogueGraphView.C.RemoveElement(this);
 
 		public void Delete()
 		{

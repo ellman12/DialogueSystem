@@ -21,10 +21,7 @@ namespace DialogueSystem.Editor.Elements
 			StartNode.SaveData.Save();
 		}
 
-		public void Remove()
-		{
-			DialogueGraphView.C.RemoveElement(this);
-		}
+		public void Remove() => DialogueGraphView.C.RemoveElement(this);
 
 		public void Delete()
 		{

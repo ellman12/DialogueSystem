@@ -83,14 +83,11 @@ namespace DialogueSystem.Editor.Elements
 			SaveData.Save();
 		}
 
-		public void Remove()
-		{
-			DisconnectAllPorts();
-			DialogueGraphView.C.RemoveElement(this);
-		}
+		public void Remove() => DialogueGraphView.C.RemoveElement(this);
 
 		public void Delete()
 		{
+			DisconnectAllPorts();
 			Remove();
 			SaveData.Delete();
 		}
