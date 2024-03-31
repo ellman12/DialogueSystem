@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,7 +16,7 @@ namespace DialogueSystem.Data
 		[HideInInspector]
 		public Vector2 Position;
 
-		protected string path, previousName, previousPath;
+		protected string path, folderPath, previousName, previousPath;
 
 		protected static T Create<T>(Vector2 position) where T : SaveData
 		{
@@ -34,6 +34,6 @@ namespace DialogueSystem.Data
 			EditorUtility.ClearDirty(this);
 		}
 
-		public void Delete() => AssetDatabase.DeleteAsset(path);
+		public abstract void Delete();
 	}
 }

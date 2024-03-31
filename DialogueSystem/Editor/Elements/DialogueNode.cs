@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
-	public sealed class DialogueNode : Node, IMoveableElement, ISaveableElement<NodeSaveData>
+	public sealed class DialogueNode : Node, ISaveableElement<NodeSaveData>
 	{
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }
@@ -83,16 +83,13 @@ namespace DialogueSystem.Editor.Elements
 			SaveData.Save();
 		}
 
-		public void Remove()
-		{
-			DisconnectAllPorts();
-			DialogueGraphView.C.RemoveElement(this);
-		}
+		public void Remove() => DialogueGraphView.C.RemoveElement(this);
 
 		public void Delete()
 		{
-			SaveData.Delete();
+			DisconnectAllPorts();
 			Remove();
+			SaveData.Delete();
 		}
 
 		private void FocusOut()

@@ -31,13 +31,6 @@ namespace DialogueSystem.Editor.Window
 
 		public void SetTitle(string newTitle) => titleContent.text = newTitle;
 
-		///Loads all .asset files at the path.
-		public static T[] GetAssetsAtPath<T>(string path) where T : ScriptableObject
-		{
-			string[] files = Directory.GetFiles(path, "*.asset", SearchOption.AllDirectories);
-			return files.Select(AssetDatabase.LoadAssetAtPath<T>).ToArray();
-		}
-
 		private void OnFocus() => C = this;
 
 		private void OnEnable()

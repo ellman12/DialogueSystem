@@ -15,25 +15,36 @@ namespace DialogueSystem.Data
 			set
 			{
 				previousName = name;
-				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName, $"{previousName}.asset").ReplaceSlash();
+				previousFolderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName).ReplaceSlash();
+				previousPath = Path.Combine(previousFolderPath, $"{previousName}.asset").ReplaceSlash();
 
-				//TODO: setting name directly like this is probably a problem!
-				name = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
-				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", name).ReplaceSlash();
-				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
-
-				Directory.CreateDirectory(folderPath);
-				AssetDatabase.Refresh();
+				string newName = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
+				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", newName).ReplaceSlash();
+				path = Path.Combine(folderPath, $"{newName}.asset").ReplaceSlash();
 
 				if (!File.Exists(path) && !File.Exists(previousPath))
+				{
+					Directory.CreateDirectory(folderPath);
 					AssetDatabase.CreateAsset(this, path);
+				}
 				else if (previousPath != path)
-					AssetDatabase.RenameAsset(previousPath, Name);
+				{
+					AssetDatabase.RenameAsset(previousPath, newName);
+					AssetDatabase.MoveAsset(previousFolderPath, folderPath);
+				}
+				
+				AssetDatabase.Refresh();
 			}
 		}
 
-		private string folderPath;
+		private string previousFolderPath;
 
 		public static GroupSaveData Create(Vector2 position) => SaveData.Create<GroupSaveData>(position);
+
+		public override void Delete()
+		{
+			AssetDatabase.DeleteAsset(path);
+			AssetDatabase.DeleteAsset(folderPath);
+		}
 	}
 }
