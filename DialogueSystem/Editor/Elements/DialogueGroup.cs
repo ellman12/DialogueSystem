@@ -4,6 +4,7 @@ using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Window;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
@@ -15,9 +16,18 @@ namespace DialogueSystem.Editor.Elements
 		public DialogueGroup(Vector2 position)
 		{
 			SaveData = GroupSaveData.Create(position);
+			
+			RegisterCallback<FocusOutEvent>(_ => FocusOut());
+			
 			title = SaveData.Id;
 			SetPosition(new Rect(position, Vector2.zero));
 		}
+	
+		private void FocusOut()
+		{
+			SaveData.Name = title = title.Trim();
+			SaveData.Save();
+		}	
 
 		public void UpdatePosition(Vector2 newPosition)
 		{
