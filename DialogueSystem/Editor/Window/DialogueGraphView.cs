@@ -60,8 +60,17 @@ namespace DialogueSystem.Editor.Window
 			SetGraph(path);
 
 			var nodeAssets = DialogueGraphWindow.GetAssetsAtPath<NodeSaveData>(GraphPath);
+			var groupAssets = DialogueGraphWindow.GetAssetsAtPath<GroupSaveData>(GraphPath);
 
 			Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
+			Dictionary<string, DialogueGroup> groups = new();
+
+			foreach (var asset in groupAssets)
+			{
+				DialogueGroup group = new(asset);
+				groups.Add(group.SaveData.Id, group);
+				AddElement(group);
+			}
 
 			foreach (var asset in nodeAssets)
 			{
@@ -85,6 +94,11 @@ namespace DialogueSystem.Editor.Window
 						AddElement(choiceDisplay.Output.ConnectTo(next));
 					}
 				}
+			}
+
+			foreach (DialogueNode node in dialogueNodes.Values.Where(node => node.SaveData.Group != null))
+			{
+				groups[node.SaveData.Group.Id].AddElement(node);
 			}
 		}
 

@@ -13,6 +13,7 @@ namespace DialogueSystem.Editor.Elements
 	{
 		public GroupSaveData SaveData { get; }
 
+		#region Constructors
 		public DialogueGroup(Vector2 position)
 		{
 			SaveData = GroupSaveData.Create(position);
@@ -22,12 +23,23 @@ namespace DialogueSystem.Editor.Elements
 			title = SaveData.Id;
 			SetPosition(new Rect(position, Vector2.zero));
 		}
+		
+		public DialogueGroup(GroupSaveData saveData)
+		{
+			SaveData = saveData;
+			
+			RegisterCallback<FocusOutEvent>(_ => FocusOut());
+
+			title = SaveData.Name;
+			SetPosition(new Rect(SaveData.Position, Vector2.zero));
+		}
 	
 		private void FocusOut()
 		{
 			SaveData.Name = title = title.Trim();
 			SaveData.Save();
 		}	
+		#endregion
 
 		public void UpdatePosition(Vector2 newPosition)
 		{
