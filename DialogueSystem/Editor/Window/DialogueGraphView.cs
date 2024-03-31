@@ -59,8 +59,8 @@ namespace DialogueSystem.Editor.Window
 		{
 			SetGraph(path);
 
-			var nodeAssets = DialogueGraphWindow.GetAssetsAtPath<NodeSaveData>(GraphPath);
-			var groupAssets = DialogueGraphWindow.GetAssetsAtPath<GroupSaveData>(GraphPath);
+			var nodeAssets = IOUtility.GetAssetsAtPath<NodeSaveData>(GraphPath);
+			var groupAssets = IOUtility.GetAssetsAtPath<GroupSaveData>(GraphPath);
 
 			Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
 			Dictionary<string, DialogueGroup> groups = new();
