@@ -63,8 +63,9 @@ namespace DialogueSystem.Editor.Window
 			var groupAssets = IOUtility.GetAssetsAtPath<GroupSaveData>(GraphPath);
 
 			Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
-			Dictionary<string, DialogueGroup> groups = new();
+			Dictionary<string, DialogueGroup> groups = new(groupAssets.Length);
 
+			//TODO: clean up this war crime at some point.
 			foreach (var asset in groupAssets)
 			{
 				DialogueGroup group = new(asset);
@@ -84,14 +85,14 @@ namespace DialogueSystem.Editor.Window
 				if (node.SaveData.Next != null)
 				{
 					var next = dialogueNodes[node.SaveData.Next.Id].Input;
-					AddElement(node.Output.ConnectTo(next));
+					AddElement(node.Output.ConnectTo<DialogueEdge>(next));
 				}
 				else
 				{
 					foreach (var choiceDisplay in node.ChoicesDisplay.Children.Where(display => display.SaveData.Node != null))
 					{
 						var next = dialogueNodes[choiceDisplay.SaveData.Node.Id].Input;
-						AddElement(choiceDisplay.Output.ConnectTo(next));
+						AddElement(choiceDisplay.Output.ConnectTo<DialogueEdge>(next));
 					}
 				}
 			}
