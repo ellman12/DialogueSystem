@@ -34,6 +34,6 @@ namespace DialogueSystem.Data
 			EditorUtility.ClearDirty(this);
 		}
 
-		public void Delete() => AssetDatabase.DeleteAsset(path);
+		public abstract void Delete();
 	}
 }

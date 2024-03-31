@@ -34,5 +34,11 @@ namespace DialogueSystem.Data
 		}
 
 		public static GroupSaveData Create(Vector2 position) => SaveData.Create<GroupSaveData>(position);
+
+		public override void Delete()
+		{
+			AssetDatabase.DeleteAsset(path);
+			AssetDatabase.DeleteAsset(folderPath);
+		}
 	}
 }

@@ -32,8 +32,8 @@ namespace DialogueSystem.Editor.Elements
 
 		public void Delete()
 		{
-			SaveData.Delete();
 			Remove();
+			SaveData.Delete();
 		}
 	}
 }

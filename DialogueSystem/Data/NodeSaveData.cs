@@ -56,5 +56,7 @@ namespace DialogueSystem.Data
 		}
 
 		public static NodeSaveData Create(Vector2 position) => SaveData.Create<NodeSaveData>(position);
+		
+		public override void Delete() => AssetDatabase.DeleteAsset(path);
 	}
 }
