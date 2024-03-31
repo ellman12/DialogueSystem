@@ -182,10 +182,7 @@ namespace DialogueSystem.Editor.Window
 			foreach (var element in change.movedElements)
 			{
 				if (element is ISaveableElement<SaveData> saveableElement)
-				{
-					saveableElement.SaveData.Position = element.GetPosition().position;
-					saveableElement.SaveData.Save();
-				}
+					saveableElement.UpdatePosition(element.GetPosition().position);
 			}
 
 			return change;

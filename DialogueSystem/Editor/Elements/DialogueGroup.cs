@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Window;
@@ -45,6 +46,9 @@ namespace DialogueSystem.Editor.Elements
 		{
 			SaveData.Position = newPosition;
 			SaveData.Save();
+			
+			foreach (var node in containedElements.Cast<DialogueNode>())
+				node.UpdatePosition(node.GetPosition().position);
 		}
 
 		public void Remove()
