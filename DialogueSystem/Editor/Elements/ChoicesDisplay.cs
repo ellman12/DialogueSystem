@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DialogueSystem.Data;
-using DialogueSystem.Editor.Window;
 using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
@@ -10,38 +9,38 @@ namespace DialogueSystem.Editor.Elements
 	{
 		public new IEnumerable<ChoiceDisplay> Children => contentContainer.Children().Cast<ChoiceDisplay>();
 
-		private readonly DialogueNode node;
+		public DialogueNode Node { get; private set; }
 
 		public ChoicesDisplay(DialogueNode node)
 		{
-			this.node = node;
+			Node = node;
 		}
 
 		public void Add()
 		{
-			node.HideOutputPort();
+			Node.HideOutputPort();
 
 			ChoiceSaveData choice = new();
-			node.SaveData.Choices.Add(choice);
+			Node.SaveData.Choices.Add(choice);
 			contentContainer.Add(new ChoiceDisplay(this, choice));
 		}
 
 		public void Add(ChoiceSaveData saveData)
 		{
-			node.HideOutputPort();
+			Node.HideOutputPort();
 			
 			contentContainer.Add(new ChoiceDisplay(this, saveData));
 		}
 
 		public void Remove(ChoiceDisplay choiceDisplay, ChoiceSaveData saveData)
 		{
-			node.SaveData.Choices.Remove(saveData);
-			node.SaveData.Save();
+			Node.SaveData.Choices.Remove(saveData);
+			Node.SaveData.Save();
 			
 			contentContainer.Remove(choiceDisplay);
 
 			if (childCount == 0)
-				node.ShowOutputPort();
+				Node.ShowOutputPort();
 		}
 	}
 }

@@ -25,6 +25,7 @@ namespace DialogueSystem.Editor.Elements
 		public DialogueNode(Vector2 position, int startingChoices = 0)
 		{
 			SaveData = NodeSaveData.Create(position);
+			SaveData.Node = this;
 
 			RegisterCallback<FocusOutEvent>(_ => FocusOut());
 			
