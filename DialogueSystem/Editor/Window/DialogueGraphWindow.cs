@@ -50,8 +50,8 @@ namespace DialogueSystem.Editor.Window
 			AssetDatabase.Refresh();
 
 			//TODO: remove this later
-			string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
-			graphView.CreateGraph(path);
+			// string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
+			// graphView.CreateGraph(path);
 		}
 	}
 }
