@@ -1,5 +1,5 @@
-using System;
 using DialogueSystem.Data;
+using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Window;
 using UnityEditor.Experimental.GraphView;
@@ -8,83 +8,98 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
-	public sealed class DialogueNode : Node
+	public sealed class DialogueNode : Node, ISaveableElement<NodeSaveData>
 	{
 		public Port Input { get; private set; }
 		public Port Output { get; private set; }
 
+		public NodeSaveData SaveData { get; }
+
+		private TextField nameTextField;
+		
 		public ChoicesDisplay ChoicesDisplay { get; private set; }
 
 		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
-
-        public readonly NodeSaveData SaveData;
-        
-		private readonly DialogueGraphView graphView;
-
-		public DialogueNode(DialogueGraphView graphView, Vector2 position, int startingChoices = 0)
+		
+		#region Constructors
+		public DialogueNode(Vector2 position, int startingChoices = 0)
 		{
-			this.graphView = graphView;
-			SaveData = NodeSaveData.Create(graphView.GraphPath, position);
+			SaveData = NodeSaveData.Create(position);
+			SaveData.Node = this;
+
+			RegisterCallback<FocusOutEvent>(_ => FocusOut());
 			
-			AddEvents();
 			AddElements();
 
 			for (int i = 0; i < startingChoices; i++)
 				ChoicesDisplay.Add();
 		}
 
-		public DialogueNode(DialogueGraphView graphView, NodeSaveData saveData)
+		public DialogueNode(NodeSaveData saveData)
 		{
-			this.graphView = graphView;
 			SaveData = saveData;
 
-			AddEvents();
+			RegisterCallback<FocusOutEvent>(_ => FocusOut());
+			
 			AddElements();
 
 			foreach (var choice in SaveData.Choices)
-			{
 				ChoicesDisplay.Add(choice);
-			}
 		}
-
-		private void AddEvents()
-		{
-			RegisterCallback<FocusInEvent>(_ => SaveData.FocusIn());
-			RegisterCallback<FocusOutEvent>(_ => SaveData.FocusOut());
-		}
-
+		
 		private void AddElements()
 		{
 			SetPosition(new Rect(SaveData.Position, Vector2.zero));
 			this.AddStyleSheet("Nodes/DialogueNode");
 
-			ChoicesDisplay = new ChoicesDisplay(this, graphView);
-			
+			ChoicesDisplay = new ChoicesDisplay(this);
+
+			#region Title Container
 			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
 			titleButtonContainer.Insert(0, Input);
 
-			titleButtonContainer.InsertTextField(1, e => SaveData.Name = String.IsNullOrWhiteSpace(e.newValue) ? SaveData.Id : e.newValue, SaveData.Name);
+			nameTextField = ElementExtensions.CreateTextField(_ => {}, SaveData.Name == SaveData.Id ? "" : SaveData.Name);
+			titleButtonContainer.Insert(1, nameTextField);
+
 			titleButtonContainer.InsertIconButton(2, "Add", ChoicesDisplay.Add);
 
 			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			titleButtonContainer.Add(Output);
+			#endregion
 
+			#region Extension Container
 			extensionContainer.AddTextField(e => SaveData.Text = e.newValue, SaveData.Text, true);
 
 			extensionContainer.Add(ChoicesDisplay);
 
 			expanded = true;
 			RefreshExpandedState();
+			#endregion
+		}
+		#endregion
+		
+		public void UpdatePosition(Vector2 newPosition)
+		{
+			SaveData.Position = newPosition;
+			SaveData.Save();
 		}
 
-        public void Delete()
-        {
-            DisconnectAllPorts();
-            SaveData.Delete();
-            RemoveFromHierarchy();
-        }
+		public void Remove() => DialogueGraphView.C.RemoveElement(this);
 
-        #region Ports
+		public void Delete()
+		{
+			DisconnectAllPorts();
+			Remove();
+			SaveData.Delete();
+		}
+
+		private void FocusOut()
+		{
+			SaveData.Name = nameTextField.value = nameTextField.value.Trim();
+			SaveData.Save();
+		}
+
+		#region Ports
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
 		{
 			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
@@ -99,7 +114,7 @@ namespace DialogueSystem.Editor.Elements
 			SaveData.Next = null;
 			SaveData.Save();
 
-			graphView.DeleteElements(Output.connections);
+			DialogueGraphView.C.DeleteElements(Output.connections);
 			Output.style.display = DisplayStyle.None;
 		}
 
@@ -109,13 +124,13 @@ namespace DialogueSystem.Editor.Elements
 			DisconnectOutputPorts();
 		}
 
-		private void DisconnectInputPort() => graphView.DeleteElements(Input.connections);
+		private void DisconnectInputPort() => DialogueGraphView.C.DeleteElements(Input.connections);
 		private void DisconnectOutputPorts()
 		{
 			SaveData.Next = null;
 			SaveData.Save();
 
-			graphView.DeleteElements(Output.connections);
+			DialogueGraphView.C.DeleteElements(Output.connections);
 
 			foreach (var choiceDisplay in ChoicesDisplay.Children)
 				choiceDisplay.DisconnectPort();

@@ -10,13 +10,15 @@ namespace DialogueSystem.Editor.Window
 	public sealed class DialogueGraphWindow : EditorWindow
 	{
 		[MenuItem("Window/Dialogue Graph")]
-		public static void Open() => GetWindow<DialogueGraphWindow>("Dialogue Graph");
-
-		public const string GraphsRoot = "Assets/DialogueSystem/Graphs";
-
-		public static readonly string ProjectRoot = Environment.CurrentDirectory.Replace('\\', '/');
+		public static void Open() => CreateWindow<DialogueGraphWindow>("Dialogue Graph");
 
 		private DialogueGraphView graphView;
+		public static DialogueGraphView GraphView => C.graphView;
+
+		private DialogueGraphToolbar toolbar; 
+		public static DialogueGraphToolbar Toolbar => C.toolbar;
+
+		public static DialogueGraphWindow C;
 
 		//TODO: delete this later
 		[MenuItem("DS/Clear &c")]
@@ -27,28 +29,29 @@ namespace DialogueSystem.Editor.Window
 			AssetDatabase.Refresh();
 		}
 
-		///Takes an absolute path and returns it relative to Assets/.
-		public static string GetRelativePath(string fullPath) => fullPath.Replace(ProjectRoot, "")[1..]; //Remove pesky / at the start, which breaks AssetDatabase.CreateAsset().
+		public void SetTitle(string newTitle) => titleContent.text = newTitle;
 
-		///Loads all .asset files at the path.
-		public static T[] GetAssetsAtPath<T>(string path) where T : ScriptableObject
-		{
-			string[] files = Directory.GetFiles(path, "*.asset", SearchOption.AllDirectories);
-			return files.Select(AssetDatabase.LoadAssetAtPath<T>).ToArray();
-		}
+		private void OnFocus() => C = this;
 
 		private void OnEnable()
 		{
+			C = this;
+            
 			rootVisualElement.AddStyleSheet("Constants");
 
-			graphView = new DialogueGraphView(this);
+			graphView = new DialogueGraphView();
 			graphView.Hide();
 			rootVisualElement.Add(graphView);
 
-			rootVisualElement.Add(new DialogueGraphToolbar(graphView));
+			toolbar = new DialogueGraphToolbar();
+			rootVisualElement.Add(toolbar);
 
-            Directory.CreateDirectory(GraphsRoot);
-            AssetDatabase.Refresh();
-        }
+			Directory.CreateDirectory(Constants.GraphsRoot);
+			AssetDatabase.Refresh();
+
+			//TODO: remove this later
+			// string path = Path.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
+			// graphView.CreateGraph(path);
+		}
 	}
 }

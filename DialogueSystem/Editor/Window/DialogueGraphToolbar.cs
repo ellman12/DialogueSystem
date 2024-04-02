@@ -10,15 +10,13 @@ namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphToolbar : Toolbar
 	{
-		private readonly DialogueGraphView graphView;
 		private readonly Label error = new();
 
-		public DialogueGraphToolbar(DialogueGraphView graphView)
+		public DialogueGraphToolbar()
 		{
-			this.graphView = graphView;
 			this.AddStyleSheet("Toolbar");
 
-			this.AddButton("Close", graphView.CloseGraph);
+			this.AddButton("Close", DialogueGraphView.C.CloseGraph);
 			this.AddButton("Load", TryLoadGraph);
 			this.AddButton("Create", CreateGraph);
 
@@ -28,14 +26,14 @@ namespace DialogueSystem.Editor.Window
 
 		private void TryLoadGraph()
 		{
-			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", DialogueGraphWindow.GraphsRoot, "");
+			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
 
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
 
 			if (ValidGraph(fullPath))
 			{
-				graphView.LoadGraph(fullPath);
+				DialogueGraphView.C.LoadGraph(fullPath);
 				error.text = "";
 			}
 			else
@@ -53,12 +51,13 @@ namespace DialogueSystem.Editor.Window
 
 		private void CreateGraph()
 		{
-			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", DialogueGraphWindow.GraphsRoot, "");
+			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", Constants.GraphsRoot, "");
 
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
 
-			graphView.CreateGraph(fullPath);
+			error.text = "";
+			DialogueGraphView.C.CreateGraph(fullPath);
 		}
 	}
 }
