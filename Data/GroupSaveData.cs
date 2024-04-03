@@ -14,13 +14,8 @@ namespace DialogueSystem.Data
 			get => name;
 			set
 			{
-				previousName = name;
-				previousFolderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName).ReplaceSlash();
-				previousPath = Path.Combine(previousFolderPath, $"{previousName}.asset").ReplaceSlash();
-
 				string newName = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
-				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", newName).ReplaceSlash();
-				path = Path.Combine(folderPath, $"{newName}.asset").ReplaceSlash();
+				UpdatePaths(newName);
 
 				if (!File.Exists(path) && !File.Exists(previousPath))
 				{
@@ -32,7 +27,7 @@ namespace DialogueSystem.Data
 					AssetDatabase.RenameAsset(previousPath, newName);
 					AssetDatabase.MoveAsset(previousFolderPath, folderPath);
 				}
-				
+
 				AssetDatabase.Refresh();
 			}
 		}
@@ -45,6 +40,16 @@ namespace DialogueSystem.Data
 		{
 			AssetDatabase.DeleteAsset(path);
 			AssetDatabase.DeleteAsset(folderPath);
+		}
+
+		protected override void UpdatePaths(string newName)
+		{
+			previousName = name;
+			previousFolderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName).ReplaceSlash();
+			previousPath = Path.Combine(previousFolderPath, $"{previousName}.asset").ReplaceSlash();
+
+			folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", newName).ReplaceSlash();
+			path = Path.Combine(folderPath, $"{newName}.asset").ReplaceSlash();
 		}
 	}
 }

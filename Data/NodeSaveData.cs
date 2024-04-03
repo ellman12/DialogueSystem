@@ -14,19 +14,13 @@ namespace DialogueSystem.Data
 	{
 		public DialogueNode Node { get; set; }
 
-		//TODO: try to reduce this repetition
 		public override string Name
 		{
 			get => name;
 			set
 			{
-				previousName = name;
-				previousPath = Path.Combine(DialogueGraphView.C.GraphPath, Group == null ? "Ungrouped" : $"Groups/{Group.Name}", $"{previousName}.asset").ReplaceSlash();
-
-				//Setting name directly does not work. RenameAsset() sets name for us.
 				string newName = String.IsNullOrWhiteSpace(value) ? Id : value.Trim();
-				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, Group == null ? "Ungrouped" : $"Groups/{Group.Name}").ReplaceSlash();
-				path = Path.Combine(folderPath, $"{newName}.asset").ReplaceSlash();
+				UpdatePaths(newName);
 
 				if (!File.Exists(path) && !File.Exists(previousPath))
 				{
@@ -34,6 +28,7 @@ namespace DialogueSystem.Data
 				}
 				else if (previousName != newName)
 				{
+					//Setting name directly does not work. RenameAsset() sets name for us.
 					AssetDatabase.RenameAsset(previousPath, newName);
 					OnReinitialize();
 				}
@@ -57,10 +52,7 @@ namespace DialogueSystem.Data
 			set
 			{
 				group = value;
-				previousName = name;
-				previousPath = path;
-				folderPath = Path.Combine(DialogueGraphView.C.GraphPath, Group == null ? "Ungrouped" : $"Groups/{Group.Name}").ReplaceSlash();
-				path = Path.Combine(folderPath, $"{name}.asset").ReplaceSlash();
+				UpdatePaths(name);
 
 				AssetDatabase.MoveAsset(previousPath, path);
 			}
@@ -69,6 +61,15 @@ namespace DialogueSystem.Data
 		public static NodeSaveData Create(Vector2 position) => SaveData.Create<NodeSaveData>(position);
 
 		public override void Delete() => AssetDatabase.DeleteAsset(path);
+
+		protected override void UpdatePaths(string newName)
+		{
+			previousName = name;
+			previousPath = path;
+
+			folderPath = Path.Combine(DialogueGraphView.C.GraphPath, Group == null ? "Ungrouped" : $"Groups/{Group.Name}").ReplaceSlash();
+			path = Path.Combine(folderPath, $"{newName}.asset").ReplaceSlash();
+		}
 
 		///When the name of a SO changes, Unity reinitializes the SO and copies the values of its members. Because of this, references to reference types (in this case the choices) become stale. I hate this and I hate Unity.
 		private void OnReinitialize()

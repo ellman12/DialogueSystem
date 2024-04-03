@@ -35,5 +35,7 @@ namespace DialogueSystem.Data
 		}
 
 		public abstract void Delete();
+
+		protected abstract void UpdatePaths(string newName);
 	}
 }
