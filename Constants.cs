@@ -3,10 +3,10 @@ using DialogueSystem.Editor.Utilities;
 
 namespace DialogueSystem
 {
-	internal static class Constants
+	public static class Constants
 	{
-		internal const string GraphsRoot = "Assets/DialogueSystem/Graphs";
+		public const string GraphsRoot = "Assets/DialogueSystem/Graphs";
 
-		internal static readonly string ProjectRoot = Environment.CurrentDirectory.ReplaceSlash();
+		public static readonly string ProjectRoot = Environment.CurrentDirectory.ReplaceSlash();
 	}
 }
