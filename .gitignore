@@ -75,9 +75,12 @@ crashlytics-build.properties
 
 *.vsconfig
 
-*.meta
-!Editor/Window/Icons/*.meta
-
 *.idea
 
-*.asset
+*.vsconfig
+
+*.meta
+!Editor/Window/Icons/*.meta
+!Graphs/*.meta
+
+*.idea
