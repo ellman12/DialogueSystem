@@ -37,7 +37,7 @@ namespace DialogueSystem.Editor.Elements
 	
 		private void FocusOut()
 		{
-			SaveData.Name = title = title.Trim();
+			SaveData.Name = title = String.IsNullOrWhiteSpace(title) ? SaveData.Id : title.Trim();
 			SaveData.Save();
 		}	
 		#endregion
