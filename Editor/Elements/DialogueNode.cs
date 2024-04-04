@@ -1,6 +1,7 @@
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
+using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -94,8 +95,8 @@ namespace DialogueSystem.Editor.Elements
 		}
 
 		private void FocusOut()
-		{
-			SaveData.Name = nameTextField.value = nameTextField.value.Trim();
+        {
+            SaveData.Name = nameTextField.value = nameTextField.value.Trim().RemoveInvalidChars();
 			SaveData.Save();
 		}
 

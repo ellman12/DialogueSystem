@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements.Interfaces;
+using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -36,8 +37,8 @@ namespace DialogueSystem.Editor.Elements
 		}
 	
 		private void FocusOut()
-		{
-			SaveData.Name = title = String.IsNullOrWhiteSpace(title) ? SaveData.Id : title.Trim();
+        {
+            SaveData.Name = title = String.IsNullOrWhiteSpace(title) ? SaveData.Id : title.Trim().RemoveInvalidChars();
 			SaveData.Save();
 		}	
 		#endregion
