@@ -7,15 +7,18 @@ using UnityEngine.UIElements;
 namespace DialogueSystem.Editor.Elements
 {
 	public sealed class ChoiceDisplay : VisualElement
-	{
-		public ChoiceSaveData SaveData { get; set; }
+    {
+        private ChoiceSaveData saveData;
+        public ChoiceSaveData SaveData
+        {
+            get => saveData;
+            set => Output.userData = saveData = value;
+        }
 		
 		public Port Output { get; }
 		
 		public ChoiceDisplay(ChoicesDisplay choicesDisplay, ChoiceSaveData saveData)
 		{
-			SaveData = saveData;
-			
 			AddToClassList("choiceDisplay");
 			this.AddStyleSheet("Nodes/ChoiceDisplay");
 			
@@ -25,6 +28,8 @@ namespace DialogueSystem.Editor.Elements
 			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			Output.userData = saveData;
 			Add(Output);	
+            
+			SaveData = saveData;
 		}
 
 		public void DisconnectPort() => DialogueGraphView.C.DeleteElements(Output.connections);
