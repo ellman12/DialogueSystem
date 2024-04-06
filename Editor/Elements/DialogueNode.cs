@@ -3,6 +3,8 @@ using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -96,10 +98,21 @@ namespace DialogueSystem.Editor.Elements
             Remove();
             SaveData.Delete();
         }
-        
-        private void FocusOut()
+
+        private async void FocusOut()
         {
-            SaveData.Name = nameTextField.value = nameTextField.value.Trim().RemoveInvalidChars();
+            string newName = nameTextField.value.Trim().RemoveInvalidChars();
+
+            if (DialogueGraphView.C.graphElements.OfType<ISaveableElement<SaveData>>().Where(element => element != this).Any(element => element.SaveData.Name == newName))
+            {
+                DialogueGraphToolbar.C.Error.text = "Name in use";
+                SaveData.Name = nameTextField.value = "";
+                await Task.Delay(3000);
+                DialogueGraphToolbar.C.Error.text = "";
+            }
+            else
+                SaveData.Name = newName;
+
             SaveData.Save();
         }
 
