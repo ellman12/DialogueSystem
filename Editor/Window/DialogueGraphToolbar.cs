@@ -1,7 +1,10 @@
+using DialogueSystem.Data;
+using DialogueSystem.Editor.Elements.Interfaces;
 using System;
 using System.IO;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -9,53 +12,64 @@ using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Window
 {
-	public sealed class DialogueGraphToolbar : Toolbar
-	{
+    public sealed class DialogueGraphToolbar : Toolbar
+    {
         public Label Error { get; } = new();
 
         public static DialogueGraphToolbar C => DialogueGraphWindow.Toolbar;
-        
-		public DialogueGraphToolbar()
-		{
-			this.AddStyleSheet("Toolbar");
 
-			this.AddButton("Close", DialogueGraphView.C.CloseGraph);
-			this.AddButton("Load", TryLoadGraph);
-			this.AddButton("Create", CreateGraph);
+        public DialogueGraphToolbar()
+        {
+            this.AddStyleSheet("Toolbar");
 
-			Error.style.color = Color.red;
-			Add(Error);
-		}
+            this.AddButton("Close", DialogueGraphView.C.CloseGraph);
+            this.AddButton("Load", TryLoadGraph);
+            this.AddButton("Create", CreateGraph);
+            this.AddButton("Ping", Ping);
 
-		private void TryLoadGraph()
-		{
-			string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
+            Error.style.color = Color.red;
+            Add(Error);
+        }
 
-			if (String.IsNullOrWhiteSpace(fullPath))
-				return;
+        private void TryLoadGraph()
+        {
+            string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
 
-			if (ValidGraph(fullPath))
-				DialogueGraphView.C.LoadGraph(fullPath);
-			else
-				Error.text = "Folder is invalid!";
-		}
+            if (String.IsNullOrWhiteSpace(fullPath))
+                return;
 
-		private static bool ValidGraph(string fullPath)
-		{
-			string ungroupedPath = PathUtility.Combine(fullPath, "Ungrouped");
-			string groupsPath = PathUtility.Combine(fullPath, "Groups");
-			return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
-		}
+            if (ValidGraph(fullPath))
+                DialogueGraphView.C.LoadGraph(fullPath);
+            else
+                Error.text = "Folder is invalid!";
+        }
 
-		private void CreateGraph()
-		{
-			string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", Constants.GraphsRoot, "");
+        private static bool ValidGraph(string fullPath)
+        {
+            string ungroupedPath = PathUtility.Combine(fullPath, "Ungrouped");
+            string groupsPath = PathUtility.Combine(fullPath, "Groups");
+            return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
+        }
 
-			if (String.IsNullOrWhiteSpace(fullPath))
-				return;
+        private void CreateGraph()
+        {
+            string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", Constants.GraphsRoot, "");
 
-			Error.text = "";
-			DialogueGraphView.C.CreateGraph(fullPath);
-		}
-	}
+            if (String.IsNullOrWhiteSpace(fullPath))
+                return;
+
+            Error.text = "";
+            DialogueGraphView.C.CreateGraph(fullPath);
+        }
+
+        private static void Ping()
+        {
+            var selection = DialogueGraphView.C.selection;
+
+            if (selection.Count == 0)
+                EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(DialogueGraphView.C.GraphPath));
+            else if (selection.Count == 1 && selection.First() is ISaveableElement<SaveData> element)
+                EditorGUIUtility.PingObject(element.SaveData);
+        }
+    }
 }
