@@ -10,8 +10,10 @@ namespace DialogueSystem.Editor.Window
 {
 	public sealed class DialogueGraphToolbar : Toolbar
 	{
-		private readonly Label error = new();
+        public Label Error { get; } = new();
 
+        public static DialogueGraphToolbar C => DialogueGraphWindow.Toolbar;
+        
 		public DialogueGraphToolbar()
 		{
 			this.AddStyleSheet("Toolbar");
@@ -20,8 +22,8 @@ namespace DialogueSystem.Editor.Window
 			this.AddButton("Load", TryLoadGraph);
 			this.AddButton("Create", CreateGraph);
 
-			error.style.color = Color.red;
-			Add(error);
+			Error.style.color = Color.red;
+			Add(Error);
 		}
 
 		private void TryLoadGraph()
@@ -32,14 +34,9 @@ namespace DialogueSystem.Editor.Window
 				return;
 
 			if (ValidGraph(fullPath))
-			{
 				DialogueGraphView.C.LoadGraph(fullPath);
-				error.text = "";
-			}
 			else
-			{
-				error.text = "Folder is invalid!";
-			}
+				Error.text = "Folder is invalid!";
 		}
 
 		private static bool ValidGraph(string fullPath)
@@ -56,7 +53,7 @@ namespace DialogueSystem.Editor.Window
 			if (String.IsNullOrWhiteSpace(fullPath))
 				return;
 
-			error.text = "";
+			Error.text = "";
 			DialogueGraphView.C.CreateGraph(fullPath);
 		}
 	}

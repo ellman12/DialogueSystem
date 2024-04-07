@@ -12,13 +12,15 @@ namespace DialogueSystem.Editor.Window
 		[MenuItem("Window/Dialogue Graph")]
 		public static void Open() => CreateWindow<DialogueGraphWindow>("Dialogue Graph");
 
-		private DialogueGraphView graphView;
+		internal DialogueGraphView graphView;
 		public static DialogueGraphView GraphView => C.graphView;
 
 		private DialogueGraphToolbar toolbar; 
 		public static DialogueGraphToolbar Toolbar => C.toolbar;
 
 		public static DialogueGraphWindow C;
+
+        public static DialogueGraphWindow[] Windows => Resources.FindObjectsOfTypeAll<DialogueGraphWindow>();
 
 		//TODO: delete this later
 		[MenuItem("DS/Clear &c")]
