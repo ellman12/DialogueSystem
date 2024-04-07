@@ -36,8 +36,8 @@ namespace DialogueSystem.Editor.Window
 
 		private void OnFocus() => C = this;
 
-		private void OnEnable()
-		{
+        private void CreateGUI()
+        {
 			C = this;
             
 			rootVisualElement.AddStyleSheet("Constants");
