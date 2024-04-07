@@ -209,8 +209,8 @@ namespace DialogueSystem.Editor.Window
             if (change.edgesToCreate == null)
                 return change;
 
-            foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
-                edge.Connect();
+			foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
+				edge.OnConnect();
 
             return change;
         }
