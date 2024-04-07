@@ -20,6 +20,8 @@ namespace DialogueSystem.Scripts
 
 		public event EventHandler OnCurrentChanged, OnBegin, OnAdvance, OnChoiceSelected, OnEnd;
 
+        public bool OnEndNode => Current.Next == null && Current.Choices.Count == 0;
+
 		[SerializeField]
 		private NodeSaveData start;
 
