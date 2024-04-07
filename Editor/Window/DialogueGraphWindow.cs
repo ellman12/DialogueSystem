@@ -22,10 +22,10 @@ namespace DialogueSystem.Editor.Window
 
 		//TODO: delete this later
 		[MenuItem("DS/Clear &c")]
-		public static void Clear(MenuCommand menuCommand)
+		public static void Clear(MenuCommand _)
 		{
-			Directory.Delete("Assets/DialogueSystem/Graphs", true);
-			Directory.CreateDirectory("Assets/DialogueSystem/Graphs");
+			Directory.Delete(Constants.GraphsRoot, true);
+			Directory.CreateDirectory(Constants.GraphsRoot);
 			AssetDatabase.Refresh();
 		}
 

@@ -5,7 +5,7 @@ namespace DialogueSystem
 {
 	public static class Constants
 	{
-		public const string GraphsRoot = "Assets/DialogueSystem/Graphs";
+		public const string GraphsRoot = "Assets/Dialogue Graphs";
 
 		public static readonly string ProjectRoot = Environment.CurrentDirectory.ReplaceSlash();
 	}
