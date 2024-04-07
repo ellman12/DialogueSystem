@@ -25,6 +25,13 @@ namespace DialogueSystem.Editor.Elements
 
             title = SaveData.Id;
             SetPosition(new Rect(position, Vector2.zero));
+
+            foreach (var node in DialogueGraphView.C.selection.OfType<DialogueNode>().Where(node => node.SaveData.Group == null))
+            {
+                node.SaveData.Group = SaveData;
+                node.SaveData.Save();
+                AddElement(node);
+            }
         }
 
         public DialogueGroup(GroupSaveData saveData)
