@@ -23,43 +23,12 @@ namespace DialogueSystem.Editor.Window
             this.AddStyleSheet("Toolbar");
 
             this.AddButton("Close", DialogueGraphView.C.CloseGraph);
-            this.AddButton("Load", TryLoadGraph);
-            this.AddButton("Create", CreateGraph);
+            this.AddButton("Load", DialogueGraphView.C.TryLoadGraph);
+            this.AddButton("Create", DialogueGraphView.C.TryCreateGraph);
             this.AddButton("Ping", Ping);
 
             Error.style.color = Color.red;
             Add(Error);
-        }
-
-        private void TryLoadGraph()
-        {
-            string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
-
-            if (String.IsNullOrWhiteSpace(fullPath))
-                return;
-
-            if (ValidGraph(fullPath))
-                DialogueGraphView.C.LoadGraph(fullPath);
-            else
-                Error.text = "Folder is invalid!";
-        }
-
-        private static bool ValidGraph(string fullPath)
-        {
-            string ungroupedPath = PathUtility.Combine(fullPath, "Ungrouped");
-            string groupsPath = PathUtility.Combine(fullPath, "Groups");
-            return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
-        }
-
-        private void CreateGraph()
-        {
-            string fullPath = EditorUtility.SaveFolderPanel("Choose Folder", Constants.GraphsRoot, "");
-
-            if (String.IsNullOrWhiteSpace(fullPath))
-                return;
-
-            Error.text = "";
-            DialogueGraphView.C.CreateGraph(fullPath);
         }
 
         private static void Ping()

@@ -7,6 +7,7 @@ using DialogueSystem.Editor.Elements;
 using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
@@ -55,17 +56,39 @@ namespace DialogueSystem.Editor.Window
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _) => ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
 
-        public void LoadGraph(string path)
+        private const int ErrorTextDelay = 3000; //ms
+
+        public async void TryLoadGraph()
         {
-            path = PathUtility.GetRelativePath(path);
+            string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
             
-            if (DialogueGraphWindow.Windows.Any(window => window != DialogueGraphWindow.C && window.graphView.GraphPath == path))
+            if (String.IsNullOrWhiteSpace(fullPath))
+                return;
+            
+            if (!GraphExists(fullPath))
+                return;
+
+            string relativePath = PathUtility.GetRelativePath(fullPath);
+
+            if (DialogueGraphWindow.Windows.Any(window => window != DialogueGraphWindow.C && window.graphView.GraphPath == relativePath))
             {
                 DialogueGraphToolbar.C.Error.text = "Graph open in another window";
+                await Task.Delay(ErrorTextDelay);
+                DialogueGraphToolbar.C.Error.text = "";
                 return;
             }
-            
-            SetGraph(path);
+
+            LoadGraph(relativePath);
+        }
+
+        private void LoadGraph(string path)
+        {
+            GraphPath = PathUtility.GetRelativePath(path);
+            GraphName = Path.GetFileName(GraphPath);
+            DialogueGraphWindow.C.SetTitle(GraphName);
+            DialogueGraphToolbar.C.Error.text = "";
+            Clear();
+            this.Show();
 
             var nodeAssets = IOUtility.GetAssetsAtPath<NodeSaveData>(GraphPath);
             var groupAssets = IOUtility.GetAssetsAtPath<GroupSaveData>(GraphPath);
@@ -111,54 +134,69 @@ namespace DialogueSystem.Editor.Window
             }
         }
 
-		public void CreateGraph(string path)
-		{
-			path = PathUtility.GetRelativePath(path);
-			string ungroupedPath = PathUtility.Combine(path, "Ungrouped");
-			string groupedPath = PathUtility.Combine(path, "Groups");
+        public async void TryCreateGraph()
+        {
+            string path = PathUtility.GetRelativePath(EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, ""));
 
-            if (Directory.Exists(ungroupedPath) && Directory.Exists(groupedPath))
+            if (String.IsNullOrWhiteSpace(path))
+                return;
+
+            if (DialogueGraphWindow.Windows.Any(window => window != DialogueGraphWindow.C && window.graphView.GraphPath == path))
             {
-                LoadGraph(path);
+                DialogueGraphToolbar.C.Error.text = "Graph open in another window";
+                await Task.Delay(ErrorTextDelay);
+                DialogueGraphToolbar.C.Error.text = "";
                 return;
             }
 
-            SetGraph(path);
-            Directory.CreateDirectory(path);
-            Directory.CreateDirectory(ungroupedPath);
-            Directory.CreateDirectory(groupedPath);
-            AssetDatabase.Refresh();
+            if (GraphExists(path))
+            {
+                LoadGraph(path);
+                DialogueGraphToolbar.C.Error.text = "Opening existing graph";
+                await Task.Delay(ErrorTextDelay);
+                DialogueGraphToolbar.C.Error.text = "";
+                return;
+            }
+
+            CreateGraph(path);
         }
 
-		public void CloseGraph()
-		{
-			GraphName = GraphPath = "";
-			DialogueGraphWindow.C.SetTitle("Dialogue Graph");
-			DialogueGraphToolbar.C.Error.text = "";
-			Clear();
-			this.Hide();
-		}
-        
+        private void CreateGraph(string path)
+        {
+            DialogueGraphToolbar.C.Error.text = "";
+
+            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(Path.Combine(path, "Ungrouped"));
+            Directory.CreateDirectory(Path.Combine(path, "Groups"));
+            AssetDatabase.Refresh();
+            LoadGraph(path);
+        }
+
+        public void CloseGraph()
+        {
+            DialogueGraphWindow.C.SetTitle("Dialogue Graph");
+            GraphName = GraphPath = DialogueGraphToolbar.C.Error.text = "";
+            Clear();
+            this.Hide();
+        }
+
         public void OnTextInputFocusIn(DialogueNode node)
         {
             ClearSelection();
             AddToSelection(node);
         }
 
-        private void SetGraph(string path)
-        {
-            GraphName = Path.GetFileName(path);
-            DialogueGraphWindow.C.SetTitle(GraphName);
-            GraphPath = PathUtility.GetRelativePath(path);
-            DialogueGraphToolbar.C.Error.text = "";
-            Clear();
-            this.Show();
-        }
-
         private new void Clear()
         {
             foreach (var element in graphElements.OfType<IDialogueElement>())
                 element.Remove();
+        }
+
+        private static bool GraphExists(string fullPath)
+        {
+            string ungroupedPath = PathUtility.Combine(fullPath, "Ungrouped");
+            string groupsPath = PathUtility.Combine(fullPath, "Groups");
+            return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
         }
 
         #region Menu
@@ -169,13 +207,13 @@ namespace DialogueSystem.Editor.Window
         private Vector2 GetLocalMousePosition(DropdownMenuAction action) => contentViewContainer.WorldToLocal(action.eventInfo.localMousePosition);
         #endregion
 
-		#region Events
-		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> nodes)
-		{
-			var dialogueGroup = (DialogueGroup) group;
+        #region Events
+        private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> nodes)
+        {
+            var dialogueGroup = (DialogueGroup)group;
 
-			foreach (var node in nodes.Cast<DialogueNode>())
-			{
+            foreach (var node in nodes.Cast<DialogueNode>())
+            {
                 node.SaveData.Group = dialogueGroup.SaveData;
                 node.SaveData.Save();
             }
@@ -210,8 +248,8 @@ namespace DialogueSystem.Editor.Window
             if (change.edgesToCreate == null)
                 return change;
 
-			foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
-				edge.OnConnect();
+            foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
+                edge.OnConnect();
 
             return change;
         }
