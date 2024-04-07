@@ -130,12 +130,19 @@ namespace DialogueSystem.Editor.Window
             AssetDatabase.Refresh();
         }
 
-        public void CloseGraph()
+		public void CloseGraph()
+		{
+			GraphName = GraphPath = "";
+			DialogueGraphWindow.C.SetTitle("Dialogue Graph");
+			DialogueGraphToolbar.C.Error.text = "";
+			Clear();
+			this.Hide();
+		}
+        
+        public void OnTextInputFocusIn(DialogueNode node)
         {
-            GraphName = GraphPath = "";
-            DialogueGraphWindow.C.SetTitle("Dialogue Graph");
-            Clear();
-            this.Hide();
+            ClearSelection();
+            AddToSelection(node);
         }
 
         private void SetGraph(string path)
