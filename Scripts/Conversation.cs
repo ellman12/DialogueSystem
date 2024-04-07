@@ -6,10 +6,19 @@ namespace DialogueSystem.Scripts
 {
 	///Manages a conversation with an NPC.
 	public sealed class Conversation : MonoBehaviour
-	{
-		public NodeSaveData Current { get; private set; }
+    {
+        private NodeSaveData current;
+        public NodeSaveData Current
+        {
+            get => current;
+            set
+            {
+                current = value;
+                OnCurrentChanged?.Invoke(null, EventArgs.Empty);
+            }
+        }
 
-		public event EventHandler OnBegin, OnAdvance, OnChoiceSelected, OnEnd;
+		public event EventHandler OnCurrentChanged, OnBegin, OnAdvance, OnChoiceSelected, OnEnd;
 
 		[SerializeField]
 		private NodeSaveData start;
