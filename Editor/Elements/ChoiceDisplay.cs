@@ -23,7 +23,7 @@ namespace DialogueSystem.Editor.Elements
 			this.AddStyleSheet("Nodes/ChoiceDisplay");
 			
 			this.AddIconButton("Close", () => { DisconnectPort(); choicesDisplay.Remove(this, saveData); });
-			this.AddTextField(OnTextChange, SaveData.Text);
+			this.AddTextField(OnTextChange, saveData.Text);
 
 			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			Output.userData = saveData;
