@@ -150,6 +150,7 @@ namespace DialogueSystem.Editor.Window
             GraphName = Path.GetFileName(path);
             DialogueGraphWindow.C.SetTitle(GraphName);
             GraphPath = PathUtility.GetRelativePath(path);
+            DialogueGraphToolbar.C.Error.text = "";
             Clear();
             this.Show();
         }
