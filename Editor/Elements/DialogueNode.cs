@@ -22,8 +22,6 @@ namespace DialogueSystem.Editor.Elements
 
         public ChoicesDisplay ChoicesDisplay { get; private set; }
 
-        public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
-
         #region Constructors
         public DialogueNode(Vector2 position, int startingChoices = 0)
         {
