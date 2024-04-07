@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using DialogueSystem.Editor.Extensions;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,9 +19,9 @@ namespace DialogueSystem.Editor.Window
 		private DialogueGraphToolbar toolbar; 
 		public static DialogueGraphToolbar Toolbar => C.toolbar;
 
-		public static DialogueGraphWindow C;
+		public static DialogueGraphWindow C { get; private set; }
 
-        public static DialogueGraphWindow[] Windows => Resources.FindObjectsOfTypeAll<DialogueGraphWindow>();
+        public static IEnumerable<DialogueGraphWindow> Windows => Resources.FindObjectsOfTypeAll<DialogueGraphWindow>();
 
 		//TODO: delete this later
 		[MenuItem("DS/Clear &c")]
