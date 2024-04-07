@@ -1,8 +1,13 @@
-﻿namespace DialogueSystem.Editor.Utilities
+﻿using System.IO;
+
+namespace DialogueSystem.Editor.Utilities
 {
 	///Various DialogueSystem utility methods for paths.
 	public static class PathUtility
-	{
+    {
+        ///Combines paths and returns a path with only '/' as the separators.
+        public static string Combine(params string[] paths) => Path.Combine(paths).ReplaceSlash();
+        
 		///Replaces all '\' path separators with '/'.
 		public static string ReplaceSlash(this string path) => path.Replace('\\', '/');
 		

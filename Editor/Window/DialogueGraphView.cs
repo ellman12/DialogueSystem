@@ -111,11 +111,11 @@ namespace DialogueSystem.Editor.Window
             }
         }
 
-        public void CreateGraph(string path)
-        {
-            path = PathUtility.GetRelativePath(path);
-            string ungroupedPath = Path.Combine(path, "Ungrouped");
-            string groupedPath = Path.Combine(path, "Groups");
+		public void CreateGraph(string path)
+		{
+			path = PathUtility.GetRelativePath(path);
+			string ungroupedPath = PathUtility.Combine(path, "Ungrouped");
+			string groupedPath = PathUtility.Combine(path, "Groups");
 
             if (Directory.Exists(ungroupedPath) && Directory.Exists(groupedPath))
             {

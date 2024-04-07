@@ -67,8 +67,8 @@ namespace DialogueSystem.Data
 			previousName = name;
 			previousPath = path;
 
-			folderPath = Path.Combine(DialogueGraphView.C.GraphPath, Group == null ? "Ungrouped" : $"Groups/{Group.Name}").ReplaceSlash();
-			path = Path.Combine(folderPath, $"{newName}.asset").ReplaceSlash();
+            folderPath = PathUtility.Combine(DialogueGraphView.C.GraphPath, Group == null ? "Ungrouped" : $"Groups/{Group.Name}");
+			path = PathUtility.Combine(folderPath, $"{newName}.asset");
 		}
 
 		///When the name of a SO changes, Unity reinitializes the SO and copies the values of its members. Because of this, references to reference types (in this case the choices) become stale. I hate this and I hate Unity.

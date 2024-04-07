@@ -45,11 +45,11 @@ namespace DialogueSystem.Data
 		protected override void UpdatePaths(string newName)
 		{
 			previousName = name;
-			previousFolderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName).ReplaceSlash();
-			previousPath = Path.Combine(previousFolderPath, $"{previousName}.asset").ReplaceSlash();
+            previousFolderPath = PathUtility.Combine(DialogueGraphView.C.GraphPath, "Groups", previousName);
+            previousPath = PathUtility.Combine(previousFolderPath, $"{previousName}.asset");
 
-			folderPath = Path.Combine(DialogueGraphView.C.GraphPath, "Groups", newName).ReplaceSlash();
-			path = Path.Combine(folderPath, $"{newName}.asset").ReplaceSlash();
+			folderPath = PathUtility.Combine(DialogueGraphView.C.GraphPath, "Groups", newName);
+			path = PathUtility.Combine(folderPath, $"{newName}.asset");
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using DialogueSystem.Editor.Extensions;
+using DialogueSystem.Editor.Utilities;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -41,8 +42,8 @@ namespace DialogueSystem.Editor.Window
 
 		private static bool ValidGraph(string fullPath)
 		{
-			string ungroupedPath = Path.Combine(fullPath, "Ungrouped");
-			string groupsPath = Path.Combine(fullPath, "Groups");
+			string ungroupedPath = PathUtility.Combine(fullPath, "Ungrouped");
+			string groupsPath = PathUtility.Combine(fullPath, "Groups");
 			return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
 		}
 
