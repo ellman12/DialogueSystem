@@ -1,6 +1,7 @@
 using System;
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -44,9 +45,14 @@ namespace DialogueSystem.Editor.Extensions
         #region Port
         public static Port CreatePort(Direction direction, Port.Capacity capacity)
         {
-            var port = Port.Create<DialogueEdge>(Orientation.Horizontal, direction, capacity, typeof(bool));
+            var port = Port.Create<DialogueEdge>(Orientation.Horizontal, direction, capacity, typeof(DialogueEdge));
             port.portName = "";
             port.AddStyleSheet("Inputs/Port");
+            
+            //Ports have a label element that, even if the text is "", needs to be displaying for the dragging to work. Remove default margins.
+            IStyle connectorText = port.Q<Label>().style;
+            connectorText.marginLeft = connectorText.marginRight = 0;
+            
             return port;
         }
 
