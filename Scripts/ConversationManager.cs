@@ -28,13 +28,15 @@ namespace DialogueSystem.Scripts
                 OnCurrentChanged?.Invoke(null, EventArgs.Empty);
                 current = value;
 
-                StartCoroutine(TypeLine());
+                StartTypingLine();
             }
         }
 
         public event EventHandler OnCurrentChanged, OnBegin, OnAdvance, OnChoiceSelected, OnFinish;
 
         public bool OnFinalNode => Current.Next == null && Current.Choices.Count == 0;
+
+        private Coroutine typingCoroutine;
 
         private void Start()
         {
@@ -89,6 +91,19 @@ namespace DialogueSystem.Scripts
                 button.Hide();
         }
 
+        private void StartTypingLine()
+        {
+            typingCoroutine = StartCoroutine(TypeLine());
+        }
+
+        private void FinishTypingLine()
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+            dialogueText.text = Current.Text;
+            SetupChoices();
+        }
+
         private IEnumerator TypeLine()
         {
             dialogueText.text = "";
@@ -101,11 +116,15 @@ namespace DialogueSystem.Scripts
             }
 
             SetupChoices();
+            typingCoroutine = null;
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Advance();
+            if (typingCoroutine == null)
+                Advance();
+            else
+                FinishTypingLine();
         }
     }
 }
