@@ -57,14 +57,14 @@ namespace DialogueSystem.Scripts
                 Current = Current.Next;
         }
 
-        ///Advances the conversation to the selected choice node. Indexes are 1-based.
+        ///Advances the conversation to the selected choice node. Indexes are 0-based.
         public void SelectChoice(int index)
         {
-            if (index < 1 || index >= Current.Choices.Count + 1)
+            if (index < 0 || index >= Current.Choices.Count)
                 throw new ArgumentOutOfRangeException();
 
             OnChoiceSelected?.Invoke(null, EventArgs.Empty);
-            Current = Current.Choices[index - 1].Node;
+            Current = Current.Choices[index].Node;
         }
 
         ///Finish the conversation by setting Current to null.
