@@ -1,5 +1,6 @@
 using DialogueSystem.Data;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -25,12 +26,13 @@ namespace DialogueSystem.Scripts
             {
                 OnCurrentChanged?.Invoke(null, EventArgs.Empty);
                 current = value;
-                dialogueText.text = current.Text;
+
+                StartCoroutine(TypeLine());
 
                 HideButtons();
 
                 if (value == null) return;
-                
+
                 for (int i = 0; i < current.Choices.Count; i++)
                     choiceButtons[i].gameObject.SetActive(true);
             }
@@ -64,7 +66,8 @@ namespace DialogueSystem.Scripts
         ///Advances the conversation to the selected choice node. Indexes are 1-based.
         public void SelectChoice(int index)
         {
-            if (index < 1 || index >= Current.Choices.Count + 1) return;
+            if (index < 1 || index >= Current.Choices.Count + 1)
+                throw new ArgumentOutOfRangeException();
 
             OnChoiceSelected?.Invoke(null, EventArgs.Empty);
             Current = Current.Choices[index - 1].Node;
@@ -81,6 +84,16 @@ namespace DialogueSystem.Scripts
         {
             foreach (var button in choiceButtons)
                 button.gameObject.SetActive(false);
+        }
+
+        private IEnumerator TypeLine()
+        {
+            dialogueText.text = "";
+            foreach (char c in Current.Text)
+            {
+                dialogueText.text += c;
+                yield return new WaitForSeconds(textSpeed);
+            }
         }
     }
 }
