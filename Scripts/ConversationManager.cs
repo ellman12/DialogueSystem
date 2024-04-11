@@ -3,15 +3,16 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace DialogueSystem.Scripts
 {
     ///Manages the current conversation and all the relevant UI elements.
-    public sealed class ConversationManager : Singleton<ConversationManager>
+    public sealed class ConversationManager : Singleton<ConversationManager>, IPointerClickHandler
     {
         [SerializeField]
         private TextMeshProUGUI nameText, dialogueText;
-        
+
         [SerializeField]
         private ChoiceButton[] choiceButtons;
 
@@ -28,13 +29,6 @@ namespace DialogueSystem.Scripts
                 current = value;
 
                 StartCoroutine(TypeLine());
-
-                HideButtons();
-
-                if (value == null) return;
-
-                for (int i = 0; i < current.Choices.Count; i++)
-                    choiceButtons[i].gameObject.SetActive(true);
             }
         }
 
@@ -80,20 +74,38 @@ namespace DialogueSystem.Scripts
             Current = null;
         }
 
+        private void SetupChoices()
+        {
+            if (Current == null)
+                return;
+
+            for (int i = 0; i < current.Choices.Count; i++)
+                choiceButtons[i].Show();
+        }
+
         private void HideButtons()
         {
             foreach (var button in choiceButtons)
-                button.gameObject.SetActive(false);
+                button.Hide();
         }
 
         private IEnumerator TypeLine()
         {
             dialogueText.text = "";
+            HideButtons();
+
             foreach (char c in Current.Text)
             {
                 dialogueText.text += c;
                 yield return new WaitForSeconds(textSpeed);
             }
+
+            SetupChoices();
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Advance();
         }
     }
 }
