@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace DialogueSystem.Editor.Window
 {
@@ -22,6 +23,8 @@ namespace DialogueSystem.Editor.Window
         public string GraphPath { get; set; }
 
         public static DialogueGraphView C => DialogueGraphWindow.GraphView;
+        
+        public Vector2 MousePosition => contentViewContainer.WorldToLocal(Mouse.current.position.ReadValue());
 
         public DialogueGraphView()
         {
@@ -48,9 +51,9 @@ namespace DialogueSystem.Editor.Window
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
 
-            AddMenuItem("Create Node", e => AddElement(new DialogueNode(GetLocalMousePosition(e))));
-            AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(GetLocalMousePosition(e), 2)));
-            AddMenuItem("Create Group", e => AddElement(new DialogueGroup(GetLocalMousePosition(e))));
+            AddMenuItem("Create Node", _ => AddNode());
+            AddMenuItem("Create Node With Two Choices", _ => AddNode(2));
+            AddMenuItem("Create Group", _ => AddGroup());
             #endregion
         }
 
@@ -61,10 +64,10 @@ namespace DialogueSystem.Editor.Window
         public async void TryLoadGraph()
         {
             string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
-            
+
             if (String.IsNullOrWhiteSpace(fullPath))
                 return;
-            
+
             if (!GraphExists(fullPath))
                 return;
 
@@ -186,6 +189,10 @@ namespace DialogueSystem.Editor.Window
             AddToSelection(node);
         }
 
+        public void AddNode(int startingChoices = 0) => AddElement(new DialogueNode(MousePosition, startingChoices));
+
+        public void AddGroup() => AddElement(new DialogueGroup(MousePosition));
+
         private new void Clear()
         {
             foreach (var element in graphElements.OfType<IDialogueElement>())
@@ -203,8 +210,6 @@ namespace DialogueSystem.Editor.Window
         public override void BuildContextualMenu(ContextualMenuPopulateEvent _) {}
 
         private void AddMenuItem(string title, Action<DropdownMenuAction> action) => this.AddManipulator(new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(title, action)));
-
-        private Vector2 GetLocalMousePosition(DropdownMenuAction action) => contentViewContainer.WorldToLocal(action.eventInfo.localMousePosition);
         #endregion
 
         #region Events
