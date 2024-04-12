@@ -22,10 +22,10 @@ namespace DialogueSystem.Editor.Window
 
         public string GraphPath { get; set; }
 
-        public static DialogueGraphView C => DialogueGraphWindow.GraphView;
-        
         public Vector2 MousePosition => contentViewContainer.WorldToLocal(Mouse.current.position.ReadValue());
 
+        public static DialogueGraphView C => DialogueGraphWindow.GraphView;
+        
         public DialogueGraphView()
         {
             this.StretchToParentSize();
