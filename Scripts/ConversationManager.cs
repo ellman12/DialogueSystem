@@ -41,12 +41,14 @@ namespace DialogueSystem.Scripts
         private void Start()
         {
             HideButtons();
+            gameObject.SetActive(false);
         }
 
         ///Start the conversation by setting Current to the start node.
         public void Begin(NodeSaveData start)
         {
             OnBegin?.Invoke(null, EventArgs.Empty);
+            gameObject.SetActive(true);
             Current = start;
         }
 
@@ -73,6 +75,7 @@ namespace DialogueSystem.Scripts
         public void Finish()
         {
             OnFinish?.Invoke(null, EventArgs.Empty);
+            gameObject.SetActive(false);
             Current = null;
         }
 
