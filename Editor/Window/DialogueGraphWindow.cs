@@ -51,21 +51,24 @@ namespace DialogueSystem.Editor.Window
 
             rootVisualElement.AddStyleSheet("Constants");
 
+            VisualElement container = new() {focusable = true};
+            container.StretchToParentSize();
+            container.RegisterCallback<KeyDownEvent>(HandleKeyboardShortcuts);
+            rootVisualElement.Add(container);
+
             graphView = new DialogueGraphView();
             graphView.Hide();
-            rootVisualElement.Add(graphView);
+            container.Add(graphView);
 
             toolbar = new DialogueGraphToolbar();
-            rootVisualElement.Add(toolbar);
-
-            rootVisualElement.RegisterCallback<KeyDownEvent>(HandleKeyboardShortcuts);
+            container.Add(toolbar);
 
             Directory.CreateDirectory(Constants.GraphsRoot);
             AssetDatabase.Refresh();
 
             //TODO: remove this later
-			// string path = PathUtility.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
-			// graphView.CreateGraph(path);
+            // string path = Utilities.PathUtility.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
+            // graphView.CreateGraph(path);
         }
 
         private static void HandleKeyboardShortcuts(KeyDownEvent e)
