@@ -7,7 +7,6 @@ using DialogueSystem.Editor.Elements;
 using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
@@ -61,8 +60,6 @@ namespace DialogueSystem.Editor.Window
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _) => ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
 
-        private const int ErrorTextDelay = 3000; //ms
-
         public async void TryLoadGraph()
         {
             string fullPath = EditorUtility.OpenFolderPanel("Load Graph", Constants.GraphsRoot, "");
@@ -77,9 +74,7 @@ namespace DialogueSystem.Editor.Window
 
             if (DialogueGraphWindow.Windows.Any(window => window != DialogueGraphWindow.C && window.graphView.GraphPath == relativePath))
             {
-                DialogueGraphToolbar.C.Error.text = "Graph open in another window";
-                await Task.Delay(ErrorTextDelay);
-                DialogueGraphToolbar.C.Error.text = "";
+                await DialogueGraphToolbar.C.ShowError("Graph open in another window");
                 return;
             }
 
@@ -91,7 +86,7 @@ namespace DialogueSystem.Editor.Window
             GraphPath = PathUtility.GetRelativePath(path);
             GraphName = Path.GetFileName(GraphPath);
             DialogueGraphWindow.C.SetTitle(GraphName);
-            DialogueGraphToolbar.C.Error.text = "";
+            DialogueGraphToolbar.C.ClearStatus();
             Clear();
             this.Show();
 
@@ -148,27 +143,23 @@ namespace DialogueSystem.Editor.Window
 
             if (DialogueGraphWindow.Windows.Any(window => window != DialogueGraphWindow.C && window.graphView.GraphPath == path))
             {
-                DialogueGraphToolbar.C.Error.text = "Graph open in another window";
-                await Task.Delay(ErrorTextDelay);
-                DialogueGraphToolbar.C.Error.text = "";
+                await DialogueGraphToolbar.C.ShowError("Graph open in another window");
                 return;
             }
 
             if (GraphExists(path))
             {
                 LoadGraph(path);
-                DialogueGraphToolbar.C.Error.text = "Opening existing graph";
-                await Task.Delay(ErrorTextDelay);
-                DialogueGraphToolbar.C.Error.text = "";
+                await DialogueGraphToolbar.C.ShowWarning("Opening existing graph");
                 return;
             }
 
             CreateGraph(path);
         }
 
-        private void CreateGraph(string path)
+        internal void CreateGraph(string path)
         {
-            DialogueGraphToolbar.C.Error.text = "";
+            DialogueGraphToolbar.C.ClearStatus();
 
             Directory.CreateDirectory(path);
             Directory.CreateDirectory(Path.Combine(path, "Ungrouped"));
@@ -180,7 +171,8 @@ namespace DialogueSystem.Editor.Window
         public void CloseGraph()
         {
             DialogueGraphWindow.C.SetTitle("Dialogue Graph");
-            GraphName = GraphPath = DialogueGraphToolbar.C.Error.text = "";
+            DialogueGraphToolbar.C.ClearStatus();
+            GraphName = GraphPath = "";
             Clear();
             this.Hide();
         }

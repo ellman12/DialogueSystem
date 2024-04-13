@@ -5,6 +5,7 @@ using System.IO;
 using DialogueSystem.Editor.Extensions;
 using DialogueSystem.Editor.Utilities;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -14,9 +15,9 @@ namespace DialogueSystem.Editor.Window
 {
     public sealed class DialogueGraphToolbar : Toolbar
     {
-        public Label Error { get; } = new();
-
         public static DialogueGraphToolbar C => DialogueGraphWindow.Toolbar;
+
+        private readonly Label status = new();
 
         public DialogueGraphToolbar()
         {
@@ -27,8 +28,21 @@ namespace DialogueSystem.Editor.Window
             this.AddButton("Create", DialogueGraphView.C.TryCreateGraph);
             this.AddButton("Ping", Ping);
 
-            Error.style.color = Color.red;
-            Add(Error);
+            Add(status);
+        }
+
+        public void ClearStatus() => status.text = "";
+
+        public async Task ShowWarning(string message) => await ShowMessage(message, Color.yellow);
+
+        public async Task ShowError(string message) => await ShowMessage(message, Color.red);
+
+        public async Task ShowMessage(string message, Color color)
+        {
+            status.style.color = color;
+            status.text = message;
+            await Task.Delay(3000);
+            status.text = "";
         }
 
         private static void Ping()

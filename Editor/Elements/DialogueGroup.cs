@@ -4,7 +4,6 @@ using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
-using System.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -50,10 +49,8 @@ namespace DialogueSystem.Editor.Elements
 
             if (DialogueGraphView.C.graphElements.OfType<ISaveableElement<SaveData>>().Where(element => element != this).Any(element => element.SaveData.Name == newName))
             {
-                DialogueGraphToolbar.C.Error.text = "Name in use";
+                await DialogueGraphToolbar.C.ShowError("Name in use");
                 SaveData.Name = "";
-                await Task.Delay(3000);
-                DialogueGraphToolbar.C.Error.text = "";
             }
             else
                 SaveData.Name = newName;
