@@ -30,7 +30,8 @@ namespace DialogueSystem.Editor.Window
             {(EventModifiers.Alt, KeyCode.N), () => DialogueGraphView.C.AddNode(2)},
             {(EventModifiers.Control, KeyCode.O), () => DialogueGraphView.C.TryLoadGraph()},
             {(EventModifiers.Control | EventModifiers.Shift, KeyCode.N), () => DialogueGraphView.C.TryCreateGraph()},
-            {(EventModifiers.Control, KeyCode.W), CtrlW}
+            {(EventModifiers.Control, KeyCode.W), CtrlW},
+            {(EventModifiers.Control, KeyCode.P), DialogueGraphToolbar.Ping}
         };
 
         //TODO: delete this later

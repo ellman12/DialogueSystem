@@ -45,7 +45,7 @@ namespace DialogueSystem.Editor.Window
             status.text = "";
         }
 
-        private static void Ping()
+        public static void Ping()
         {
             var selection = DialogueGraphView.C.selection;
 
