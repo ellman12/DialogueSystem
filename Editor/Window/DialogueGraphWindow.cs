@@ -24,7 +24,7 @@ namespace DialogueSystem.Editor.Window
 
         public static IEnumerable<DialogueGraphWindow> Windows => Resources.FindObjectsOfTypeAll<DialogueGraphWindow>();
 
-        private static readonly Dictionary<(EventModifiers, KeyCode), Action> shortcuts = new()
+        private static readonly Dictionary<(EventModifiers, KeyCode), Action> hotkeys = new()
         {
             {(EventModifiers.Control, KeyCode.N), () => DialogueGraphView.C.AddNode()},
             {(EventModifiers.Alt, KeyCode.N), () => DialogueGraphView.C.AddNode(2)},
@@ -33,6 +33,8 @@ namespace DialogueSystem.Editor.Window
             {(EventModifiers.Control, KeyCode.W), CtrlW},
             {(EventModifiers.Control, KeyCode.P), DialogueGraphToolbar.Ping}
         };
+
+        private static readonly HashSet<(EventModifiers, KeyCode)> validDefaultHotkeys = new() {(EventModifiers.FunctionKey, KeyCode.Delete)};
 
         //TODO: delete this later
         [MenuItem("DS/Clear &c")]
@@ -55,7 +57,7 @@ namespace DialogueSystem.Editor.Window
 
             VisualElement container = new() {focusable = true};
             container.StretchToParentSize();
-            container.RegisterCallback<KeyDownEvent>(HandleKeyboardShortcuts);
+            container.RegisterCallback<KeyDownEvent>(HandleHotkeys);
             rootVisualElement.Add(container);
 
             graphView = new DialogueGraphView();
@@ -73,13 +75,16 @@ namespace DialogueSystem.Editor.Window
             // graphView.CreateGraph(path);
         }
 
-        private static void HandleKeyboardShortcuts(KeyDownEvent e)
+        private static void HandleHotkeys(KeyDownEvent e)
         {
+            if (validDefaultHotkeys.Contains((e.modifiers, e.keyCode)))
+                return;
+
             e.PreventDefault();
             e.StopPropagation();
             e.StopImmediatePropagation();
 
-            if (shortcuts.TryGetValue((e.modifiers, e.keyCode), out Action action))
+            if (hotkeys.TryGetValue((e.modifiers, e.keyCode), out Action action))
                 action();
         }
 
