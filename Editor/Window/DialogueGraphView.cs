@@ -18,14 +18,16 @@ namespace DialogueSystem.Editor.Window
 {
     public sealed class DialogueGraphView : GraphView
     {
-        public string GraphName { get; set; }
+        public string GraphName { get; set; } = "";
 
-        public string GraphPath { get; set; }
+        public string GraphPath { get; set; } = "";
 
         public Vector2 MousePosition => contentViewContainer.WorldToLocal(Mouse.current.position.ReadValue());
 
+        public bool GraphOpen => !String.IsNullOrWhiteSpace(GraphPath);
+
         public static DialogueGraphView C => DialogueGraphWindow.GraphView;
-        
+
         public DialogueGraphView()
         {
             this.StretchToParentSize();
@@ -189,9 +191,17 @@ namespace DialogueSystem.Editor.Window
             AddToSelection(node);
         }
 
-        public void AddNode(int startingChoices = 0) => AddElement(new DialogueNode(MousePosition, startingChoices));
+        public void AddNode(int startingChoices = 0)
+        {
+            if (this.Visible())
+                AddElement(new DialogueNode(MousePosition, startingChoices));
+        }
 
-        public void AddGroup() => AddElement(new DialogueGroup(MousePosition));
+        public void AddGroup()
+        {
+            if (this.Visible())
+                AddElement(new DialogueGroup(MousePosition));
+        }
 
         private new void Clear()
         {

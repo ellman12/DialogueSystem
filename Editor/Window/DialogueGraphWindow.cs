@@ -29,7 +29,8 @@ namespace DialogueSystem.Editor.Window
             {(EventModifiers.Control, KeyCode.N), () => DialogueGraphView.C.AddNode()},
             {(EventModifiers.Alt, KeyCode.N), () => DialogueGraphView.C.AddNode(2)},
             {(EventModifiers.Control, KeyCode.O), () => DialogueGraphView.C.TryLoadGraph()},
-            {(EventModifiers.Control | EventModifiers.Shift, KeyCode.N), () => DialogueGraphView.C.TryCreateGraph()}
+            {(EventModifiers.Control | EventModifiers.Shift, KeyCode.N), () => DialogueGraphView.C.TryCreateGraph()},
+            {(EventModifiers.Control, KeyCode.W), CtrlW}
         };
 
         //TODO: delete this later
@@ -79,6 +80,14 @@ namespace DialogueSystem.Editor.Window
 
             if (shortcuts.TryGetValue((e.modifiers, e.keyCode), out Action action))
                 action();
+        }
+
+        private static void CtrlW()
+        {
+            if (DialogueGraphView.C.GraphOpen)
+                DialogueGraphView.C.CloseGraph();
+            else
+                C.Close();
         }
     }
 }
