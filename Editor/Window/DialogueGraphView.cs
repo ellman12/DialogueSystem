@@ -65,7 +65,7 @@ namespace DialogueSystem.Editor.Window
 
         public async void TryLoadGraph()
         {
-            string fullPath = EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, "");
+            string fullPath = EditorUtility.OpenFolderPanel("Load Graph", Constants.GraphsRoot, "");
 
             if (String.IsNullOrWhiteSpace(fullPath))
                 return;
@@ -141,7 +141,7 @@ namespace DialogueSystem.Editor.Window
 
         public async void TryCreateGraph()
         {
-            string path = PathUtility.GetRelativePath(EditorUtility.OpenFolderPanel("Choose Folder", Constants.GraphsRoot, ""));
+            string path = PathUtility.GetRelativePath(EditorUtility.OpenFolderPanel("Choose Folder for New Graph", Constants.GraphsRoot, ""));
 
             if (String.IsNullOrWhiteSpace(path))
                 return;
