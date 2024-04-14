@@ -11,7 +11,6 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace DialogueSystem.Editor.Window
 {
@@ -21,9 +20,9 @@ namespace DialogueSystem.Editor.Window
 
         public string GraphPath { get; set; } = "";
 
-        public Vector2 MousePosition => contentViewContainer.WorldToLocal(Mouse.current.position.ReadValue());
-
         public bool GraphOpen => !String.IsNullOrWhiteSpace(GraphPath);
+
+        public static Vector2 MousePosition;
 
         public static DialogueGraphView C => DialogueGraphWindow.GraphView;
 
@@ -43,6 +42,8 @@ namespace DialogueSystem.Editor.Window
             graphViewChanged += UpdateElementPositions;
             graphViewChanged += UpdateElementEdges;
             graphViewChanged += DeleteSelected;
+            
+            RegisterCallback<MouseMoveEvent>(e => MousePosition = contentViewContainer.WorldToLocal(e.mousePosition));
             #endregion
 
             #region Manipulators
