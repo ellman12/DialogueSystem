@@ -13,7 +13,7 @@ namespace DialogueSystem.Editor.Elements
 
 		public void OnConnect()
 		{
-			if (StartNode.SaveData.Type == NodeType.Text)
+			if (StartNode.TextNode)
 				StartNode.SaveData.Next = EndNode.SaveData;
 			else
 				((ChoiceSaveData) output.userData).Node = EndNode.SaveData;

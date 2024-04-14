@@ -21,6 +21,10 @@ namespace DialogueSystem.Editor.Elements
 
         public ChoicesDisplay ChoicesDisplay { get; private set; }
 
+        public bool TextNode => SaveData.Type == NodeType.Text;
+        
+        public bool PromptNode => SaveData.Type == NodeType.Prompt;
+
         #region Constructors
         public DialogueNode(Vector2 position, int startingChoices = 0)
         {
