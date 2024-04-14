@@ -91,6 +91,13 @@ namespace DialogueSystem.Editor.Elements
             SaveData.Save();
         }
 
+        public void ConnectTo(DialogueNode node)
+        {
+            DialogueGraphView.C.AddElement(Output.ConnectTo<DialogueEdge>(node.Input));
+            SaveData.Next = node.SaveData;
+            SaveData.Save();
+        }
+
         public void Remove() => DialogueGraphView.C.RemoveElement(this);
 
         public void Delete()

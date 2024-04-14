@@ -35,6 +35,11 @@ namespace DialogueSystem.Editor.Elements
 			SaveData = saveData;
 		}
 
+        public void ConnectTo(DialogueNode node)
+        {
+            DialogueGraphView.C.AddElement(Output.ConnectTo<DialogueEdge>(node.Input));
+        }
+
 		public void DisconnectPort() => DialogueGraphView.C.DeleteElements(Output.connections);
 		
 		private void OnTextChange(ChangeEvent<string> e) => SaveData.Text = e.newValue;

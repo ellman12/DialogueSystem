@@ -27,9 +27,11 @@ namespace DialogueSystem.Editor.Window
         private static readonly Dictionary<(EventModifiers, KeyCode), Action> hotkeys = new()
         {
             {(EventModifiers.Control, KeyCode.N), () => DialogueGraphView.C.AddNode()},
-            {(EventModifiers.Alt, KeyCode.N), () => DialogueGraphView.C.AddNode(2)},
+            {(EventModifiers.Alt, KeyCode.N), () => DialogueGraphView.C.AddConnectedNode()},
+            {(EventModifiers.Control | EventModifiers.Shift, KeyCode.N), () => DialogueGraphView.C.AddNode(2)},
+            {(EventModifiers.Control, KeyCode.G), () => DialogueGraphView.C.AddGroup()},
             {(EventModifiers.Control, KeyCode.O), () => DialogueGraphView.C.TryLoadGraph()},
-            {(EventModifiers.Control | EventModifiers.Shift, KeyCode.N), () => DialogueGraphView.C.TryCreateGraph()},
+            {(EventModifiers.Control | EventModifiers.Alt | EventModifiers.Shift, KeyCode.N), () => DialogueGraphView.C.TryCreateGraph()},
             {(EventModifiers.Control, KeyCode.W), CtrlW},
             {(EventModifiers.Control, KeyCode.P), DialogueGraphToolbar.Ping}
         };

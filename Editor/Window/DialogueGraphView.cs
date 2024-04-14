@@ -26,6 +26,8 @@ namespace DialogueSystem.Editor.Window
 
         public static DialogueGraphView C => DialogueGraphWindow.GraphView;
 
+        private DialogueNode newestNode;
+
         public DialogueGraphView()
         {
             this.StretchToParentSize();
@@ -42,7 +44,7 @@ namespace DialogueSystem.Editor.Window
             graphViewChanged += UpdateElementPositions;
             graphViewChanged += UpdateElementEdges;
             graphViewChanged += DeleteSelected;
-            
+
             RegisterCallback<MouseMoveEvent>(e => MousePosition = contentViewContainer.WorldToLocal(e.mousePosition));
             #endregion
 
@@ -84,6 +86,7 @@ namespace DialogueSystem.Editor.Window
 
         private void LoadGraph(string path)
         {
+            newestNode = null;
             GraphPath = PathUtility.GetRelativePath(path);
             GraphName = Path.GetFileName(GraphPath);
             DialogueGraphWindow.C.SetTitle(GraphName);
@@ -186,8 +189,32 @@ namespace DialogueSystem.Editor.Window
 
         public void AddNode(int startingChoices = 0)
         {
-            if (this.Visible())
-                AddElement(new DialogueNode(MousePosition, startingChoices));
+            if (!this.Visible()) return;
+            
+            DialogueNode newNode = new(MousePosition, startingChoices);
+            newestNode = newNode;
+            AddElement(newNode);
+        }
+
+        public void AddConnectedNode()
+        {
+            if (!this.Visible()) return;
+            
+            DialogueNode newNode = new(MousePosition);
+            AddElement(newNode);
+
+            if (newestNode == null)
+            {
+                newestNode = newNode;
+                return;
+            }
+
+            if (newestNode.TextNode)
+                newestNode.ConnectTo(newNode);
+            else
+                newestNode.ChoicesDisplay.Children.First(display => !display.Output.connected).ConnectTo(newNode);
+            
+            newestNode = newNode;
         }
 
         public void AddGroup()
@@ -262,10 +289,13 @@ namespace DialogueSystem.Editor.Window
             return change;
         }
 
-        private static GraphViewChange DeleteSelected(GraphViewChange change)
+        private GraphViewChange DeleteSelected(GraphViewChange change)
         {
             if (change.elementsToRemove == null)
                 return change;
+
+            if (change.elementsToRemove.OfType<DialogueNode>().Any())
+                newestNode = null;
 
             foreach (var element in change.elementsToRemove.ToArray().OfType<IDialogueElement>())
                 element.Delete();
