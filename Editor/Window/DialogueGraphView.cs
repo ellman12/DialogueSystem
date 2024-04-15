@@ -22,6 +22,12 @@ namespace DialogueSystem.Editor.Window
 
         public bool GraphOpen => !String.IsNullOrWhiteSpace(GraphPath);
 
+        public IEnumerable<DialogueNode> StartNodes => graphElements.OfType<DialogueNode>().Where(node => !node.Input.connected);
+        
+        public IEnumerable<DialogueNode> EndNodes => graphElements.OfType<DialogueNode>().Where(node => !node.Output.connected);
+
+        public IEnumerable<DialogueNode> ConnectionlessNodes => graphElements.OfType<DialogueNode>().Where(node => !node.Input.connected && !node.Output.connected);
+
         public static Vector2 MousePosition;
 
         public static DialogueGraphView C => DialogueGraphWindow.GraphView;
@@ -190,7 +196,7 @@ namespace DialogueSystem.Editor.Window
         public void AddNode(int startingChoices = 0)
         {
             if (!this.Visible()) return;
-            
+
             DialogueNode newNode = new(MousePosition, startingChoices);
             newestNode = newNode;
             AddElement(newNode);
