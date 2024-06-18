@@ -61,4 +61,6 @@
 
 .node #collapsible-area .unity-text-field {
     max-height: 100px;
+    margin-top: 6px;
+    margin-bottom: 6px;
 }

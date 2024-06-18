@@ -3,7 +3,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin: 4px;
+    margin-left: 3px;
+    margin-right: 3px;
 }
 
 .choiceDisplay > * {
