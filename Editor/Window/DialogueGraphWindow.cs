@@ -38,15 +38,6 @@ namespace DialogueSystem.Editor.Window
 
         private static readonly HashSet<(EventModifiers, KeyCode)> validDefaultHotkeys = new() {(EventModifiers.FunctionKey, KeyCode.Delete)};
 
-        //TODO: delete this later
-        [MenuItem("DS/Clear &c")]
-        public static void Clear(MenuCommand _)
-        {
-            Directory.Delete(Constants.GraphsRoot, true);
-            Directory.CreateDirectory(Constants.GraphsRoot);
-            AssetDatabase.Refresh();
-        }
-
         public void SetTitle(string newTitle) => titleContent.text = newTitle;
 
         private void OnFocus() => C = this;
