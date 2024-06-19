@@ -28,7 +28,8 @@ namespace DialogueSystem.Scripts
                 OnCurrentChanged?.Invoke(null, EventArgs.Empty);
                 current = value;
 
-                StartTypingLine();
+                if (value != null)
+                    StartTypingLine();
             }
         }
 
@@ -57,7 +58,9 @@ namespace DialogueSystem.Scripts
         {
             OnAdvance?.Invoke(null, EventArgs.Empty);
 
-            if (Current.Next != null)
+            if (OnFinalNode)
+                Finish();
+            else if (Current.Next != null)
                 Current = Current.Next;
         }
 
