@@ -62,7 +62,7 @@ namespace DialogueSystem.Editor.Elements
             Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
             titleButtonContainer.Insert(0, Input);
 
-            nameTextField = ElementExtensions.CreateTextField(_ => {}, SaveData.Name == SaveData.Id ? "" : SaveData.Name);
+            nameTextField = ElementExtensions.CreateTextField(_ => {}, SaveData.Name == SaveData.Id ? "" : SaveData.Name, "Node name");
             nameTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
             titleButtonContainer.Insert(1, nameTextField);
 
@@ -73,13 +73,17 @@ namespace DialogueSystem.Editor.Elements
             #endregion
 
             #region Extension Container
-            var characterTextField = ElementExtensions.CreateTextField(e => SaveData.Character = e.newValue, SaveData.Character, "Name of the character speaking.");
+            var characterTextField = ElementExtensions.CreateTextField(e => SaveData.Character = e.newValue, SaveData.Character, "Character name");
             characterTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
             extensionContainer.Add(characterTextField);
 
-            var textTextField = ElementExtensions.CreateTextField(e => SaveData.Text = e.newValue, SaveData.Text, "What the character says.", true);
+            var textTextField = ElementExtensions.CreateTextField(e => SaveData.Text = e.newValue, SaveData.Text, "What they say", true);
             textTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
             extensionContainer.Add(textTextField);
+
+            var voiceLineFilename = ElementExtensions.CreateTextField(e => SaveData.VoiceLineFilename = e.newValue, SaveData.VoiceLineFilename, "Name of the voice audio file");
+            voiceLineFilename.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
+            extensionContainer.Add(voiceLineFilename);
 
             extensionContainer.Add(ChoicesDisplay);
 

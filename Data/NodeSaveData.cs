@@ -44,6 +44,8 @@ namespace DialogueSystem.Data
         public string Text = "Text";
 
         public string Character = "Character Name";
+        
+        public string VoiceLineFilename = "";
 
         public NodeSaveData Next;
         public List<ChoiceSaveData> Choices = new();
