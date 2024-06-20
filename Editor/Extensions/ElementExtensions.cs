@@ -62,17 +62,17 @@ namespace DialogueSystem.Editor.Extensions
         #endregion
 
         #region TextField
-        public static TextField CreateTextField(EventCallback<ChangeEvent<string>> onChange, string value = "", bool multiline = false, string label = "")
+        public static TextField CreateTextField(EventCallback<ChangeEvent<string>> onChange, string value = "", string tooltip = "", bool multiline = false)
         {
-            TextField textField = new() {value = value, label = label, multiline = multiline};
+            TextField textField = new() {value = value, tooltip = tooltip, multiline = multiline};
             textField.AddStyleSheet("Inputs/TextInput");
             textField.RegisterValueChangedCallback(onChange);
             return textField;
         }
 
-        public static void InsertTextField(this VisualElement element, int index, EventCallback<ChangeEvent<string>> onChange, string value = "", bool multiline = false, string label = "") => element.Insert(index, CreateTextField(onChange, value, multiline, label));
+        public static void InsertTextField(this VisualElement element, int index, EventCallback<ChangeEvent<string>> onChange, string value = "", string tooltip = "", bool multiline = false) => element.Insert(index, CreateTextField(onChange, value, tooltip, multiline));
 
-        public static void AddTextField(this VisualElement element, EventCallback<ChangeEvent<string>> onChange, string value = "", bool multiline = false, string label = "") => element.Add(CreateTextField(onChange, value, multiline, label));
+        public static void AddTextField(this VisualElement element, EventCallback<ChangeEvent<string>> onChange, string value = "",  string tooltip = "", bool multiline = false) => element.Add(CreateTextField(onChange, value, tooltip, multiline));
         #endregion
     }
 }

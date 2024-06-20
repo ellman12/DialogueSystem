@@ -73,11 +73,11 @@ namespace DialogueSystem.Editor.Elements
             #endregion
 
             #region Extension Container
-            var characterTextField = ElementExtensions.CreateTextField(e => SaveData.Character = e.newValue, SaveData.Character);
+            var characterTextField = ElementExtensions.CreateTextField(e => SaveData.Character = e.newValue, SaveData.Character, "Name of the character speaking.");
             characterTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
             extensionContainer.Add(characterTextField);
 
-            var textTextField = ElementExtensions.CreateTextField(e => SaveData.Text = e.newValue, SaveData.Text, true);
+            var textTextField = ElementExtensions.CreateTextField(e => SaveData.Text = e.newValue, SaveData.Text, "What the character says.", true);
             textTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
             extensionContainer.Add(textTextField);
 
