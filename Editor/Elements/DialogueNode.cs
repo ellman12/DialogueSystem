@@ -85,6 +85,8 @@ namespace DialogueSystem.Editor.Elements
             voiceLineFilename.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
             extensionContainer.Add(voiceLineFilename);
 
+            extensionContainer.AddObjectField(e => SaveData.AnimationClip = (AnimationClip)e.newValue, SaveData.AnimationClip, "AnimationClip to play");
+
             extensionContainer.Add(ChoicesDisplay);
 
             expanded = true;

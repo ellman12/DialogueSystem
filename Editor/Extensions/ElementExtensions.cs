@@ -1,11 +1,13 @@
 using System;
-using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements;
+using DialogueSystem.Editor.Window;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object=UnityEngine.Object;
 
 namespace DialogueSystem.Editor.Extensions
 {
@@ -48,11 +50,11 @@ namespace DialogueSystem.Editor.Extensions
             var port = Port.Create<DialogueEdge>(Orientation.Horizontal, direction, capacity, typeof(DialogueEdge));
             port.portName = "";
             port.AddStyleSheet("Inputs/Port");
-            
+
             //Ports have a label element that, even if the text is "", needs to be displaying for the dragging to work. Remove default margins.
             IStyle connectorText = port.Q<Label>().style;
             connectorText.marginLeft = connectorText.marginRight = 0;
-            
+
             return port;
         }
 
@@ -72,7 +74,34 @@ namespace DialogueSystem.Editor.Extensions
 
         public static void InsertTextField(this VisualElement element, int index, EventCallback<ChangeEvent<string>> onChange, string value = "", string tooltip = "", bool multiline = false) => element.Insert(index, CreateTextField(onChange, value, tooltip, multiline));
 
-        public static void AddTextField(this VisualElement element, EventCallback<ChangeEvent<string>> onChange, string value = "",  string tooltip = "", bool multiline = false) => element.Add(CreateTextField(onChange, value, tooltip, multiline));
+        public static void AddTextField(this VisualElement element, EventCallback<ChangeEvent<string>> onChange, string value = "", string tooltip = "", bool multiline = false) => element.Add(CreateTextField(onChange, value, tooltip, multiline));
+        #endregion
+
+        #region ObjectField
+        public static ObjectField CreateObjectField<T>(EventCallback<ChangeEvent<Object>> onChange, T value, string tooltip = "") where T : Object
+        {
+            ObjectField objectField = new() {objectType = typeof(T), value = value, tooltip = tooltip};
+            objectField.RegisterValueChangedCallback(onChange);
+            objectField.RegisterCallback<MouseDownEvent>(_ => DialogueGraphView.C.ClearSelection());
+
+            objectField.Children().First().Children().First().RegisterCallback<MouseDownEvent>(e =>
+            {
+                e.PreventDefault();
+                e.StopImmediatePropagation();
+                DialogueGraphView.C.ClearSelection();
+            });
+            return objectField;
+        }
+
+        public static void InsertObjectField<T>(this VisualElement element, int index, EventCallback<ChangeEvent<Object>> onChange, T value, string tooltip = "") where T : Object
+        {
+            element.Insert(index, CreateObjectField<T>(onChange, value, tooltip));
+        }
+
+        public static void AddObjectField<T>(this VisualElement element, EventCallback<ChangeEvent<Object>> onChange, T value, string tooltip = "") where T : Object
+        {
+            element.Add(CreateObjectField<T>(onChange, value, tooltip));
+        }
         #endregion
     }
 }

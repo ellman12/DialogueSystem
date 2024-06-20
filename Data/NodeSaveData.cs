@@ -47,6 +47,8 @@ namespace DialogueSystem.Data
         
         public string VoiceLineFilename = "";
 
+        public AnimationClip AnimationClip;
+
         public NodeSaveData Next;
         public List<ChoiceSaveData> Choices = new();
 
