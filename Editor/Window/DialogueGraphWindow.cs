@@ -62,10 +62,6 @@ namespace DialogueSystem.Editor.Window
 
             Directory.CreateDirectory(Constants.GraphsRoot);
             AssetDatabase.Refresh();
-
-            //TODO: remove this later
-            // string path = Utilities.PathUtility.Combine(Environment.CurrentDirectory, Constants.GraphsRoot, Guid.NewGuid().ToString()).Replace('\\', '/');
-            // graphView.CreateGraph(path);
         }
 
         private static void HandleHotkeys(KeyDownEvent e)
