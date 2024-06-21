@@ -1,140 +1,173 @@
 using DialogueSystem.Data;
 using DialogueSystem.Editor.Elements.Interfaces;
 using DialogueSystem.Editor.Extensions;
+using DialogueSystem.Editor.Utilities;
 using DialogueSystem.Editor.Window;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor.Elements
 {
-	public sealed class DialogueNode : Node, ISaveableElement<NodeSaveData>
-	{
-		public Port Input { get; private set; }
-		public Port Output { get; private set; }
+    public sealed class DialogueNode : Node, ISaveableElement<NodeSaveData>
+    {
+        public Port Input { get; private set; }
+        public Port Output { get; private set; }
 
-		public NodeSaveData SaveData { get; }
+        public NodeSaveData SaveData { get; }
 
-		private TextField nameTextField;
-		
-		public ChoicesDisplay ChoicesDisplay { get; private set; }
+        private TextField nameTextField;
 
-		public NodeType Type => SaveData.Choices.Count == 0 ? NodeType.Text : NodeType.Prompt;
-		
-		#region Constructors
-		public DialogueNode(Vector2 position, int startingChoices = 0)
-		{
-			SaveData = NodeSaveData.Create(position);
-			SaveData.Node = this;
+        public ChoicesDisplay ChoicesDisplay { get; private set; }
 
-			RegisterCallback<FocusOutEvent>(_ => FocusOut());
-			
-			AddElements();
+        public bool TextNode => SaveData.Type == NodeType.Text;
 
-			for (int i = 0; i < startingChoices; i++)
-				ChoicesDisplay.Add();
-		}
+        public bool PromptNode => SaveData.Type == NodeType.Prompt;
 
-		public DialogueNode(NodeSaveData saveData)
-		{
-			SaveData = saveData;
+        #region Constructors
+        public DialogueNode(Vector2 position, int startingChoices = 0)
+        {
+            SaveData = NodeSaveData.Create(position);
+            SaveData.Node = this;
 
-			RegisterCallback<FocusOutEvent>(_ => FocusOut());
-			
-			AddElements();
+            RegisterCallback<FocusOutEvent>(_ => FocusOut());
 
-			foreach (var choice in SaveData.Choices)
-				ChoicesDisplay.Add(choice);
-		}
-		
-		private void AddElements()
-		{
-			SetPosition(new Rect(SaveData.Position, Vector2.zero));
-			this.AddStyleSheet("Nodes/DialogueNode");
+            AddElements();
 
-			ChoicesDisplay = new ChoicesDisplay(this);
+            for (int i = 0; i < startingChoices; i++)
+                ChoicesDisplay.Add();
+        }
 
-			#region Title Container
-			Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
-			titleButtonContainer.Insert(0, Input);
+        public DialogueNode(NodeSaveData saveData)
+        {
+            SaveData = saveData;
 
-			nameTextField = ElementExtensions.CreateTextField(_ => {}, SaveData.Name == SaveData.Id ? "" : SaveData.Name);
-			titleButtonContainer.Insert(1, nameTextField);
+            RegisterCallback<FocusOutEvent>(_ => FocusOut());
 
-			titleButtonContainer.InsertIconButton(2, "Add", ChoicesDisplay.Add);
+            AddElements();
 
-			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
-			titleButtonContainer.Add(Output);
-			#endregion
+            foreach (var choice in SaveData.Choices)
+                ChoicesDisplay.Add(choice);
+        }
 
-			#region Extension Container
-			extensionContainer.AddTextField(e => SaveData.Text = e.newValue, SaveData.Text, true);
+        private void AddElements()
+        {
+            SetPosition(new Rect(SaveData.Position, Vector2.zero));
+            this.AddStyleSheet("Nodes/DialogueNode");
 
-			extensionContainer.Add(ChoicesDisplay);
+            ChoicesDisplay = new ChoicesDisplay(this);
 
-			expanded = true;
-			RefreshExpandedState();
-			#endregion
-		}
-		#endregion
-		
-		public void UpdatePosition(Vector2 newPosition)
-		{
-			SaveData.Position = newPosition;
-			SaveData.Save();
-		}
+            #region Title Container
+            Input = ElementExtensions.CreatePort(Direction.Input, Port.Capacity.Multi);
+            titleButtonContainer.Insert(0, Input);
 
-		public void Remove() => DialogueGraphView.C.RemoveElement(this);
+            nameTextField = ElementExtensions.CreateTextField(_ => {}, SaveData.Name == SaveData.Id ? "" : SaveData.Name, "Node name");
+            nameTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
+            titleButtonContainer.Insert(1, nameTextField);
 
-		public void Delete()
-		{
-			DisconnectAllPorts();
-			Remove();
-			SaveData.Delete();
-		}
+            titleButtonContainer.InsertIconButton(2, "Add", ChoicesDisplay.Add);
 
-		private void FocusOut()
-		{
-			SaveData.Name = nameTextField.value = nameTextField.value.Trim();
-			SaveData.Save();
-		}
+            Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
+            titleButtonContainer.Add(Output);
+            #endregion
 
-		#region Ports
-		public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
-		{
-			e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
-			e.menu.AppendAction("Disconnect Output Ports", _ => DisconnectOutputPorts());
-			e.menu.AppendAction("Disconnect All Ports", _ => DisconnectAllPorts());
-			e.menu.AppendSeparator();
-		}
+            #region Extension Container
+            var characterTextField = ElementExtensions.CreateTextField(e => SaveData.Character = e.newValue, SaveData.Character, "Character name");
+            characterTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
+            extensionContainer.Add(characterTextField);
 
-		public void ShowOutputPort() => Output.style.display = DisplayStyle.Flex;
-		public void HideOutputPort()
-		{
-			SaveData.Next = null;
-			SaveData.Save();
+            var textTextField = ElementExtensions.CreateTextField(e => SaveData.Text = e.newValue, SaveData.Text, "What they say", true);
+            textTextField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
+            extensionContainer.Add(textTextField);
 
-			DialogueGraphView.C.DeleteElements(Output.connections);
-			Output.style.display = DisplayStyle.None;
-		}
+            var voiceLineFilename = ElementExtensions.CreateTextField(e => SaveData.VoiceLineFilename = e.newValue, SaveData.VoiceLineFilename, "Name of the voice audio file");
+            voiceLineFilename.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(this));
+            extensionContainer.Add(voiceLineFilename);
 
-		private void DisconnectAllPorts()
-		{
-			DisconnectInputPort();
-			DisconnectOutputPorts();
-		}
+            extensionContainer.AddObjectField(e => SaveData.AnimationClip = (AnimationClip)e.newValue, SaveData.AnimationClip, "AnimationClip to play");
 
-		private void DisconnectInputPort() => DialogueGraphView.C.DeleteElements(Input.connections);
-		private void DisconnectOutputPorts()
-		{
-			SaveData.Next = null;
-			SaveData.Save();
+            extensionContainer.Add(ChoicesDisplay);
 
-			DialogueGraphView.C.DeleteElements(Output.connections);
+            expanded = true;
+            RefreshExpandedState();
+            #endregion
+        }
+        #endregion
 
-			foreach (var choiceDisplay in ChoicesDisplay.Children)
-				choiceDisplay.DisconnectPort();
-		}
-		#endregion
-	}
+        public void UpdatePosition(Vector2 newPosition)
+        {
+            SaveData.Position = newPosition;
+            SaveData.Save();
+        }
+
+        public void ConnectTo(DialogueNode node)
+        {
+            DialogueGraphView.C.AddElement(Output.ConnectTo<DialogueEdge>(node.Input));
+            SaveData.Next = node.SaveData;
+            SaveData.Save();
+        }
+
+        public void Remove() => DialogueGraphView.C.RemoveElement(this);
+
+        public void Delete()
+        {
+            DisconnectAllPorts();
+            Remove();
+            SaveData.Delete();
+        }
+
+        private async void FocusOut()
+        {
+            string newName = nameTextField.value.Trim().RemoveInvalidChars();
+
+            if (DialogueGraphView.C.graphElements.OfType<ISaveableElement<SaveData>>().Where(element => element != this).Any(element => element.SaveData.Name == newName))
+            {
+                await DialogueGraphToolbar.C.ShowError("Name in use");
+                nameTextField.value = SaveData.Name = "";
+            }
+            else
+                SaveData.Name = newName;
+
+            SaveData.Save();
+        }
+
+        #region Ports
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent e)
+        {
+            e.menu.AppendAction("Disconnect Input Ports", _ => DisconnectInputPort());
+            e.menu.AppendAction("Disconnect Output Ports", _ => DisconnectOutputPorts());
+            e.menu.AppendAction("Disconnect All Ports", _ => DisconnectAllPorts());
+            e.menu.AppendSeparator();
+        }
+
+        public void ShowOutputPort() => Output.style.display = DisplayStyle.Flex;
+        public void HideOutputPort()
+        {
+            SaveData.Next = null;
+            SaveData.Save();
+
+            DialogueGraphView.C.DeleteElements(Output.connections);
+            Output.style.display = DisplayStyle.None;
+        }
+
+        private void DisconnectAllPorts()
+        {
+            DisconnectInputPort();
+            DisconnectOutputPorts();
+        }
+
+        private void DisconnectInputPort() => DialogueGraphView.C.DeleteElements(Input.connections);
+        private void DisconnectOutputPorts()
+        {
+            SaveData.Next = null;
+            SaveData.Save();
+
+            DialogueGraphView.C.DeleteElements(Output.connections);
+
+            foreach (var choiceDisplay in ChoicesDisplay.Children)
+                choiceDisplay.DisconnectPort();
+        }
+        #endregion
+    }
 }

@@ -14,203 +14,301 @@ using UnityEngine;
 
 namespace DialogueSystem.Editor.Window
 {
-	public sealed class DialogueGraphView : GraphView
-	{
-		public string GraphName { get; set; }
+    public sealed class DialogueGraphView : GraphView
+    {
+        public string GraphName { get; set; } = "";
 
-		public string GraphPath { get; set; }
+        public string GraphPath { get; set; } = "";
 
-		public static DialogueGraphView C => DialogueGraphWindow.GraphView;
+        public bool GraphOpen => !String.IsNullOrWhiteSpace(GraphPath);
 
-		public DialogueGraphView()
-		{
-			this.StretchToParentSize();
-			this.AddStyleSheet("GraphView");
+        public IEnumerable<DialogueNode> StartNodes => graphElements.OfType<DialogueNode>().Where(node => !node.Input.connected);
+        
+        public IEnumerable<DialogueNode> EndNodes => graphElements.OfType<DialogueNode>().Where(node => !node.Output.connected);
 
-			GridBackground gridBackground = new();
-			gridBackground.StretchToParentSize();
-			Insert(0, gridBackground);
+        public IEnumerable<DialogueNode> ConnectionlessNodes => graphElements.OfType<DialogueNode>().Where(node => !node.Input.connected && !node.Output.connected);
 
-			#region Events
-			elementsAddedToGroup = NodesAddedToGroup;
-			elementsRemovedFromGroup = NodesRemovedFromGroup;
+        public static Vector2 MousePosition;
 
-			graphViewChanged += UpdateElementPositions;
-			graphViewChanged += UpdateElementEdges;
-			graphViewChanged += DeleteSelected;
-			#endregion
+        public static DialogueGraphView C => DialogueGraphWindow.GraphView;
 
-			#region Manipulators
-			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+        private DialogueNode newestNode;
 
-			this.AddManipulator(new ContentDragger());
-			this.AddManipulator(new SelectionDragger());
-			this.AddManipulator(new RectangleSelector());
+        public DialogueGraphView()
+        {
+            this.StretchToParentSize();
+            this.AddStyleSheet("GraphView");
 
-			AddMenuItem("Create Node", e => AddElement(new DialogueNode(GetLocalMousePosition(e))));
-			AddMenuItem("Create Node With Two Choices", e => AddElement(new DialogueNode(GetLocalMousePosition(e), 2)));
-			AddMenuItem("Create Group", e => AddElement(new DialogueGroup(GetLocalMousePosition(e))));
-			#endregion
-		}
+            GridBackground gridBackground = new();
+            gridBackground.StretchToParentSize();
+            Insert(0, gridBackground);
 
-		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _) => ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
+            #region Events
+            elementsAddedToGroup = NodesAddedToGroup;
+            elementsRemovedFromGroup = NodesRemovedFromGroup;
 
-		public void LoadGraph(string path)
-		{
-			SetGraph(path);
+            graphViewChanged += UpdateElementPositions;
+            graphViewChanged += UpdateElementEdges;
+            graphViewChanged += DeleteSelected;
 
-			var nodeAssets = IOUtility.GetAssetsAtPath<NodeSaveData>(GraphPath);
-			var groupAssets = IOUtility.GetAssetsAtPath<GroupSaveData>(GraphPath);
+            RegisterCallback<MouseMoveEvent>(e => MousePosition = contentViewContainer.WorldToLocal(e.mousePosition));
+            #endregion
 
-			Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
-			Dictionary<string, DialogueGroup> groups = new(groupAssets.Length);
+            #region Manipulators
+            SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
-			//TODO: clean up this war crime at some point.
-			foreach (var asset in groupAssets)
-			{
-				DialogueGroup group = new(asset);
-				groups.Add(group.SaveData.Id, group);
-				AddElement(group);
-			}
+            this.AddManipulator(new ContentDragger());
+            this.AddManipulator(new SelectionDragger());
+            this.AddManipulator(new RectangleSelector());
 
-			foreach (var asset in nodeAssets)
-			{
-				DialogueNode node = new(asset);
-				dialogueNodes.Add(node.SaveData.Id, node);
-				AddElement(node);
-			}
+            AddMenuItem("Create Node", _ => AddNode());
+            AddMenuItem("Create Node With Two Choices", _ => AddNode(2));
+            AddMenuItem("Create Group", _ => AddGroup());
+            #endregion
+        }
 
-			foreach (var node in dialogueNodes.Values)
-			{
-				if (node.SaveData.Next != null)
-				{
-					var next = dialogueNodes[node.SaveData.Next.Id].Input;
-					AddElement(node.Output.ConnectTo<DialogueEdge>(next));
-				}
-				else
-				{
-					foreach (var choiceDisplay in node.ChoicesDisplay.Children.Where(display => display.SaveData.Node != null))
-					{
-						var next = dialogueNodes[choiceDisplay.SaveData.Node.Id].Input;
-						AddElement(choiceDisplay.Output.ConnectTo<DialogueEdge>(next));
-					}
-				}
-			}
+        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter _) => ports.Where(port => startPort != port && startPort.node != port.node && startPort.direction != port.direction).ToList();
 
-			foreach (DialogueNode node in dialogueNodes.Values.Where(node => node.SaveData.Group != null))
-			{
-				groups[node.SaveData.Group.Id].AddElement(node);
-			}
-		}
+        public async void TryLoadGraph()
+        {
+            string fullPath = EditorUtility.OpenFolderPanel("Load Graph", Constants.GraphsRoot, "");
 
-		public void CreateGraph(string path)
-		{
-			path = PathUtility.GetRelativePath(path);
-			string ungroupedPath = Path.Combine(path, "Ungrouped");
-			string groupedPath = Path.Combine(path, "Groups");
+            if (String.IsNullOrWhiteSpace(fullPath))
+                return;
 
-			if (Directory.Exists(ungroupedPath) && Directory.Exists(groupedPath))
-			{
-				LoadGraph(path);
-				return;
-			}
+            if (!GraphExists(fullPath))
+                return;
 
-			SetGraph(path);
-			Directory.CreateDirectory(path);
-			Directory.CreateDirectory(ungroupedPath);
-			Directory.CreateDirectory(groupedPath);
-			AssetDatabase.Refresh();
-		}
+            string relativePath = PathUtility.GetRelativePath(fullPath);
 
-		public void CloseGraph()
-		{
-			GraphName = GraphPath = "";
-			DialogueGraphWindow.C.SetTitle("Dialogue Graph");
-			Clear();
-			this.Hide();
-		}
+            if (DialogueGraphWindow.Windows.Any(window => window != DialogueGraphWindow.C && window.graphView.GraphPath == relativePath))
+            {
+                await DialogueGraphToolbar.C.ShowError("Graph open in another window");
+                return;
+            }
 
-		private void SetGraph(string path)
-		{
-			GraphName = Path.GetFileName(path);
-			DialogueGraphWindow.C.SetTitle(GraphName);
-			GraphPath = PathUtility.GetRelativePath(path);
-			Clear();
-			this.Show();
-		}
+            LoadGraph(relativePath);
+        }
 
-		private new void Clear()
-		{
-			foreach (var element in graphElements.OfType<IDialogueElement>())
-				element.Remove();
-		}
+        private void LoadGraph(string path)
+        {
+            newestNode = null;
+            GraphPath = PathUtility.GetRelativePath(path);
+            GraphName = Path.GetFileName(GraphPath);
+            DialogueGraphWindow.C.SetTitle(GraphName);
+            DialogueGraphToolbar.C.ClearStatus();
+            Clear();
+            this.Show();
 
-		#region Menu
-		public override void BuildContextualMenu(ContextualMenuPopulateEvent _) {}
+            var nodeAssets = IOUtility.GetAssetsAtPath<NodeSaveData>(GraphPath);
+            var groupAssets = IOUtility.GetAssetsAtPath<GroupSaveData>(GraphPath);
 
-		private void AddMenuItem(string title, Action<DropdownMenuAction> action) => this.AddManipulator(new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(title, action)));
+            Dictionary<string, DialogueNode> dialogueNodes = new(nodeAssets.Length);
+            Dictionary<string, DialogueGroup> groups = new(groupAssets.Length);
 
-		private Vector2 GetLocalMousePosition(DropdownMenuAction action) => contentViewContainer.WorldToLocal(action.eventInfo.localMousePosition);
-		#endregion
+            //TODO: clean up this war crime at some point.
+            foreach (var asset in groupAssets)
+            {
+                DialogueGroup group = new(asset);
+                groups.Add(group.SaveData.Id, group);
+                AddElement(group);
+            }
 
-		#region Events
-		private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> nodes)
-		{
-			var dialogueGroup = (DialogueGroup) group;
+            foreach (var asset in nodeAssets)
+            {
+                DialogueNode node = new(asset);
+                dialogueNodes.Add(node.SaveData.Id, node);
+                AddElement(node);
+            }
 
-			foreach (var node in nodes.Cast<DialogueNode>())
-			{
-				node.SaveData.Group = dialogueGroup.SaveData;
-				node.SaveData.Save();
-			}
-		}
+            foreach (var node in dialogueNodes.Values)
+            {
+                if (node.SaveData.Next != null)
+                {
+                    var next = dialogueNodes[node.SaveData.Next.Id].Input;
+                    AddElement(node.Output.ConnectTo<DialogueEdge>(next));
+                }
+                else
+                {
+                    foreach (var choiceDisplay in node.ChoicesDisplay.Children.Where(display => display.SaveData.Node != null))
+                    {
+                        var next = dialogueNodes[choiceDisplay.SaveData.Node.Id].Input;
+                        AddElement(choiceDisplay.Output.ConnectTo<DialogueEdge>(next));
+                    }
+                }
+            }
 
-		private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> nodes)
-		{
-			foreach (var node in nodes.Cast<DialogueNode>())
-			{
-				node.SaveData.Group = null;
-				node.SaveData.Save();
-			}
-		}
+            foreach (DialogueNode node in dialogueNodes.Values.Where(node => node.SaveData.Group != null))
+            {
+                groups[node.SaveData.Group.Id].AddElement(node);
+            }
+        }
 
-		#region GraphViewChanged
-		private static GraphViewChange UpdateElementPositions(GraphViewChange change)
-		{
-			if (change.movedElements == null)
-				return change;
+        public async void TryCreateGraph()
+        {
+            string path = PathUtility.GetRelativePath(EditorUtility.OpenFolderPanel("Choose Folder for New Graph", Constants.GraphsRoot, ""));
 
-			foreach (var element in change.movedElements)
-			{
-				if (element is ISaveableElement<SaveData> saveableElement)
-					saveableElement.UpdatePosition(element.GetPosition().position);
-			}
+            if (String.IsNullOrWhiteSpace(path))
+                return;
 
-			return change;
-		}
+            if (DialogueGraphWindow.Windows.Any(window => window != DialogueGraphWindow.C && window.graphView.GraphPath == path))
+            {
+                await DialogueGraphToolbar.C.ShowError("Graph open in another window");
+                return;
+            }
 
-		private static GraphViewChange UpdateElementEdges(GraphViewChange change)
-		{
-			if (change.edgesToCreate == null)
-				return change;
+            if (GraphExists(path))
+            {
+                LoadGraph(path);
+                await DialogueGraphToolbar.C.ShowWarning("Opening existing graph");
+                return;
+            }
 
-			foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
-				edge.Connect();
+            CreateGraph(path);
+        }
 
-			return change;
-		}
+        internal void CreateGraph(string path)
+        {
+            DialogueGraphToolbar.C.ClearStatus();
 
-		private static GraphViewChange DeleteSelected(GraphViewChange change)
-		{
-			if (change.elementsToRemove == null)
-				return change;
+            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(Path.Combine(path, "Ungrouped"));
+            Directory.CreateDirectory(Path.Combine(path, "Groups"));
+            AssetDatabase.Refresh();
+            LoadGraph(path);
+        }
 
-			foreach (var element in change.elementsToRemove.ToArray().OfType<IDialogueElement>())
-				element.Delete();
+        public void CloseGraph()
+        {
+            DialogueGraphWindow.C.SetTitle("Dialogue Graph");
+            DialogueGraphToolbar.C.ClearStatus();
+            GraphName = GraphPath = "";
+            Clear();
+            this.Hide();
+        }
 
-			return change;
-		}
-		#endregion
-		#endregion
-	}
+        public void OnTextInputFocusIn(DialogueNode node)
+        {
+            ClearSelection();
+            AddToSelection(node);
+        }
+
+        public void AddNode(int startingChoices = 0)
+        {
+            if (!this.Visible()) return;
+
+            DialogueNode newNode = new(MousePosition, startingChoices);
+            newestNode = newNode;
+            AddElement(newNode);
+        }
+
+        public void AddConnectedNode()
+        {
+            if (!this.Visible()) return;
+            
+            DialogueNode newNode = new(MousePosition);
+            AddElement(newNode);
+
+            if (newestNode == null)
+            {
+                newestNode = newNode;
+                return;
+            }
+
+            if (newestNode.TextNode)
+                newestNode.ConnectTo(newNode);
+            else
+                newestNode.ChoicesDisplay.Children.First(display => !display.Output.connected).ConnectTo(newNode);
+            
+            newestNode = newNode;
+        }
+
+        public void AddGroup()
+        {
+            if (this.Visible())
+                AddElement(new DialogueGroup(MousePosition));
+        }
+
+        private new void Clear()
+        {
+            foreach (var element in graphElements.OfType<IDialogueElement>())
+                element.Remove();
+        }
+
+        private static bool GraphExists(string fullPath)
+        {
+            string ungroupedPath = PathUtility.Combine(fullPath, "Ungrouped");
+            string groupsPath = PathUtility.Combine(fullPath, "Groups");
+            return Directory.Exists(fullPath) && Directory.Exists(ungroupedPath) && Directory.Exists(groupsPath);
+        }
+
+        #region Menu
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent _) {}
+
+        private void AddMenuItem(string title, Action<DropdownMenuAction> action) => this.AddManipulator(new ContextualMenuManipulator(menuEvent => menuEvent.menu.AppendAction(title, action)));
+        #endregion
+
+        #region Events
+        private static void NodesAddedToGroup(Group group, IEnumerable<GraphElement> nodes)
+        {
+            var dialogueGroup = (DialogueGroup)group;
+
+            foreach (var node in nodes.Cast<DialogueNode>())
+            {
+                node.SaveData.Group = dialogueGroup.SaveData;
+                node.SaveData.Save();
+            }
+        }
+
+        private static void NodesRemovedFromGroup(Group group, IEnumerable<GraphElement> nodes)
+        {
+            foreach (var node in nodes.Cast<DialogueNode>())
+            {
+                node.SaveData.Group = null;
+                node.SaveData.Save();
+            }
+        }
+
+        #region GraphViewChanged
+        private static GraphViewChange UpdateElementPositions(GraphViewChange change)
+        {
+            if (change.movedElements == null)
+                return change;
+
+            foreach (var element in change.movedElements)
+            {
+                if (element is ISaveableElement<SaveData> saveableElement)
+                    saveableElement.UpdatePosition(element.GetPosition().position);
+            }
+
+            return change;
+        }
+
+        private static GraphViewChange UpdateElementEdges(GraphViewChange change)
+        {
+            if (change.edgesToCreate == null)
+                return change;
+
+            foreach (var edge in change.edgesToCreate.Cast<DialogueEdge>())
+                edge.OnConnect();
+
+            return change;
+        }
+
+        private GraphViewChange DeleteSelected(GraphViewChange change)
+        {
+            if (change.elementsToRemove == null)
+                return change;
+
+            if (change.elementsToRemove.OfType<DialogueNode>().Any())
+                newestNode = null;
+
+            foreach (var element in change.elementsToRemove.ToArray().OfType<IDialogueElement>())
+                element.Delete();
+
+            return change;
+        }
+        #endregion
+        #endregion
+    }
 }

@@ -11,9 +11,9 @@ namespace DialogueSystem.Editor.Elements
 		public DialogueNode StartNode => (DialogueNode) output.node;
 		public DialogueNode EndNode => (DialogueNode) input.node;
 
-		public void Connect()
+		public void OnConnect()
 		{
-			if (StartNode.Type == NodeType.Text)
+			if (StartNode.TextNode)
 				StartNode.SaveData.Next = EndNode.SaveData;
 			else
 				((ChoiceSaveData) output.userData).Node = EndNode.SaveData;

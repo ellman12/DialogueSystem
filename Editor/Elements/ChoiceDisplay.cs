@@ -23,7 +23,10 @@ namespace DialogueSystem.Editor.Elements
 			this.AddStyleSheet("Nodes/ChoiceDisplay");
 			
 			this.AddIconButton("Close", () => { DisconnectPort(); choicesDisplay.Remove(this, saveData); });
-			this.AddTextField(OnTextChange, saveData.Text);
+
+            var textField = ElementExtensions.CreateTextField(OnTextChange, saveData.Text);
+            textField.RegisterCallback<FocusInEvent>(_ => DialogueGraphView.C.OnTextInputFocusIn(choicesDisplay.Node));
+            Add(textField);
 
 			Output = ElementExtensions.CreatePort(Direction.Output, Port.Capacity.Single);
 			Output.userData = saveData;
@@ -31,6 +34,11 @@ namespace DialogueSystem.Editor.Elements
             
 			SaveData = saveData;
 		}
+
+        public void ConnectTo(DialogueNode node)
+        {
+            DialogueGraphView.C.AddElement(Output.ConnectTo<DialogueEdge>(node.Input));
+        }
 
 		public void DisconnectPort() => DialogueGraphView.C.DeleteElements(Output.connections);
 		

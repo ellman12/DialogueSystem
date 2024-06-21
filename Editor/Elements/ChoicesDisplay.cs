@@ -22,6 +22,7 @@ namespace DialogueSystem.Editor.Elements
 
 			ChoiceSaveData choice = new();
 			Node.SaveData.Choices.Add(choice);
+            Node.SaveData.Save();
 			contentContainer.Add(new ChoiceDisplay(this, choice));
 		}
 

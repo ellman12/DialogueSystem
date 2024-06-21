@@ -77,5 +77,3 @@ crashlytics-build.properties
 
 *.idea
 
-*.meta
-!Editor/Window/Icons/*.meta
